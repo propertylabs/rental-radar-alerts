@@ -1,37 +1,22 @@
-// src/App.js
-import React, { useState } from 'react';
-import CriteriaForm from './components/CriteriaForm';
-import CriteriaList from './components/CriteriaList';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './components/Login.js';
+import OAuthCallback from './components/OAuthCallback.js';
+import PrivateRoute from './components/PrivateRoute.js';
+import Dashboard from './components/Dashboard.js';
 
 function App() {
-  const [criteria, setCriteria] = useState([]);
-
-  const addCriteria = (newCriteria) => {
-    setCriteria([...criteria, newCriteria]);
-  };
-
-  const toggleEnable = (index) => {
-    const updatedCriteria = criteria.map((crit, i) =>
-      i === index ? { ...crit, enabled: !crit.enabled } : crit
-    );
-    setCriteria(updatedCriteria);
-  };
-
-  const deleteCriteria = (index) => {
-    const updatedCriteria = criteria.filter((_, i) => i !== index);
-    setCriteria(updatedCriteria);
-  };
-
   return (
-    <div className="App">
-      <h1>Property Alerts Setup</h1>
-      <CriteriaForm onAddCriteria={addCriteria} />
-      <CriteriaList 
-        criteria={criteria}
-        onToggleEnable={toggleEnable}
-        onDelete={deleteCriteria}
-      />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Navigate to={localStorage.getItem('token') ? "/dashboard" : "/login"} />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/oauth/callback" element={<OAuthCallback />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 

@@ -2,7 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import App from './App.js';
 
 // Remove or comment out the following line
 // import reportWebVitals from './reportWebVitals';
