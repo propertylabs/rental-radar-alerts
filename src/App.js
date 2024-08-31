@@ -1,23 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React, { useState } from 'react';
+import CriteriaForm from './components/CriteriaForm';
+import CriteriaList from './components/CriteriaList';
 
 function App() {
+  const [criteria, setCriteria] = useState([]);
+
+  const addCriteria = (newCriteria) => {
+    setCriteria([...criteria, newCriteria]);
+  };
+
+  const toggleEnable = (index) => {
+    const updatedCriteria = criteria.map((crit, i) =>
+      i === index ? { ...crit, enabled: !crit.enabled } : crit
+    );
+    setCriteria(updatedCriteria);
+  };
+
+  const deleteCriteria = (index) => {
+    const updatedCriteria = criteria.filter((_, i) => i !== index);
+    setCriteria(updatedCriteria);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Property Alerts Setup</h1>
+      <CriteriaForm onAddCriteria={addCriteria} />
+      <CriteriaList 
+        criteria={criteria}
+        onToggleEnable={toggleEnable}
+        onDelete={deleteCriteria}
+      />
     </div>
   );
 }
