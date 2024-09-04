@@ -1,0 +1,209 @@
+/* Reset body to prevent content from being pushed up */
+body {
+    margin: 0;
+    padding: 0;
+    padding-top: env(safe-area-inset-top); /* Ensure content is not pushed into the notch */
+}
+
+/* Standalone status message styling */
+.standalone-status {
+    text-align: center;
+    padding: 10px;
+    background-color: #f0f0f0;
+    color: #333;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 20px; /* Add space between the message and the rest of the content */
+}
+
+/* Base styles for the navbar */
+.navbar, .standalone-navbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    z-index: 1000;
+    box-sizing: border-box;
+    border-top: 1px solid #e0e0e0; /* Subtle border on top */
+    border-radius: 20px 20px 0 0; /* Rounded corners at the top */
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for elevation */
+}
+
+/* Specific handling for standalone mode on iOS */
+.standalone-navbar {
+    padding-bottom: calc(env(safe-area-inset-bottom));
+    padding-top: 10px;
+}
+
+/* Container for nav items */
+.nav-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 500px;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Styling for individual nav items */
+.nav-item {
+    text-decoration: none;
+    color: #000;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Styling for active nav items */
+.active-nav-item {
+    color: #007bff;
+    font-weight: bold; /* Make the active item text bold */
+}
+
+/* Icon styling */
+.icon {
+    font-size: 24px; /* Larger icons */
+    margin-bottom: 4px;
+    color: #888; /* Default icon color */
+}
+
+/* Styling for active nav items' icons */
+.active-nav-item .icon {
+    color: #007bff; /* Active icon color */
+}
+
+/* Info button styling */
+.info-button {
+    position: absolute; /* Align with page titles */
+    top: calc(env(safe-area-inset-top) + 10px); /* Position with respect to the iOS safe area */
+    left: calc(env(safe-area-inset-left) + 10px); /* Ensure the button doesn't go into the safe area */
+    background-color: #fff;
+    border: 1px solid #e0e0e0; /* Match the navbar border */
+    border-radius: 50%; /* Circular button */
+    padding: 10px;
+    font-size: 20px; /* Slightly larger icon for better visibility */
+    color: #007bff; /* In keeping with the active nav item color */
+    cursor: pointer;
+    z-index: 1100; /* Higher than navbar */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for a modern look */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+.info-button:hover {
+    background-color: #007bff; /* Change background on hover */
+    color: #fff; /* Change icon color on hover */
+}
+
+/* Info popup styling */
+.info-popup {
+    position: absolute;
+    top: calc(env(safe-area-inset-top) + 50px); /* Positioned safely below the info button */
+    left: calc(env(safe-area-inset-left) + 10px);
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    z-index: 1100; /* Ensure the popup is on top */
+    width: 250px;
+    text-align: left;
+}
+
+/* Popup content styling */
+.popup-content {
+    position: relative; /* Make the close button position relative to this container */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Close button styling */
+.popup-close {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 24px;
+    height: 24px;
+    background-color: #ccc; /* Background color for the circle */
+    color: #fff; /* Color of the 'X' */
+    border-radius: 50%; /* Make the button a circle */
+    border: none;
+    font-size: 16px;
+    line-height: 24px;
+    text-align: center;
+    cursor: pointer;
+    z-index: 1200; /* Ensure the close button is above everything else */
+    padding: 0;
+}
+
+.popup-close:focus {
+    outline: none; /* Remove default focus outline */
+}
+
+/* Original Popup styling */
+.popup {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    z-index: 9999; /* Ensure the popup is on top */
+    width: 80%;
+    max-width: 300px;
+    text-align: center;
+}
+
+/* Original Popup content styling */
+.popup-content {
+    position: relative; /* Make the close button position relative to this container */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Original Close button styling */
+.popup-close {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 24px;
+    height: 24px;
+    background-color: #ccc; /* Background color for the circle */
+    color: #fff; /* Color of the 'X' */
+    border-radius: 50%; /* Make the button a circle */
+    border: none;
+    font-size: 16px;
+    line-height: 24px;
+    text-align: center;
+    cursor: pointer;
+    z-index: 10000; /* Ensure the close button is above everything else */
+    padding: 0;
+}
+
+.popup-close:focus {
+    outline: none; /* Remove default focus outline */
+}
+
+/* Apply modal-active to the entire <nav> tag */
+nav.modal-active {
+    opacity: 0.5; /* Fade the entire navbar, including background */
+    pointer-events: none; /* Disable interaction */
+    transition: opacity 0.3s ease; /* Smooth fading effect */
+  }

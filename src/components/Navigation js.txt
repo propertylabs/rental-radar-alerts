@@ -1,0 +1,39 @@
+import React, { useEffect, useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import { FaHome, FaSearch, FaBell, FaCog } from 'react-icons/fa';
+import './Navigation.css';
+
+const Navigation = () => {
+  const [isStandalone, setIsStandalone] = useState(false);
+
+  useEffect(() => {
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    setIsStandalone(standalone);
+  }, []);
+
+  return (
+    <>
+      <div className="standalone-status">
+        {isStandalone ? 'Standalone mode detected' : 'Standalone mode not detected'}
+      </div>
+      <nav className={isStandalone ? 'standalone-navbar' : 'navbar'}>
+        <div className="nav-container">
+          <NavLink to="/dashboard" className="nav-item" activeClassName="active-nav-item">
+            <FaHome className="icon" /> Home
+          </NavLink>
+          <NavLink to="/dashboard/searches" className="nav-item" activeClassName="active-nav-item">
+            <FaSearch className="icon" /> Searches
+          </NavLink>
+          <NavLink to="/dashboard/alerts" className="nav-item" activeClassName="active-nav-item">
+            <FaBell className="icon" /> Alerts
+          </NavLink>
+          <NavLink to="/dashboard/settings" className="nav-item" activeClassName="active-nav-item">
+            <FaCog className="icon" /> Settings
+          </NavLink>
+        </div>
+      </nav>
+    </>
+  );
+};
+
+export default Navigation;

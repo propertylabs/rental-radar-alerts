@@ -7,24 +7,17 @@ export default async function handler(req, res) {
   const redirectUri = process.env.WHOP_REDIRECT_URI;
   const dbUrl = process.env.POSTGRES_URL;
 
-  console.log("Client ID:", clientId || "Not Accessible");
-  console.log("Client Secret:", clientSecret || "Not Accessible");
-  console.log("Redirect URI:", redirectUri || "Not Accessible");
-
   if (!clientId || !clientSecret || !redirectUri) {
     return res.status(500).json({ error: "Client Secret, Client ID, or Redirect URI is not accessible." });
   }
 
   const { code } = req.query;
-  console.log("Authorization Code Extracted:", code);
 
   if (!code) {
     return res.status(400).json({ error: 'Authorization code is missing' });
   }
 
   try {
-    console.log("Starting token exchange process...");
-
     const tokenResponse = await fetch('https://api.whop.com/v5/oauth/token', {
       method: 'POST',
       headers: {
@@ -40,10 +33,8 @@ export default async function handler(req, res) {
     });
 
     const tokenData = await tokenResponse.json();
-    console.log("Response from Whop API:", tokenData);
 
     if (!tokenResponse.ok) {
-      console.error("Token exchange failed:", tokenData);
       return res.status(tokenResponse.status).json({ error: tokenData });
     }
 
@@ -55,10 +46,8 @@ export default async function handler(req, res) {
     });
 
     const userData = await userResponse.json();
-    console.log("User Data Response:", userData);
 
     if (!userResponse.ok || !userData.id) {
-      console.error("Failed to retrieve user data:", userData);
       return res.status(500).json({ error: "Failed to retrieve user data." });
     }
 
@@ -70,18 +59,16 @@ export default async function handler(req, res) {
     });
 
     const membershipData = await membershipResponse.json();
-    console.log("Membership Data Response:", membershipData);
 
     if (!membershipResponse.ok) {
-      console.error("Failed to retrieve membership data:", membershipData);
       return res.status(500).json({ error: "Failed to retrieve membership data." });
     }
 
     // Check if the user has a valid membership
-    const hasValidMembership = membershipData.data.some(membership => membership.product_id === 'prod_GtVfwuPeiuWoU' && membership.valid);
+    const isSubscriber = membershipData.data.some(membership => membership.product_id === 'prod_GtVfwuPeiuWoU' && membership.valid);
 
-    if (!hasValidMembership || membershipData.data.length === 0) {
-      return res.status(403).json({ error: "You must be subscribed to Rental Radar to access this app." });
+    if (!isSubscriber) {
+      return res.status(403).json({ error: "You must be subscribed to access this app." });
     }
 
     // Initialize PostgreSQL client
@@ -102,14 +89,18 @@ export default async function handler(req, res) {
 
     await client.query(upsertQuery, [
       userData.id,
-      userData.name || userData.username, // Fallback to username if name is null
+      userData.name || userData.username,
       userData.email,
     ]);
 
     await client.end();
 
-    // Return the access token
-    return res.status(200).json(tokenData);
+    // Return the access token, Whop user ID, and subscription status
+    return res.status(200).json({
+      access_token: tokenData.access_token,
+      whop_user_id: userData.id,
+      isSubscriber: true,
+    });
 
   } catch (error) {
     console.error("Error during token exchange or user data processing:", error.message);

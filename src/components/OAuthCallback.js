@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 const OAuthCallback = () => {
-  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -13,32 +11,29 @@ const OAuthCallback = () => {
 
       if (!code) {
         console.error("Authorization code is missing.");
-        setErrorMessage("Failed to receive authorization code.");
+        navigate('/notsub');
         return;
       }
 
       try {
-        // Call the serverless function with the authorization code
-        const response = await axios.get(`/api/whop-auth?code=${code}`);
+        const response = await fetch(`/api/whop-auth?code=${code}`);
+        const data = await response.json();
 
-        if (response.data.access_token) {
-          console.log("Access token received successfully:", response.data.access_token);
-          localStorage.setItem('token', response.data.access_token);
+        if (data.access_token && data.whop_user_id && data.isSubscriber) {
+          // Store the token and Whop user ID if the user is a paying subscriber
+          localStorage.setItem('token', data.access_token);
+          localStorage.setItem('whop_user_id', data.whop_user_id);
 
           setTimeout(() => {
             navigate('/dashboard');
           }, 1000); // Delay navigation by 1 second
         } else {
-          setErrorMessage("Failed to receive access token.");
-          console.error("Failed to receive access token:", response.data);
+          console.error("User is not a paying subscriber.");
+          navigate('/notsub'); // Redirect non-subscribers to the notsub page
         }
       } catch (error) {
-        if (error.response && error.response.status === 403) {
-          setErrorMessage(error.response.data.error || "You must be subscribed to Rental Radar to access this app.");
-        } else {
-          console.error('Error during API request:', error.response?.data || error.message);
-          setErrorMessage('An error occurred during the API request.');
-        }
+        console.error('Error during API request:', error.message);
+        navigate('/notsub'); // Redirect to notsub on error
       }
     };
 
@@ -48,12 +43,6 @@ const OAuthCallback = () => {
   return (
     <div>
       <h2>Processing OAuth Callback...</h2>
-      {errorMessage && (
-        <div className="error-popup">
-          <p>{errorMessage}</p>
-          <button onClick={() => navigate('/login')}>OK</button>
-        </div>
-      )}
     </div>
   );
 };
