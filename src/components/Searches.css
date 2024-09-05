@@ -37,7 +37,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -50,19 +50,22 @@
     padding: 20px;
     border-radius: 8px;
     width: 90vw; /* Full width minus a small gap */
-    max-width: 800px; /* Increased max width on desktop */
+    max-width: 800px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    position: relative;
-    height: calc(100vh - 60px); /* Fixed height to avoid overflow */
-    overflow-y: hidden; /* Disable vertical scrolling */
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    max-height: 80vh; /* Modal height is 80% of the viewport height */
+    margin: 30px 0; /* Adds the 30px gap at top and bottom */
+    overflow: hidden; /* Disable scrolling */
 }
 
 /* For mobile devices (max-width: 768px), fill most of the height minus 60px */
 @media (max-width: 768px) {
     .modal-content {
-        width: calc(100% - 16px); /* Full width minus 8px gap on each side */
-        margin: 30px 8px; /* 30px top and bottom, 8px left and right */
-        height: calc(100vh - 60px); /* Full height minus 60px */
+        width: calc(100% - 16px);
+        margin: 30px 8px;
+        height: calc(100vh - 160px); /* Full height minus 160px (30px top and bottom gap) */
+        overflow: hidden;
     }
 }
 
@@ -77,10 +80,13 @@
     cursor: pointer;
 }
 
-/* Modal body, map, and other elements inside */
+/* Modal body */
 .modal-body {
-    padding: 20px;
-    text-align: center;
+    flex-grow: 1; /* Expand to fill the available space */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Align headings and toggle to the top */
+    overflow: hidden; /* Disable overflow inside the body */
 }
 
 /* Step Heading */
@@ -145,69 +151,30 @@
     transition: color 0.4s ease;
 }
 
-/* Postcode tile styling */
-.postcode-tile {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background-color: #f0f0f5;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    font-size: 16px;
-    font-weight: 500;
-}
-
-.postcode-tile.add-tile {
-    background-color: #f0f0f5;
-    border: 2px dashed #bbb;
-    padding: 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.postcode-tile.add-tile:hover {
-    background-color: #e5e5eb;
-}
-
-/* Delete icon inside tiles */
-.delete-icon {
-    cursor: pointer;
-    font-size: 18px;
-    color: #ff5c5c;
-}
-
-/* Tile scrollable container */
-.tile-scroll-container {
-    max-height: 200px;
-    overflow-y: auto;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-}
-
-/* Tiles wrapper */
-.tiles-wrapper {
+/* Content container to hold map or text view */
+.content-container {
+    flex-grow: 1; /* Ensure this section fills the remaining space */
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    justify-content: flex-start;
+    overflow: hidden;
 }
 
-/* Postcode input style */
-.postcode-input {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-}
-
-/* Map container adjustments */
+/* Placeholder container for the map */
 .map-container {
-    width: 100%;
-    height: calc(100% - 30px); /* Fixed height based on modal space */
+    flex-grow: 1; /* Allow map to grow and take available space */
     margin-top: 10px;
+    border: 2px solid #ddd;
     border-radius: 12px;
-    box-sizing: border-box; /* Ensure the map stays inside the modal container */
+    background-color: #f5f5f5; /* Light grey background for placeholder */
+    height: 100%; /* Ensure it grows to available space */
+}
+
+/* Placeholder container for the text view */
+.tiles-wrapper {
+    flex-grow: 1; /* Allow tiles content to grow and take available space */
+    margin-top: 10px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    background-color: #f5f5f5; /* Light grey background for placeholder */
 }

@@ -1,23 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
-import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import './Searches.css';
 
 const Searches = () => {
   const [searches, setSearches] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // Track modal state
   const [viewMode, setViewMode] = useState('text'); // 'text' or 'map' toggle
-  const [geoData, setGeoData] = useState(null); // Store GeoJSON data dynamically
-  const [selectedPostcodes, setSelectedPostcodes] = useState({}); // Track selected postcodes by name
-
-  // Fetch GeoJSON data when component mounts
-  useEffect(() => {
-    fetch('/data/manchester-M.geojson') // Adjust path to your data location
-      .then((response) => response.json())
-      .then((data) => setGeoData(data))
-      .catch((error) => console.error('Error fetching GeoJSON:', error));
-  }, []);
 
   // Handle opening the modal
   const handleOpenModal = () => {
@@ -34,56 +22,6 @@ const Searches = () => {
   // Toggle between 'text' and 'map' view
   const handleToggleView = (view) => {
     setViewMode(view);
-  };
-
-  // Define default style for unselected features
-  const defaultStyle = {
-    color: 'black',
-    weight: 1,
-    fillOpacity: 0.3,
-  };
-
-  // Define the highlighted style for selected features
-  const highlightedStyle = {
-    color: 'blue',
-    weight: 5,
-    fillOpacity: 0.7,
-  };
-
-  // Function to define the style of each feature dynamically based on its selection state
-  const styleFeature = (feature) => {
-    const postcodeName = feature.properties.name;
-    // Check if this postcode is selected, and apply the highlighted style if so
-    if (selectedPostcodes[postcodeName]) {
-      return highlightedStyle;
-    } else {
-      return defaultStyle;
-    }
-  };
-
-  // Function to handle the click event for each postcode
-  const onEachPostcode = (feature, layer) => {
-    const postcodeName = feature.properties.name;
-
-    // Click event handler for each postcode layer
-    layer.on('click', () => {
-      setSelectedPostcodes((prevSelected) => {
-        const newSelected = { ...prevSelected }; // Copy current selection state
-
-        if (newSelected[postcodeName]) {
-          // If the postcode is already selected, deselect it
-          delete newSelected[postcodeName]; // Remove from selected list
-        } else {
-          // If the postcode is not selected, select it
-          newSelected[postcodeName] = true; // Mark as selected
-        }
-
-        return newSelected; // Return updated selection state
-      });
-    });
-
-    // Add a tooltip to display the postcode name
-    layer.bindTooltip(postcodeName, { permanent: true, direction: 'center', className: 'zone-label' });
   };
 
   return (
@@ -137,33 +75,20 @@ const Searches = () => {
                 </div>
               </div>
 
-              {/* Conditional rendering based on toggle selection */}
-              {viewMode === 'text' ? (
-                <div className="tiles-wrapper">
-                  {/* Your existing logic for adding postcode tiles goes here */}
-                </div>
-              ) : (
-                <div className="map-container">
-                  {/* Render Map when in 'map' view and GeoJSON data is loaded */}
-                  {geoData && (
-                    <MapContainer
-                      center={[53.483959, -2.244644]} // Centered on Manchester
-                      zoom={12}
-                      style={{ height: 'calc(100% - 30px)', width: '100%' }} // Ensuring map fits modal
-                    >
-                      <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                      />
-                      <GeoJSON
-                        data={geoData}
-                        style={styleFeature} // Use dynamic styling based on selection state
-                        onEachFeature={onEachPostcode} // Attach event handling to each postcode
-                      />
-                    </MapContainer>
-                  )}
-                </div>
-              )}
+              {/* Same content space for both views */}
+              <div className="content-container">
+                {viewMode === 'text' ? (
+                  <div className="tiles-wrapper">
+                    {/* Placeholder content for the text view */}
+                    <p>This is where postcode tiles will go in text mode.</p>
+                  </div>
+                ) : (
+                  <div className="map-container">
+                    {/* Placeholder content for the map */}
+                    <p>Map content goes here</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

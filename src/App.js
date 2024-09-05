@@ -9,7 +9,7 @@ import Alerts from './components/Alerts.js';
 import Settings from './components/Settings.js';
 import Navigation from './components/Navigation.js';
 import NotSub from './components/NotSub.js'; // Import the NotSub component
-import MapTest from './components/MapTest.js';
+// import MapTest from './components/MapTest.js';
 
 
 const DashboardLayout = ({ children }) => (
@@ -27,7 +27,6 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/oauth/callback" element={<OAuthCallback />} />
         <Route path="/notsub" element={<NotSub />} /> {/* Add the NotSub route */}
-        <Route path="/maptest" element={<MapTest />} />
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<DashboardLayout><Home /></DashboardLayout>} />
           <Route path="/dashboard/searches" element={<DashboardLayout><Searches /></DashboardLayout>} />
