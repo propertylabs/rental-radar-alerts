@@ -6,7 +6,7 @@ import './Navigation.css';
 const Navigation = () => {
   const [isStandalone, setIsStandalone] = useState(false);
   const [isIOSUser, setIsIOSUser] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
+  const [showIOSPopup, setShowIOSPopup] = useState(false); // Separate state for iOS "Add to Home Screen" popup
   const [showInfoPopup, setShowInfoPopup] = useState(false); // State to manage the info button popup
 
   useEffect(() => {
@@ -18,14 +18,14 @@ const Navigation = () => {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     setIsIOSUser(isIOS);
 
-    // Show the popup if the user is on iOS and not in standalone mode
+    // Show the iOS popup if the user is on iOS and not in standalone mode
     if (isIOS && !standalone) {
-      setShowPopup(true);
+      setShowIOSPopup(true);
     }
   }, []);
 
-  const closePopup = () => {
-    setShowPopup(false);
+  const closeIOSPopup = () => {
+    setShowIOSPopup(false);
   };
 
   const toggleInfoPopup = () => {
@@ -34,10 +34,10 @@ const Navigation = () => {
 
   return (
     <>
-      {/* Info button in the top left corner 
+      {/* Info button in the top left corner */}
       <button className="info-button" onClick={toggleInfoPopup}>
         <FaInfoCircle />
-      </button>*/}
+      </button>
 
       {/* Info Popup */}
       {showInfoPopup && (
@@ -46,14 +46,19 @@ const Navigation = () => {
             <button className="popup-close" onClick={toggleInfoPopup}>&times;</button>
             <p>{isStandalone ? 'Standalone mode detected' : 'Standalone mode not detected'}</p>
             {isIOSUser && <p>iOS user detected</p>}
-            {showPopup && (
-              <>
-                <p>Install this app to your home screen for a better experience.</p>
-                <p>
-                  Tap <FaShareSquare className="share-icon" /> then 'Add to Home Screen'.
-                </p>
-              </>
-            )}
+          </div>
+        </div>
+      )}
+
+      {/* iOS "Add to Home Screen" Popup */}
+      {showIOSPopup && (
+        <div className="popup">
+          <div className="popup-content">
+            <button className="popup-close" onClick={closeIOSPopup}>&times;</button>
+            <p>Install this app to your home screen for a better experience.</p>
+            <p>
+              Tap <FaShareSquare className="share-icon" /> then 'Add to Home Screen'.
+            </p>
           </div>
         </div>
       )}
