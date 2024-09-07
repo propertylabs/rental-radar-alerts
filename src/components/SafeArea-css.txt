@@ -1,0 +1,132 @@
+/* Safe area container - dynamically adjusts based on the environment variables */
+.safe-area-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    box-sizing: border-box;
+}
+  
+/* Simulating safe area at the top */
+.safe-area-top {
+    background-color: rgba(255, 0, 0, 0.5);
+    text-align: center;
+    color: white;
+    padding-top: env(safe-area-inset-top);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+  
+/* Simulating safe area at the bottom */
+.safe-area-bottom {
+    background-color: rgba(0, 0, 255, 0.5);
+    text-align: center;
+    color: white;
+    padding-bottom: env(safe-area-inset-bottom);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+  
+/* Main content area */
+.safe-area-content {
+    flex-grow: 1;
+    background-color: rgba(0, 255, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+  
+/* Arrow Containers */
+.arrow-container-left,
+.arrow-container-right,
+.arrow-container-top,
+.arrow-container-bottom {
+    width: 20px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute; /* Use absolute positioning for arrows */
+}
+
+/* Left Arrow Container */
+.arrow-container-left {
+    left: 0;
+    top: 50%;
+    transform: translate(0, -50%); /* Adjust so it's flush against the left edge */
+    z-index: 2; /* Ensure it appears on top */
+}
+
+/* Right Arrow Container */
+.arrow-container-right {
+    right: 0;
+    top: 50%;
+    transform: translate(0, -50%); /* Adjust so it's flush against the right edge */
+    z-index: 2; /* Ensure it appears on top */
+}
+  
+/* Arrow Styles */
+.arrow-left,
+.arrow-right,
+.arrow-top,
+.arrow-bottom {
+    display: block;
+    width: 0;
+    height: 0;
+    border: solid transparent;
+}
+  
+/* Left and Right Arrows */
+.arrow-left {
+    border-right: 20px solid black;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+}
+  
+.arrow-right {
+    border-left: 20px solid black;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+}
+  
+/* Top and Bottom Arrows */
+.arrow-top {
+    border-bottom: 20px solid black;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+}
+  
+.arrow-bottom {
+    border-top: 20px solid black;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+}
+  
+/* Top Arrow Container */
+.arrow-container-top {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, calc(env(safe-area-inset-top) + 10px));
+    z-index: 2; /* Ensure it appears on top */
+}
+  
+/* Bottom Arrow Container */
+.arrow-container-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, calc(-1 * env(safe-area-inset-bottom) - 10px));
+    z-index: 2; /* Ensure it appears on top */
+}

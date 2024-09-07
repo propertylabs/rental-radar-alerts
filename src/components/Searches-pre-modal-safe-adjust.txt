@@ -76,15 +76,14 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100dvh;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
-    justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.5); /* Transparent overlay */
-    z-index: 10000; /* Ensure modal stays on top */
+    justify-content: center;
+    z-index: 2000;
 }
 
-/* Modal content */
 .modal-content {
     background: #fff;
     padding: 20px;
@@ -92,38 +91,25 @@
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
-    position: relative;
-    margin: 0 auto;
-
-    /* Full width and height with safe area management */
-    width: calc(100vw - 40px) !important; /* Small padding */
+    margin-top: env(safe-area-inset-top);
+    margin-bottom: env(safe-area-inset-bottom);
+    height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    width: calc(100% - 16px);
     max-width: 800px;
-    height: calc(100dvh - 40px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important; /* Avoid safe areas */
-    max-height: calc(100dvh - 40px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
-
-    /* Smooth transition for resizing */
-    transition: height 0.3s ease, max-height 0.3s ease, width 0.3s ease, max-width 0.3s ease;
-    overflow-y: auto; /* Enable scroll if content overflows */
+    overflow: hidden;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-/* Mobile adjustments */
 @media (max-width: 768px) {
     .modal-content {
-        width: calc(100vw - 20px) !important; /* Full width minus small padding */
-        height: calc(100dvh - 20px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important; /* Avoid safe areas */
+        width: calc(100% - 16px);
+        margin: env(safe-area-inset-top) 8px env(safe-area-inset-bottom) 8px;
+        height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     }
 }
 
-/* Desktop adjustments */
-@media (min-width: 769px) {
-    .modal-content {
-        width: 80vw !important; /* Take up 80% of the available width on desktop */
-        height: 80dvh !important; /* Take up 80% of available height on desktop */
-        max-height: 90dvh !important; /* Don’t take up too much vertical space */
-    }
-}
-
-/* Close button */
+/* Back button in the top left (replacing close button in step 2) */
 .modal-close {
     position: absolute;
     top: 10px;
@@ -140,7 +126,6 @@
     text-decoration: underline;
 }
 
-/* Next button */
 .modal-next {
     position: absolute;
     top: 10px;

@@ -1,0 +1,59 @@
+/* Modal overlay */
+.simple-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Transparent overlay */
+    z-index: 10000; /* Ensure modal stays on top */
+}
+
+/* Modal content */
+.simple-modal-content {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    position: relative;
+
+    /* Full width and height with important tags to stop style attributes overriding */
+    width: calc(100vw - 40px) !important; /* 20px padding on left and right */
+    max-width: 500px !important; /* Max width for desktop */
+    height: calc(100dvh - 40px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+    max-height: calc(100dvh - 40px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+
+    /* Smooth transition for resizing */
+    transition: height 0.3s ease, max-height 0.3s ease, width 0.3s ease, max-width 0.3s ease;
+    overflow-y: auto; /* Enable scroll if content overflows */
+}
+
+/* Close button */
+.simple-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #000;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .simple-modal-content {
+        width: calc(100vw - 40px) !important; /* Ensure 20px padding on both sides */
+        height: calc(100dvh - 40px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important; /* Respect safe areas and padding */
+    }
+}
+
+/* Desktop adjustments */
+@media (min-width: 769px) {
+    .simple-modal-content {
+        width: 80vw !important; /* Take up 80% of available width on desktop */
+        height: 80dvh !important; /* Take up 80% of available height on desktop */
+        max-height: 90dvh !important; /* Don't take up too much vertical space */
+    }
+}

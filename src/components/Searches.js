@@ -1,16 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { FaPlus, FaTimes } from 'react-icons/fa';
+import { FaPlus, FaTimes, FaBed, FaBuilding, FaHome } from 'react-icons/fa';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import './Searches.css';
+// import './SearchesModal.css';
+
+// Function to detect standalone mode
+const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
 const validManchesterPostcodes = [
-  'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9',
-  'M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19',
-  'M20', 'M21', 'M22', 'M23', 'M24', 'M25', 'M26', 'M27', 'M28', 'M29',
-  'M30', 'M31', 'M32', 'M33', 'M34', 'M35', 'M38', 'M40', 'M41', 'M43', 'M44', 'M45', 'M46',
-  'M50', 'M90'
+  // Postcode data...
 ];
+
+// Adjust modal for safe areas and URL bar presence in Safari
+const adjustModalForSafeAreas = (standalone) => {
+  const modal = document.querySelector('.modal-content');
+  if (modal) {
+    if (standalone) {
+      // In standalone mode, the viewport height doesn't dynamically change, so use a static approach
+      modal.style.height = `calc(100vh - 20px)`; // Add padding at the top and bottom for a cleaner look
+      modal.style.paddingTop = '10px';
+      modal.style.paddingBottom = '10px';
+    } else {
+      // Non-standalone mode: Adjust for dynamic URL bar and safe areas
+      const visibleHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      const topSafeArea = parseInt(getComputedStyle(document.documentElement).getPropertyValue('env(safe-area-inset-top)')) || 0;
+      const bottomSafeArea = parseInt(getComputedStyle(document.documentElement).getPropertyValue('env(safe-area-inset-bottom)')) || 0;
+
+      modal.style.paddingTop = `${topSafeArea}px`;
+      modal.style.paddingBottom = `${bottomSafeArea}px`;
+      modal.style.height = `calc(${visibleHeight}px - ${topSafeArea}px - ${bottomSafeArea}px)`;
+    }
+  }
+};
 
 const Searches = () => {
   const [searches, setSearches] = useState([]);
@@ -22,11 +44,9 @@ const Searches = () => {
   const [newPostcode, setNewPostcode] = useState('');
   const [error, setError] = useState('');
   const [step, setStep] = useState(1);
-  const [selectedProperty, setSelectedProperty] = useState('');
   const [selectedProperties, setSelectedProperties] = useState([]);
-  const [bedroomSelection, setBedroomSelection] = useState('');
   const [studioSelected, setStudioSelected] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [bedroomSelection, setBedroomSelection] = useState('');
 
   useEffect(() => {
     if (viewMode === 'map') {
@@ -37,23 +57,36 @@ const Searches = () => {
     }
   }, [viewMode]);
 
-  // Sync text view and map view
   useEffect(() => {
-    if (viewMode === 'map' && geoData) {
-      const updatedFeatures = geoData.features.map((feature) => ({
-        ...feature,
-        properties: {
-          ...feature.properties,
-          selected: selectedPostcodes.includes(feature.properties.name)
-        }
-      }));
-      setGeoData({ ...geoData, features: updatedFeatures });
+    const standalone = isStandalone();
+
+    const handleResize = () => {
+      if (isModalOpen) adjustModalForSafeAreas(standalone);
+    };
+
+    // Adjust the modal when it opens
+    if (isModalOpen) {
+      adjustModalForSafeAreas(standalone);
     }
-  }, [viewMode, selectedPostcodes, geoData]);
+
+    window.addEventListener('resize', handleResize); // Listen for window resize
+    if (!standalone && window.visualViewport) {
+      // Only listen for visual viewport changes in non-standalone mode
+      window.visualViewport.addEventListener('resize', handleResize);
+    }
+
+    // Cleanup event listeners on component unmount or when modal closes
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (!standalone && window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleResize);
+      }
+    };
+  }, [isModalOpen]);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
-    setStep(1); // Ensure we start at step 1 when opening the modal
+    setStep(1);
   };
 
   const handleCloseModal = () => setIsModalOpen(false);
@@ -61,33 +94,18 @@ const Searches = () => {
   const handleToggleView = (view) => setViewMode(view);
 
   const handlePropertyTypeSelect = (type) => {
-    if (type === 'Room') {
-      if (!selectedProperties.includes('Room')) {
-        setSelectedProperties(['Room']);
-      } else {
-        setSelectedProperties([]);
-      }
+    if (selectedProperties.includes(type)) {
+      setSelectedProperties(selectedProperties.filter((prop) => prop !== type));
     } else {
-      if (selectedProperties.includes('Room')) {
-        setErrorMessage('Room searches cannot be combined with other property types.');
-      } else {
-        if (selectedProperties.includes(type)) {
-          setSelectedProperties(selectedProperties.filter((prop) => prop !== type));
-        } else {
-          setSelectedProperties([...selectedProperties, type]);
-        }
-      }
+      setSelectedProperties([...selectedProperties, type]);
     }
   };
 
-  const handleBedroomSelect = (num) => {
-    setBedroomSelection(num);
-  };
+  const handleNextClick = () => setStep(step + 1);
 
   const handleAddTile = () => {
     const cleanedPostcode = newPostcode.trim().toUpperCase();
     if (cleanedPostcode === '') return;
-
     const isValid = validManchesterPostcodes.includes(cleanedPostcode);
 
     if (isValid && !selectedPostcodes.includes(cleanedPostcode)) {
@@ -96,7 +114,7 @@ const Searches = () => {
       setNewPostcode('');
       setError('');
     } else {
-      setError('Please enter a valid Manchester postcode');
+      setError('Please enter a valid Manchester postcode.');
     }
   };
 
@@ -126,36 +144,6 @@ const Searches = () => {
       weight: selectedPostcodes.includes(postcodeName) ? 5 : 1,
       fillOpacity: selectedPostcodes.includes(postcodeName) ? 0.7 : 0.3
     });
-  };
-
-  const handleNextClick = () => {
-    if (step === 1) {
-      if (selectedPostcodes.length > 0) {
-        setStep(2);
-      } else {
-        setError('Please select at least one postcode.');
-      }
-    } else if (step === 2) {
-      if (selectedProperties.length > 0) {
-        if (selectedProperties.includes('Room')) {
-          setStep(4); // Skip to step 4
-        } else {
-          setStep(3); // Move to bedroom selection
-        }
-      } else {
-        setErrorMessage('Please select a property type.');
-      }
-    } else if (step === 3) {
-      if (bedroomSelection || studioSelected) {
-        setStep(4);
-      } else {
-        setErrorMessage('Please select the number of bedrooms.');
-      }
-    }
-  };
-
-  const handleBackClick = () => {
-    if (step > 1) setStep(step - 1); // Go back one step at a time
   };
 
   return (
@@ -192,7 +180,7 @@ const Searches = () => {
                   &times;
                 </button>
               ) : (
-                <button className="modal-back" onClick={handleBackClick}>
+                <button className="modal-back" onClick={() => setStep(step - 1)}>
                   Back
                 </button>
               )}
@@ -236,7 +224,6 @@ const Searches = () => {
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') handleAddTile();
                             }}
-                            onBlur={handleAddTile}  {/* Add onBlur to save postcode when focus is lost */}
                             placeholder="Add postcode"
                           />
                         </div>
@@ -277,31 +264,25 @@ const Searches = () => {
                     <button
                       className={`property-type-button ${selectedProperties.includes('Flat') ? 'selected' : ''}`}
                       onClick={() => handlePropertyTypeSelect('Flat')}
-                      disabled={selectedProperties.includes('Room')}
                     >
+                      <FaBuilding className="property-icon" />
                       Flat
                     </button>
                     <button
                       className={`property-type-button ${selectedProperties.includes('House') ? 'selected' : ''}`}
                       onClick={() => handlePropertyTypeSelect('House')}
-                      disabled={selectedProperties.includes('Room')}
                     >
+                      <FaHome className="property-icon" />
                       House
                     </button>
                     <button
                       className={`property-type-button ${selectedProperties.includes('Room') ? 'selected' : ''}`}
                       onClick={() => handlePropertyTypeSelect('Room')}
-                      disabled={selectedProperties.length > 0 && !selectedProperties.includes('Room')}
                     >
+                      <FaBed className="property-icon" />
                       Room
                     </button>
                   </div>
-
-                  {selectedProperties.includes('Room') && (
-                    <p className="info-message">Room searches cannot be combined with other property types. Please finish adding this search for rooms only.</p>
-                  )}
-
-                  {errorMessage && <p className="error-message">{errorMessage}</p>}
                 </>
               )}
 
@@ -318,15 +299,12 @@ const Searches = () => {
                       <button
                         key={num}
                         className={`bedroom-button ${bedroomSelection === num ? 'selected' : ''}`}
-                        onClick={() => handleBedroomSelect(num)}
-                        disabled={studioSelected && selectedProperties.includes('House') && num !== 'Studio'}
+                        onClick={() => setBedroomSelection(num)}
                       >
                         {num}
                       </button>
                     ))}
                   </div>
-
-                  {errorMessage && <p className="error-message">{errorMessage}</p>}
                 </>
               )}
             </div>

@@ -8,9 +8,8 @@ import Searches from './components/Searches.js';
 import Alerts from './components/Alerts.js';
 import Settings from './components/Settings.js';
 import Navigation from './components/Navigation.js';
-import NotSub from './components/NotSub.js'; // Import the NotSub component
-// import MapTest from './components/MapTest.js';
-
+import NotSub from './components/NotSub.js';
+// import SafeArea from './components/SafeArea.js'; // Import the SafeArea component
 
 const DashboardLayout = ({ children }) => (
   <div>
@@ -26,7 +25,8 @@ function App() {
         <Route path="/" element={<Navigate to={localStorage.getItem('token') ? "/dashboard" : "/login"} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/oauth/callback" element={<OAuthCallback />} />
-        <Route path="/notsub" element={<NotSub />} /> {/* Add the NotSub route */}
+        <Route path="/notsub" element={<NotSub />} /> {/* NotSub route */}
+        {/*<Route path="/safearea" element={<SafeArea />} />  SafeArea route */}
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<DashboardLayout><Home /></DashboardLayout>} />
           <Route path="/dashboard/searches" element={<DashboardLayout><Searches /></DashboardLayout>} />

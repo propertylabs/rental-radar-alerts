@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [envVariables, setEnvVariables] = useState(null);
+  const navigate = useNavigate();
 
   const clientId = process.env.REACT_APP_WHOP_CLIENT_ID;
   const redirectUri = process.env.REACT_APP_WHOP_REDIRECT_URI;
@@ -13,6 +15,10 @@ const Login = () => {
       redirectUri,
       clientSecret,
     });
+  };
+
+  const handleGoToSafeArea = () => {
+    navigate('/safearea');
   };
 
   return (
@@ -35,6 +41,10 @@ const Login = () => {
           <p><strong>Client Secret:</strong> {envVariables.clientSecret}</p>
         </div>
       )}
+
+      <button onClick={handleGoToSafeArea} style={styles.button}>
+        Go to Safe Area
+      </button>
     </div>
   );
 };
