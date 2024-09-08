@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login.js';
@@ -7,14 +8,17 @@ import Home from './components/Home.js';
 import Searches from './components/Searches.js';
 import Alerts from './components/Alerts.js';
 import Settings from './components/Settings.js';
+import Header from './components/Header.js';
 import Navigation from './components/Navigation.js';
 import NotSub from './components/NotSub.js';
-// import SafeArea from './components/SafeArea.js'; // Import the SafeArea component
 
-const DashboardLayout = ({ children }) => (
+const DashboardLayout = ({ children, pageTitle }) => (
   <div>
-    {children}
-    <Navigation /> {/* Fixed Navigation Bar */}
+    <Header pageTitle={pageTitle} /> {/* Pass the pageTitle as a prop */}
+    <div className="content">
+      {children}
+    </div>
+    <Navigation />
   </div>
 );
 
@@ -25,13 +29,12 @@ function App() {
         <Route path="/" element={<Navigate to={localStorage.getItem('token') ? "/dashboard" : "/login"} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/oauth/callback" element={<OAuthCallback />} />
-        <Route path="/notsub" element={<NotSub />} /> {/* NotSub route */}
-        {/*<Route path="/safearea" element={<SafeArea />} />  SafeArea route */}
+        <Route path="/notsub" element={<NotSub />} />
         <Route element={<PrivateRoute />}>
-          <Route path="/dashboard" element={<DashboardLayout><Home /></DashboardLayout>} />
-          <Route path="/dashboard/searches" element={<DashboardLayout><Searches /></DashboardLayout>} />
-          <Route path="/dashboard/alerts" element={<DashboardLayout><Alerts /></DashboardLayout>} />
-          <Route path="/dashboard/settings" element={<DashboardLayout><Settings /></DashboardLayout>} />
+          <Route path="/dashboard" element={<DashboardLayout pageTitle="Dashboard"><Home /></DashboardLayout>} />
+          <Route path="/dashboard/searches" element={<DashboardLayout pageTitle="Searches"><Searches /></DashboardLayout>} />
+          <Route path="/dashboard/alerts" element={<DashboardLayout pageTitle="Alerts"><Alerts /></DashboardLayout>} />
+          <Route path="/dashboard/settings" element={<DashboardLayout pageTitle="Settings"><Settings /></DashboardLayout>} />
         </Route>
       </Routes>
     </Router>

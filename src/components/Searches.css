@@ -1,27 +1,44 @@
-/* Container and header */
+/* =========================== */
+/* Global Styles & Containers   */
+/* =========================== */
+
 .searches-container {
-    padding: 20px;
     text-align: center;
     display: flex;
-    flex-direction: column; /* Ensure title stays above the tiles */
+    flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    min-height: 100vh; /* Ensure the content fills the screen */
+    min-height: 100vh;
+    height: 100vh; /* Full height of the viewport */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Disable horizontal scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
-/* Tile container */
+/* =========================== */
+/* Tile Container and Styling   */
+/* =========================== */
+
+/* Container for the search tiles */
 .searches-list {
     width: 100%;
-    max-width: 500px; /* Match the nav-container width */
     margin: 0 auto;
-    padding: 0 15px; /* Add padding to the sides */
+    padding: 60px 15px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center tiles */
+    align-items: center;
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden;
 }
 
-/* Title */
+@media (min-width: 769px) {
+    .searches-list {
+        padding: 80px 15px;
+    }
+}
+
+/* Title for the searches page */
 .searches-title {
     font-size: 32px;
     font-weight: bold;
@@ -30,47 +47,165 @@
 }
 
 /* Add search tile */
+/* Add search tile */
 .search-item.add-tile {
     background-color: #f0f0f5;
-    border: 2px dashed #bbb;
+    border: 2px dashed #007bff;
     padding: 20px;
     text-align: center;
     cursor: pointer;
-    border-radius: 12px; /* Match the navbar corner rounding */
-    transition: background-color 0.3s ease;
-    width: 100%; /* Full width for mobile responsiveness */
+    border-radius: 12px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
     box-sizing: border-box;
-    margin: 10px auto; /* Ensure centering and spacing between tiles */
+    margin: 10px auto;
+    min-height: 190px; /* Same minimum height as search items */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1; /* Ensure the tile grows to the same height as the other items */
 }
 
-/* For larger screens */
+.search-item.add-tile:hover {
+    background-color: #e0e0f0;
+    transform: scale(1.05);
+}
+
 @media (min-width: 769px) {
     .search-item.add-tile {
-        width: 70%; /* 70% width of the container for larger screens */
         max-width: 500px;
     }
 }
 
-/* For mobile devices (max-width: 768px) */
 @media (max-width: 768px) {
     .search-item.add-tile {
         width: 100%;
-        max-width: 100%; /* Full width on mobile */
-        margin: 0 10px; /* Add margin on mobile so the tile doesn't touch the screen edge */
+        max-width: 100%;
+        margin: 0 10px;
     }
-}
-
-.search-item.add-tile:hover {
-    background-color: #e5e5eb;
 }
 
 /* Large add icon */
 .large-add-icon {
-    font-size: 24px;
+    font-size: 32px;
     color: #007bff;
 }
 
-/* Modal overlay */
+/* General styling for saved search tiles */
+.search-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 10px auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ensure content is spaced correctly */
+    align-items: flex-start; /* Align content at the start of the container */
+    word-wrap: break-word; /* Allow long text to wrap */
+    flex-grow: 1; /* Allow the tile to grow if more content is added */
+    position: relative;
+}
+
+.search-item:hover {
+    background-color: #f7f7f7;
+}
+
+@media (min-width: 769px) {
+    .search-item {
+        max-width: 500px;
+    }
+}
+
+@media (max-width: 768px) {
+    .search-item {
+        width: 100%;
+        max-width: 100%;
+        margin: 10px 10px;
+    }
+}
+
+/* Specific text styling for search details */
+.search-item p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.search-item p strong {
+    font-weight: 600;
+}
+
+/* Styling for the search name to make it stand out */
+.search-item p:first-of-type {
+    font-size: 16px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* Action buttons container */
+.search-item .action-buttons {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
+}
+
+/* Edit button styling */
+.edit-search-button {
+    background-color: #f39c12;
+    border: none;
+    color: white;
+    padding: 10px 10px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.edit-search-button:hover {
+    background-color: #e67e22;
+}
+
+/* Delete button styling */
+.delete-search-button {
+    background-color: #e74c3c;
+    border: none;
+    color: white;
+    padding: 10px 10px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.delete-search-button:hover {
+    background-color: #c0392b;
+}
+
+.delete-search-button .trash-icon, .edit-search-button .edit-icon {
+    font-size: 14px;
+    color: white;
+}
+
+/* =========================== */
+/* Modal Overlay & Content      */
+/* =========================== */
+
+/* Modal overlay (background) */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -80,114 +215,135 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.5); /* Transparent overlay */
-    z-index: 10000; /* Ensure modal stays on top */
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
 }
 
-/* Modal content */
+/* Modal content box */
 .modal-content {
     background: #fff;
-    padding: 20px;
     border-radius: 16px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
     position: relative;
     margin: 0 auto;
-
-    /* Full width and height with safe area management */
-    width: calc(100vw - 40px) !important; /* Small padding */
+    width: calc(100vw - 20px) !important;
     max-width: 800px;
-    height: calc(100dvh - 40px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important; /* Avoid safe areas */
-    max-height: calc(100dvh - 40px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
-
-    /* Smooth transition for resizing */
+    height: calc(100dvh - 20px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+    max-height: calc(100dvh - 20px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
     transition: height 0.3s ease, max-height 0.3s ease, width 0.3s ease, max-width 0.3s ease;
-    overflow-y: auto; /* Enable scroll if content overflows */
+    overflow-y: hidden; /* Prevent the modal itself from scrolling */
 }
 
-/* Mobile adjustments */
 @media (max-width: 768px) {
     .modal-content {
-        width: calc(100vw - 20px) !important; /* Full width minus small padding */
-        height: calc(100dvh - 20px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important; /* Avoid safe areas */
+        width: calc(100vw - 20px) !important;
+        height: calc(100dvh - 20px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
     }
 }
 
-/* Desktop adjustments */
 @media (min-width: 769px) {
     .modal-content {
-        width: 80vw !important; /* Take up 80% of the available width on desktop */
-        height: 80dvh !important; /* Take up 80% of available height on desktop */
-        max-height: 90dvh !important; /* Don’t take up too much vertical space */
+        width: 80vw !important;
+        height: 80dvh !important;
+        max-height: 90dvh !important;
     }
 }
 
-/* Close button */
-.modal-close {
-    position: absolute;
-    top: 10px;
-    left: 15px;
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    z-index: 1000;
-    color: #007bff;
-}
-
-.modal-close:hover {
-    text-decoration: underline;
-}
-
-/* Next button */
-.modal-next {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    font-size: 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    z-index: 1000;
-    transition: background-color 0.3s ease;
-}
-
-.modal-next:hover {
-    background-color: #0056b3;
-}
-
-/* Modal body */
 .modal-body {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    overflow: hidden;
+    padding: 20px;
+    overflow: hidden; /* Prevent the body from scrolling */
 }
 
-/* Step Heading */
+/* =========================== */
+/* Modal Header & Buttons       */
+/* =========================== */
+
+/* Modal header container */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+    position: relative;
+    width: 100%; /* Ensure header takes full width */
+}
+
+/* Circular button styles - NEXT, BACK, and CLOSE */
+.modal-close, .modal-back, .modal-next {
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%; /* Make the buttons circular */
+    height: 50px; /* Maintain the height */
+    width: 50px; /* Circular, so width = height */
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    transition: background-color 0.3s ease;
+}
+
+/* Adjusting icon size inside buttons */
+.modal-close svg, .modal-back svg, .modal-next svg {
+    font-size: 20px; /* Adjust icon size */
+    color: white;    /* Ensure the icon color is white */
+}
+
+/* Adjust button alignment */
+.modal-close, .modal-next, .modal-back {
+    flex-shrink: 0; /* Prevent buttons from shrinking */
+}
+
+.modal-next {
+    margin-right: 10px;
+}
+
+.modal-back {
+    margin-left: 10px;
+}
+
+.modal-close {
+    margin-left: 10px;
+}
+
+/* =========================== */
+/* Steps Titles and Descriptions */
+/* =========================== */
+
+/* Step Heading for modal content */
 .step-heading {
-    font-size: 20px;
+    font-size: 30px;
     font-weight: 700;
-    margin: 20px 0;
-    text-align: center;
-    color: #333;
+    text-align: left;
+    margin-bottom: 10px;
+    margin-top: 10px;
 }
 
+/* Step Subtitle */
 .step-subtitle {
-    font-size: 15px;
-    font-style: italic;
+    font-size: 14px;
     color: #666;
-    margin-bottom: 30px;
+    text-align: left;
+    margin-bottom: 20px;
 }
+
+/* =========================== */
+/* Toggle & Content Container   */
+/* =========================== */
 
 /* Toggle container */
 .toggle-container {
-    margin: 20px 0;
+    margin: 10px 0;
     display: flex;
     justify-content: center;
 }
@@ -225,21 +381,37 @@
     border-radius: 30px;
 }
 
-/* Content container to hold map or text view */
-.content-container {
+/* =========================== */
+/* Content Container for Map/Text */
+/* =========================== */
+
+.content-container-flexible {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    overflow: hidden;
+    overflow: hidden; /* Ensure only the child tiles-wrapper scrolls */
+    padding-top: 10px;
+    height: 100%; /* Full remaining height of the modal */
 }
+
+.content-container {
+    flex-grow: 1;
+    overflow: hidden; /* Prevent the entire modal from scrolling */
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================== */
+/* Map & Postcode Tiles         */
+/* =========================== */
 
 .map-container {
     flex-grow: 1;
     margin-top: 10px;
     border: 2px solid #ddd;
     border-radius: 12px;
-    height: 100%;
+    height: 100%; /* Take up the available space */
     position: relative;
 }
 
@@ -249,63 +421,47 @@
     border-radius: 12px;
 }
 
-/* Tooltip styling for postcode labels */
-.leaflet-tooltip.zone-label {
-    background-color: rgba(255, 255, 255, 0.9);
-    color: #333;
-    font-weight: bold;
-    font-size: 14px;
-    padding: 5px;
-    border-radius: 3px;
-    border: 1px solid #ccc;
-}
-
-/* Scrollable container for tiles */
+/* Scrollable container for postcode tiles */
 .tiles-wrapper {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    max-height: 300px;
-    overflow-y: auto;
-    padding: 10px;
+    flex-direction: column; /* Stack the tiles vertically */
+    gap: 10px; /* Space between tiles */
+    padding: 10px; /* Padding inside the tiles wrapper */
     border: 1px solid #ddd;
     border-radius: 12px;
     background-color: #f5f5f5;
-    margin-top: 10px;
+    margin-top: 10px; /* Space between the toggle and the tiles wrapper */
     justify-content: flex-start;
+    overflow-y: auto; /* Enable vertical scrolling when needed */
+    flex-grow: 1; /* Fill available height */
+    box-sizing: border-box; /* Include padding in the height calculation */
 }
 
 /* Each postcode tile */
 .postcode-tile {
-    position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between; /* Ensure delete icon aligns right */
     padding: 10px;
-    width: 100px;
-    min-height: 50px;
+    height: 60px; /* Fixed height for each tile */
+    min-height: 60px; /* Ensure a minimum height */
     background-color: #e5e5eb;
     border: 2px solid #ddd;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 32px;
     font-weight: bold;
     color: #333;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease;
+    box-sizing: border-box; /* Ensure padding doesn't affect height */
 }
 
-.postcode-tile:hover {
-    background-color: #d9d9e0;
-}
-
+/* =========================== */
 /* Add new tile button */
 .add-tile {
     background-color: #f0f0f5;
     border: 2px dashed #bbb;
-    padding: 10px;
-    width: 100px;
-    min-height: 50px;
+    height: 60px; /* Fixed height */
+    min-height: 60px; /* Fixed minimum height */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -315,30 +471,567 @@
     transition: background-color 0.3s ease;
 }
 
-.add-tile:hover {
+.add-tile input.postcode-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 32px; /* Same size as completed tiles */
+    text-align: left; /* Left-align text */
+}
+
+/* Plus icon */
+.plus-icon {
+    font-size: 24px;
+    color: #333;
+}
+
+/* =========================== */
+/* Bedroom Selection Styles     */
+/* =========================== */
+
+/* Container for the entire bedroom selection section */
+.bedroom-selection-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Wrapper for each dropdown row */
+.dropdown-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+/* Dropdown row for labels and select fields */
+.dropdown-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+/* Label styles */
+.dropdown-wrapper label {
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 20px;
+    flex: 1;
+    text-align: left;
+}
+
+/* Dropdown select styles */
+.bedroom-dropdown {
+    width: 1000px;
+    max-width: 300px;
+    padding: 12px;
+    font-size: 18px;
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    appearance: none;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+}
+
+.bedroom-dropdown:hover {
+    border-color: #007bff;
+}
+
+.bedroom-dropdown:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Ensure the container takes up more space on desktop */
+@media (min-width: 769px) {
+    .dropdown-wrapper {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .dropdown-wrapper label {
+        font-size: 24px; /* Increase label size for desktop */
+    }
+
+    .bedroom-dropdown {
+        max-width: 300px; /* Larger dropdown on desktop */
+        padding: 14px; /* Increase padding on desktop */
+        font-size: 20px;
+    }
+}
+
+/* Ensure the dropdown takes up more space on mobile */
+@media (max-width: 768px) {
+    .dropdown-wrapper {
+        flex-direction: row; /* Ensure label and dropdown are side by side */
+        max-width: 100%; /* Maximize the width for mobile */
+    }
+
+    .dropdown-wrapper label {
+        font-size: 18px; /* Slightly smaller label on mobile */
+    }
+
+    .bedroom-dropdown {
+        max-width: 200px; /* Adjust dropdown width for mobile */
+        padding: 10px;
+        font-size: 16px; /* Adjust font size for mobile */
+    }
+}
+
+/* =========================== */
+/* Responsive Adjustments       */
+/* =========================== */
+
+@media (min-width: 769px) {
+    .bedroom-selection-container {
+        flex-direction: column;
+    }
+
+    .bedroom-selection-row {
+        flex-direction: row; /* Align text and dropdown side by side */
+        max-width: 80%; /* Take up more space on desktop */
+    }
+
+    .bedroom-selection-label {
+        font-size: 28px; /* Make the labels bigger on desktop */
+    }
+
+    .bedroom-selection-dropdown {
+        max-width: 300px; /* Increase dropdown width on desktop */
+        height: 60px; /* Increase dropdown height */
+        font-size: 22px; /* Bigger font size for desktop */
+    }
+}
+
+@media (max-width: 768px) {
+    .bedroom-selection-container {
+        width: 100%;
+    }
+
+    .bedroom-selection-row {
+        flex-direction: row; /* Align text and dropdown side by side */
+        max-width: 90%; /* Use more space on mobile */
+    }
+
+    .bedroom-selection-label {
+        font-size: 20px; /* Adjust label size for mobile */
+    }
+
+    .bedroom-selection-dropdown {
+        max-width: 150px; /* Slightly smaller dropdown on mobile */
+        height: 45px; /* Adjust height on mobile */
+        font-size: 18px; /* Adjust font size on mobile */
+    }
+}
+
+/* =========================== */
+/* Disabled dropdown styling */
+/* =========================== */
+
+.bedroom-dropdown.disabled {
+    background-color: #f0f0f0; /* Light grey background */
+    color: #999; /* Grey text */
+    /* cursor: not-allowed; /* Show not-allowed cursor */
+    border-color: #ccc; /* Light border color */
+}
+
+/* =========================== */
+/* Dropdown Overlay for Disabled */
+/* =========================== */
+
+.dropdown-wrapper-relative {
+    position: relative;
+}
+
+/* Invisible overlay that blocks interaction */
+.dropdown-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0);
+    z-index: 9999; /* Ensure it's above other elements */
+    cursor: not-allowed; /* Show not-allowed cursor */
+    pointer-events: auto; /* Ensure it can be clicked */
+}
+
+/* Error message styling */
+.dropdown-error-message {
+    color: red;
+    background-color: #ffe6e6;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: center;
+    animation: fadeInOut 3s forwards;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* =========================== */
+/* Price Range Selection Styles */
+/* =========================== */
+
+/* Container for the entire price selection section */
+.price-selection-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Separator between the sections */
+.section-separator {
+    height: 1px;
+    background-color: #ddd;
+    width: 100%;
+    max-width: 700px;
+    margin: 20px 0;
+}
+
+/* Wrapper for each dropdown row */
+.price-dropdown-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+/* Dropdown row for labels and select fields */
+.price-dropdown-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+/* Label styles */
+.price-dropdown-wrapper label {
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 20px;
+    flex: 1;
+    text-align: left;
+}
+
+/* Dropdown select styles */
+.price-dropdown {
+    width: 100%;
+    max-width: 250px;
+    padding: 12px;
+    font-size: 18px;
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    appearance: none;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+}
+
+.price-dropdown:hover {
+    border-color: #007bff;
+}
+
+.price-dropdown:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Ensure the container takes up more space on desktop */
+@media (min-width: 769px) {
+    .price-dropdown-wrapper {
+        flex-direction: row;
+        justify-content: space-between;
+        max-width: 100%; /* Expand the width on desktop */
+    }
+
+    .price-dropdown-wrapper label {
+        font-size: 24px; /* Increase label size for desktop */
+    }
+
+    .price-dropdown {
+        max-width: 300px; /* Larger dropdown on desktop */
+        padding: 14px; /* Increase padding on desktop */
+        font-size: 20px;
+    }
+}
+
+/* Ensure the dropdown takes up more space on mobile */
+@media (max-width: 768px) {
+    .price-dropdown-wrapper {
+        flex-direction: row; /* Ensure label and dropdown are side by side */
+        max-width: 100%; /* Maximize the width for mobile */
+    }
+
+    .price-dropdown-wrapper label {
+        font-size: 18px; /* Slightly smaller label on mobile */
+    }
+
+    .price-dropdown {
+        max-width: 200px; /* Adjust dropdown width for mobile */
+        padding: 10px;
+        font-size: 16px; /* Adjust font size for mobile */
+    }
+}
+
+/* =========================== */
+/* Property Type Button Styles  */
+/* =========================== */
+
+/* Wrapper for property type buttons and error message */
+.property-type-container-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+/* Property type buttons container */
+.property-type-container {
+    display: grid;
+    overflow-y: hidden; /* Disable vertical scrolling */
+    flex-grow: 1; /* Take up the available space */
+}
+
+.property-type-button {
+    background-color: #f0f0f5; /* Neutral background */
+    color: #333; /* Darker color for unselected text */
+    border: 2px solid #ccc; /* Soft border for unselected state */
+    border-radius: 12px; /* Softer, more rounded corners */
+    font-size: 18px; /* Slightly smaller, for consistency */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transitions for hover, selected states */
+    height: 100px; /* Make buttons square */
+    width: 100px; /* Make buttons square */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    flex-direction: column; /* Ensure icon and text are in column */
+}
+
+/* Ensures icons and text are centered */
+.property-type-button .property-icon {
+    font-size: 40px; /* Larger icon size */
+    margin-bottom: 8px;
+}
+
+.property-type-button .property-text {
+    font-size: 14px; /* Smaller text size */
+    text-align: center;
+}
+
+/* Hover effects */
+.property-type-button:hover {
+    background-color: #e6e6f0; /* Light hover effect */
+    border-color: #b3b3cc; /* Darker border on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+}
+
+/* Selected state */
+.property-type-button.selected {
+    background-color: #4a90e2; /* Softer blue for selected state */
+    color: #fff; /* White text on selected state */
+    border-color: #357ABD; /* Slightly darker border for selected state */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Stronger shadow when selected */
+}
+
+/* Greyed-out (disabled) state */
+.property-type-button.greyed-out {
+    background-color: #ddd; /* Greyed-out background */
+    color: #aaa; /* Lighter text for disabled */
+    border-color: #ccc; /* Keep the border light */
+    cursor: not-allowed; /* Show it's not clickable */
+}
+
+/* Responsive behavior */
+@media (max-width: 768px) {
+    .property-type-container {
+        grid-template-columns: 1fr; /* Single column on smaller screens */
+        gap: 12px; /* Slightly smaller gap between buttons */
+    }
+
+    .property-type-button {
+        width: 100%; /* Full width for smaller screens */
+        height: 100%; /* Make height flexible to maintain aspect ratio */
+    }
+}
+
+@media (min-width: 769px) {
+    .property-type-container {
+        grid-template-columns: repeat(3, 1fr); /* Single row on desktop with 3 equal columns */
+        margin: auto;
+        max-width: 80%;
+        align-items: center;
+        flex-grow: 0;
+    }
+
+    .property-type-button {
+        height: 170px; /* Make buttons larger on desktop */
+        width: 170px; /* Keep them square */
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+}
+
+/* =========================== */
+/* Must-Have Button Styles      */
+/* =========================== */
+
+/* Wrapper for must-have buttons */
+.must-have-container-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center; /* Center the buttons horizontally */
+    align-items: center; /* Center the buttons vertically */
+    flex-direction: column;
+}
+
+/* Must-have buttons container */
+.must-have-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Responsive grid */
+    justify-content: center; /* Center the grid in the modal */
+    align-items: center; /* Align buttons vertically in their grid cells */
+    max-width: 100%; /* Prevent container from stretching too wide */
+    height: 100%;
+}
+
+@media (min-width: 769px) {
+    .must-have-container {
+        grid-template-columns: repeat(2, 1fr); /* 2x2 grid on desktop */
+        grid-template-rows: repeat(2, 1fr); /* Ensure there are 2 rows */
+        max-width: 100%; /* Keep the grid from expanding too wide */
+        height: 380px;
+        margin: auto; /* Center the container */
+    }
+}
+
+/* Must-have button styles */
+.must-have-button {
+    background-color: #f0f0f5; /* Neutral background */
+    color: #333; /* Darker color for unselected text */
+    border: 2px solid #ccc; /* Soft border for unselected state */
+    border-radius: 12px; /* Softer, more rounded corners */
+    font-size: 18px; /* Slightly smaller, for consistency */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transitions for hover, selected states */
+    height: 120px; /* Square dimensions */
+    width: 120px; /* Square dimensions */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    flex-direction: column; /* Ensure icon and text are in column */
+}
+
+/* Icon and text alignment */
+.must-have-button .must-have-icon {
+    font-size: 40px; /* Larger icon size */
+    margin-bottom: 8px;
+}
+
+.must-have-button .must-have-text {
+    font-size: 14px; /* Smaller text size */
+    text-align: center;
+}
+
+/* Hover effects */
+.must-have-button:hover {
+    background-color: #e6e6f0; /* Light hover effect */
+    border-color: #b3b3cc; /* Darker border on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+}
+
+/* Selected state */
+.must-have-button.selected {
+    background-color: #4a90e2; /* Softer blue for selected state */
+    color: #fff; /* White text on selected state */
+    border-color: #357ABD; /* Slightly darker border for selected state */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Stronger shadow when selected */
+}
+
+/* Greyed-out (disabled) state */
+.must-have-button.greyed-out {
+    background-color: #ddd; /* Greyed-out background */
+    color: #aaa; /* Lighter text for disabled */
+    border-color: #ccc; /* Keep the border light */
+    cursor: not-allowed; /* Show it's not clickable */
+}
+
+/* Responsive behavior */
+@media (max-width: 768px) {
+    .must-have-container {
+        grid-template-columns: 1fr; /* Single column on smaller screens */
+        gap: 12px; /* Slightly smaller gap between buttons */
+    }
+
+    .must-have-button {
+        width: 100%; /* Full width for smaller screens */
+        height: auto; /* Make height flexible to maintain aspect ratio */
+    }
+}
+
+@media (min-width: 769px) {
+    .must-have-button {
+        height: 170px; /* Larger buttons on desktop */
+        width: 170px; /* Keep them square */
+    }
+}
+
+/* =========================== */
+/* Active Styles for Touch Devices */
+/* =========================== */
+
+/* Active state for touch devices */
+.property-type-button:active,
+.must-have-button:active {
+    transform: scale(0.98); /* Slight shrink effect when pressing */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Stronger shadow when active */
+}
+
+.modal-close:active,
+.modal-back:active,
+.modal-next:active {
+    background-color: #418ab9;
+}
+
+.postcode-tile:active {
+    background-color: #d9d9e0;
+}
+
+.add-tile:active {
     background-color: #e5e5eb;
 }
+
+/* =========================== */
+/* Form & Validation Styles     */
+/* =========================== */
 
 /* Postcode input field */
 .postcode-input {
     width: 100px;
-    padding: 5px;
+    padding-left: 10px;
     font-size: 16px;
     border: 1px solid #ddd;
     border-radius: 4px;
     text-align: center;
-}
-
-/* Delete icon for tiles */
-.delete-icon {
-    font-size: 14px;
-    color: #ff4d4d;
-    cursor: pointer;
-    margin-left: 10px;
-}
-
-.delete-icon:hover {
-    color: #ff0000;
 }
 
 /* Error message for invalid postcode input */
@@ -349,20 +1042,31 @@
     animation: fadeIn 0.5s ease-in-out;
 }
 
-/* Scrollbar customization */
-.tiles-wrapper::-webkit-scrollbar {
+/* =========================== */
+/* Scrollbar Customization      */
+/* =========================== */
+
+.tiles-wrapper::-webkit-scrollbar,
+.property-type-container::-webkit-scrollbar {
     width: 8px;
 }
 
-.tiles-wrapper::-webkit-scrollbar-thumb {
+.tiles-wrapper::-webkit-scrollbar-thumb,
+.property-type-container::-webkit-scrollbar-thumb {
     background-color: #007bff;
     border-radius: 10px;
 }
 
-.tiles-wrapper::-webkit-scrollbar-track {
+.tiles-wrapper::-webkit-scrollbar-track,
+.property-type-container::-webkit-scrollbar-track {
     background-color: #f5f5f5;
 }
 
+/* =========================== */
+/* Animations                   */
+/* =========================== */
+
+/* Fade-in animation */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -372,98 +1076,101 @@
     }
 }
 
-/* Updated Property Type Container for better layout and responsiveness */
-.property-type-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 20px;
-    justify-items: center;
-    margin-top: 30px;
-}
+/* =========================== */
+/* Final Step: Name Your Search */
+/* =========================== */
 
-/* Updated Property type option buttons */
-.property-type-button {
-    background-color: #f7f8fa;
-    border: 2px solid #ccc;
-    padding: 20px;
-    border-radius: 12px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+/* Input for search name */
+.search-name-input {
     width: 100%;
-    max-width: 150px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 120px;
-    color: #333;
-}
-
-.property-type-button:hover {
-    background-color: #007bff;
-    color: white;
-    border-color: #0056b3;
-}
-
-.property-type-button.selected {
-    background-color: #007bff;
-    color: white;
-    border-color: #0056b3;
-}
-
-/* Icon styling for the property buttons */
-.property-icon {
-    font-size: 36px;
-    margin-bottom: 10px;
-    color: inherit;
-}
-
-/* Responsive property type buttons for mobile devices */
-@media (max-width: 600px) {
-    .property-type-button {
-        max-width: 100px;
-        height: 110px;
-        padding: 10px;
-        font-size: 14px;
-    }
-
-    .property-icon {
-        font-size: 30px;
-    }
-}
-
-/* Bedroom button container */
-.bedroom-container {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-top: 20px;
-}
-
-/* Bedroom buttons */
-.bedroom-button {
-    background-color: #f0f0f5;
-    border: 2px solid #ddd;
-    padding: 10px 15px;
+    padding: 12px;
+    font-size: 18px;
     border-radius: 8px;
-    font-size: 16px;
+    border: 2px solid #ccc;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+  }
+  
+  /* Save search button */
+  .save-search-button {
+    background-color: #007bff;
+    color: white;
+    padding: 14px;
+    font-size: 18px;
+    border-radius: 8px;
+    border: none;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin: 5px;
-    min-width: 60px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .save-search-button:hover {
+    background-color: #0056b3;
+  }
+
+/* =========================== */
+/* Errors + Grey out           */
+/* =========================== */
+
+.error-message {
+    position: absolute;  /* Overlay on top of the buttons */
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    color: red;
+    font-size: 16px;
+    padding: 10px;
+    background-color: #ffe6e6;
+    border: 1px solid red;
+    border-radius: 4px;
     text-align: center;
+    opacity: 0;
+    z-index: 99999;
+    width: 80%;
+    max-width: 400px;
+    animation: fadeInOut 3s forwards;
 }
 
-.bedroom-button:hover {
-    background-color: #007bff;
-    color: white;
-    border-color: #0056b3;
+/* Error message fade-in and fade-out animation */
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
 }
 
-.bedroom-button.selected {
-    background-color: #007bff;
-    color: white;
-    border-color: #0056b3;
+
+
+
+/* Pulsating placeholder styling */
+.loading-placeholder {
+    background-color: #e0e0e0;
+    border-radius: 12px;
+    height: 190px; /* Match the height of the actual search tiles */
+    width: 100%;
+    margin: 10px auto;
+    animation: pulse 1.5s infinite ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (min-width: 769px) {
+    .loading-placeholder {
+        max-width: 500px;
+    }
+}
+
+/* Pulsating animation */
+@keyframes pulse {
+    0% {
+        background-color: #e0e0e0;
+    }
+    50% {
+        background-color: #f0f0f0;
+    }
+    100% {
+        background-color: #e0e0e0;
+    }
 }

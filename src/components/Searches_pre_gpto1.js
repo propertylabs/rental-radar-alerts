@@ -112,7 +112,6 @@ const MapWithSearch = ({ geoData, selectedPostcodes, onEachPostcode }) => {
 
 const Searches = () => {
   const [searches, setSearches] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState('text');
   const [geoData, setGeoData] = useState(null);
@@ -130,7 +129,6 @@ const Searches = () => {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [searchName, setSearchName] = useState(''); // New state for search name
-  const [showDropdownError, setShowDropdownError] = useState(false);
 
   useEffect(() => {
     if (viewMode === 'map') {
@@ -237,9 +235,16 @@ const Searches = () => {
   const handleMinBedroomsChange = (e) => setMinBedrooms(e.target.value);
   const handleMaxBedroomsChange = (e) => setMaxBedrooms(e.target.value);
 
-  const handleMinPriceChange = (e) => setMinPrice(e.target.value);
+  // New handlers for price changes
+  const handleMinPriceChange = (e) => {
+    setMinPrice(e.target.value);
+  };
 
-  const handleMaxPriceChange = (e) => setMaxPrice(e.target.value);
+  const handleMaxPriceChange = (e) => {
+    setMaxPrice(e.target.value);
+  };
+
+  const [showDropdownError, setShowDropdownError] = useState(false);
 
   const handleDropdownClick = (e) => {
     e.preventDefault(); // Ensure the click action is canceled
@@ -341,22 +346,20 @@ const Searches = () => {
       if (saveResponse.ok) {
         console.log('Search saved successfully!', result);
         handleCloseModal(); // Close the modal after saving
-        fetchUserSearches(); // Refresh searches
       } else {
         console.error('Failed to save search:', result);
       }
     } catch (error) {
+      // Only log the error here, as there is no 'res' in client-side React
       console.error('Database query error:', error.message, error.stack);
     }
   };
 
   const fetchUserSearches = async () => {
-    setIsLoading(true); // Start loading
     const whopUserId = localStorage.getItem('whop_user_id'); // Ensure you get the user ID
   
     if (!whopUserId) {
       console.error('User ID not found');
-      setIsLoading(false); // Stop loading in case of error
       return;
     }
   
@@ -378,7 +381,6 @@ const Searches = () => {
     } catch (error) {
       console.error('Error fetching searches:', error);
     }
-    setIsLoading(false); // Stop loading after fetch
   };
 
   const handleDeleteSearch = async (searchId) => {
@@ -403,58 +405,142 @@ const Searches = () => {
     }
   };
 
+  // Add handleEditSearch function to avoid "not defined" error
   const handleEditSearch = (searchId) => {
     console.log(`Editing search with ID: ${searchId}`);
     // You can add functionality to open a modal for editing in the future
   };
 
-  return (
-    <div className="searches-container">
-      <div className="searches-list">
-        {isLoading ? (
-          // Show loading placeholders when data is loading
-          <>
-            <div className="loading-placeholder"></div>
-            <div className="loading-placeholder"></div>
-            <div className="loading-placeholder"></div>
-          </>
-        ) : (
-          <>
-            {searches.length === 0 ? (
-              <div className="search-item add-tile" onClick={handleOpenModal}>
-                <FaPlus className="large-add-icon" />
-              </div>
-            ) : (
-              <>
-                {searches.map((search, index) => (
-                  <div key={index} className="search-item">
-                    <p><strong>Search Name:</strong> {search.searchName}</p>
-                    {search.postcodes && search.postcodes.length > 0 ? (
-                      <p><strong>Location:</strong> {search.postcodes.join(', ')}</p>
-                    ) : (
-                      <p><strong>Location:</strong> No postcodes selected</p>
-                    )}
-                    <p><strong>Bedrooms:</strong> {`${search.criteria.minBedrooms || 0} - ${search.criteria.maxBedrooms || 'Any'}`}</p>
-                    <p><strong>Price Range:</strong> £{search.criteria.minPrice || 0} - £{search.criteria.maxPrice || 'Any'}</p>
-                    <p><strong>Property Types:</strong> {search.criteria.propertyTypes.join(', ')}</p>
-                    <p><strong>Must Haves:</strong> {search.criteria.mustHaves.join(', ')}</p>
-
-                    {/* Action buttons */}
-                    <div className="action-buttons">
-                      <button className="edit-search-button" onClick={() => handleEditSearch(search.id)}>
-                        <FaPencilAlt className="edit-icon" />
-                      </button>
-                      <button className="delete-search-button" onClick={() => handleDeleteSearch(search.id)}>
-                        <FaTrash className="trash-icon" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+  const Searches = () => {
+    const [searches, setSearches] = useState([]);
+    const [isLoading, setIsLoading] = useState(true); // Add loading state
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    // other states...
+  
+    useEffect(() => {
+      // Fetch user's saved searches when component mounts
+      fetchUserSearches();
+    }, []);
+  
+    const fetchUserSearches = async () => {
+      setIsLoading(true); // Start loading
+      const whopUserId = localStorage.getItem('whop_user_id'); 
+    
+      if (!whopUserId) {
+        console.error('User ID not found');
+        setIsLoading(false); // Stop loading in case of error
+        return;
+      }
+    
+      try {
+        const response = await fetch(`/api/get-user-searches?userId=${whopUserId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+    
+        if (response.ok) {
+          const result = await response.json();
+          setSearches(result);
+        } else {
+          console.error('Failed to fetch searches');
+        }
+      } catch (error) {
+        console.error('Error fetching searches:', error);
+      }
+      setIsLoading(false); // Stop loading after fetch
+    };
+  
+    return (
+      <div className="searches-container">
+        <div className="searches-list">
+          {isLoading ? (
+            // Show loading placeholders when data is loading
+            <>
+              <div className="loading-placeholder"></div>
+              <div className="loading-placeholder"></div>
+              <div className="loading-placeholder"></div>
+            </>
+          ) : (
+            <>
+              {searches.length === 0 ? (
                 <div className="search-item add-tile" onClick={handleOpenModal}>
                   <FaPlus className="large-add-icon" />
                 </div>
-              </>
-            )}
+              ) : (
+                <>
+                  {searches.map((search, index) => (
+                    <div key={index} className="search-item">
+                      <p><strong>Search Name:</strong> {search.searchName}</p>
+                      <p><strong>Location:</strong> {search.postcodes && search.postcodes.length > 0 ? search.postcodes.join(', ') : 'No postcodes selected'}</p>
+                      <p><strong>Bedrooms:</strong> {`${search.criteria.minBedrooms || 0} - ${search.criteria.maxBedrooms || 'Any'}`}</p>
+                      <p><strong>Price Range:</strong> £{search.criteria.minPrice || 0} - £{search.criteria.maxPrice || 'Any'}</p>
+                      <p><strong>Property Types:</strong> {search.criteria.propertyTypes.join(', ')}</p>
+                      <p><strong>Must Haves:</strong> {search.criteria.mustHaves.join(', ')}</p>
+  
+                      {/* Action buttons */}
+                      <div className="action-buttons">
+                        <button className="edit-search-button" onClick={() => handleEditSearch(search.id)}>
+                          <FaPencilAlt className="edit-icon" />
+                        </button>
+                        <button className="delete-search-button" onClick={() => handleDeleteSearch(search.id)}>
+                          <FaTrash className="trash-icon" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="search-item add-tile" onClick={handleOpenModal}>
+                    <FaPlus className="large-add-icon" />
+                  </div>
+                </>
+              )}
+            </>
+          )}
+        </div>
+  
+        {/* Modal and other code here */}
+      </div>
+    );
+  };
+  
+
+  return (
+    <div className="searches-container">
+      <div className="searches-list">
+        {searches.length === 0 ? (
+          <div className="search-item add-tile" onClick={handleOpenModal}>
+            <FaPlus className="large-add-icon" />
+          </div>
+        ) : (
+          <>
+            {searches.map((search, index) => (
+              <div key={index} className="search-item">
+                <p><strong>Search Name:</strong> {search.searchName}</p>
+                {search.postcodes && search.postcodes.length > 0 ? (
+                  <p><strong>Location:</strong> {search.postcodes.join(', ')}</p>
+                ) : (
+                  <p><strong>Location:</strong> No postcodes selected</p>
+                )}
+                <p><strong>Bedrooms:</strong> {`${search.criteria.minBedrooms || 0} - ${search.criteria.maxBedrooms || 'Any'}`}</p>
+                <p><strong>Price Range:</strong> £{search.criteria.minPrice || 0} - £{search.criteria.maxPrice || 'Any'}</p>
+                <p><strong>Property Types:</strong> {search.criteria.propertyTypes.join(', ')}</p>
+                <p><strong>Must Haves:</strong> {search.criteria.mustHaves.join(', ')}</p>
+
+                {/* Action buttons */}
+                <div className="action-buttons">
+                  <button className="edit-search-button" onClick={() => handleEditSearch(search.id)}>
+                    <FaPencilAlt className="edit-icon" />
+                  </button>
+                  <button className="delete-search-button" onClick={() => handleDeleteSearch(search.id)}>
+                    <FaTrash className="trash-icon" />
+                  </button>
+                </div>
+              </div>
+            ))}
+            <div className="search-item add-tile" onClick={handleOpenModal}>
+              <FaPlus className="large-add-icon" />
+            </div>
           </>
         )}
       </div>
@@ -548,7 +634,7 @@ const Searches = () => {
                 </>
               )}
 
-{step === 2 && (
+              {step === 2 && (
                 <>
                   <h4 className="step-heading">Select a Property Type</h4>
                   <p className="step-subtitle">Please select the type of property you're interested in: flat, house, room, etc.</p>

@@ -34,22 +34,6 @@ const Navigation = () => {
 
   return (
     <>
-      {/* Info button in the top left corner */}
-      <button className="info-button" onClick={toggleInfoPopup}>
-        <FaInfoCircle />
-      </button>
-
-      {/* Info Popup */}
-      {showInfoPopup && (
-        <div className="info-popup">
-          <div className="popup-content">
-            <button className="popup-close" onClick={toggleInfoPopup}>&times;</button>
-            <p>{isStandalone ? 'Standalone mode detected' : 'Standalone mode not detected'}</p>
-            {isIOSUser && <p>iOS user detected</p>}
-          </div>
-        </div>
-      )}
-
       {/* iOS "Add to Home Screen" Popup */}
       {showIOSPopup && (
         <div className="popup">
