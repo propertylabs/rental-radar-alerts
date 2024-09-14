@@ -81,7 +81,7 @@
     .search-item.add-tile {
         width: 100%;
         max-width: 100%;
-        margin: 0 10px;
+        transform: scale(1.0);
     }
 }
 
@@ -211,12 +211,13 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100dvh;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 10000;
+    z-index: 10000; /* Set to a high value to ensure it appears above other elements */
+    transform: translateZ(0); /* Create a new stacking context */
 }
 
 /* Modal content box */
@@ -228,12 +229,13 @@
     flex-direction: column;
     position: relative;
     margin: 0 auto;
-    width: calc(100vw - 20px) !important;
+    width: calc(100vw - 20px);
     max-width: 800px;
-    height: calc(100dvh - 20px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
-    max-height: calc(100dvh - 20px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+    height: calc(100vh - 20px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    z-index: 10001; /* Higher than the overlay */
     transition: height 0.3s ease, max-height 0.3s ease, width 0.3s ease, max-width 0.3s ease;
     overflow-y: hidden; /* Prevent the modal itself from scrolling */
+    transform: translateZ(0); /* Create a new stacking context */
 }
 
 @media (max-width: 768px) {
@@ -259,6 +261,11 @@
     padding: 20px;
     overflow: hidden; /* Prevent the body from scrolling */
 }
+  
+  /* When modal is open */
+  .modal-open .navbar {
+    z-index: -1; /* Move behind the modal */
+  }
 
 /* =========================== */
 /* Modal Header & Buttons       */

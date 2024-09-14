@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login.js';
@@ -12,13 +11,13 @@ import Header from './components/Header.js';
 import Navigation from './components/Navigation.js';
 import NotSub from './components/NotSub.js';
 
-const DashboardLayout = ({ children, pageTitle }) => (
+const DashboardLayout = ({ children, pageTitle, isModalOpen }) => (
   <div>
-    <Header pageTitle={pageTitle} /> {/* Pass the pageTitle as a prop */}
+    <Header pageTitle={pageTitle} isModalOpen={isModalOpen} /> {/* Pass isModalOpen */}
     <div className="content">
       {children}
     </div>
-    <Navigation />
+    <Navigation isModalOpen={isModalOpen} /> {/* Pass isModalOpen */}
   </div>
 );
 
@@ -32,7 +31,7 @@ function App() {
         <Route path="/notsub" element={<NotSub />} />
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<DashboardLayout pageTitle="Dashboard"><Home /></DashboardLayout>} />
-          <Route path="/dashboard/searches" element={<DashboardLayout pageTitle="Searches"><Searches /></DashboardLayout>} />
+          <Route path="/dashboard/searches" element={<DashboardLayout pageTitle="Searches" isModalOpen={/* Pass state here */}><Searches /></DashboardLayout>} />
           <Route path="/dashboard/alerts" element={<DashboardLayout pageTitle="Alerts"><Alerts /></DashboardLayout>} />
           <Route path="/dashboard/settings" element={<DashboardLayout pageTitle="Settings"><Settings /></DashboardLayout>} />
         </Route>
