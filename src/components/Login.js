@@ -7,13 +7,23 @@ const Login = () => {
 
   const clientId = process.env.REACT_APP_WHOP_CLIENT_ID;
   const redirectUri = process.env.REACT_APP_WHOP_REDIRECT_URI;
-  const clientSecret = process.env.WHOP_CLIENT_SECRET;
+
+  const handleWhopLogin = () => {
+    const authUrl = `https://whop.com/oauth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+
+    // Open in a small, centered pop-up window
+    const width = 600;
+    const height = 700;
+    const left = (window.screen.width - width) / 2;
+    const top = (window.screen.height - height) / 2;
+
+    window.open(authUrl, "_blank", `width=${width},height=${height},top=${top},left=${left},noopener`);
+  };
 
   const handlePrintEnvVariables = () => {
     setEnvVariables({
       clientId,
       redirectUri,
-      clientSecret,
     });
   };
 
@@ -24,11 +34,7 @@ const Login = () => {
   return (
     <div style={styles.container}>
       <h2>Login with Whop</h2>
-      <a
-        href={`https://whop.com/oauth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}`}
-      >
-        <button style={styles.button}>Login with Whop</button>
-      </a>
+      <button onClick={handleWhopLogin} style={styles.button}>Login with Whop</button>
 
       <button onClick={handlePrintEnvVariables} style={styles.button}>
         Print Whop Env Variables
@@ -38,7 +44,6 @@ const Login = () => {
         <div style={styles.envContainer}>
           <p><strong>Client ID:</strong> {envVariables.clientId}</p>
           <p><strong>Redirect URI:</strong> {envVariables.redirectUri}</p>
-          <p><strong>Client Secret:</strong> {envVariables.clientSecret}</p>
         </div>
       )}
 

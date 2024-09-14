@@ -26,11 +26,20 @@ body {
     display: flex;
     justify-content: space-around;
     padding: 10px 0;
-    z-index: 1000;
     box-sizing: border-box;
-    border-top: 1px solid #e0e0e0; /* Subtle border on top */
-    border-radius: 20px 20px 0 0; /* Rounded corners at the top */
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for elevation */
+    border-top: 1px solid #e0e0e0;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    transform: translateZ(0); /* Create a new stacking context */
+    z-index: 999; /* Default z-index for navbar */
+}
+
+/* Apply modal-active to the entire <nav> tag */
+nav.modal-active {
+    opacity: 0.5; /* Fade the entire navbar, including background */
+    pointer-events: none; /* Disable interaction */
+    z-index: -1; /* Move navbar behind modal */
+    transition: opacity 0.3s ease; /* Smooth fading effect */
 }
 
 /* Specific handling for standalone mode on iOS */
@@ -200,10 +209,3 @@ body {
 .popup-close:focus {
     outline: none; /* Remove default focus outline */
 }
-
-/* Apply modal-active to the entire <nav> tag */
-nav.modal-active {
-    opacity: 0.5; /* Fade the entire navbar, including background */
-    pointer-events: none; /* Disable interaction */
-    transition: opacity 0.3s ease; /* Smooth fading effect */
-  }

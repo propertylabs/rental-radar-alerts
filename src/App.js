@@ -14,11 +14,11 @@ import NotSub from './components/NotSub.js';
 
 const DashboardLayout = ({ children, pageTitle }) => (
   <div>
-    <Header pageTitle={pageTitle} /> {/* Pass the pageTitle as a prop */}
+    <Navigation /> {/* Move this here for testing */}
+    <Header pageTitle={pageTitle} />
     <div className="content">
       {children}
     </div>
-    <Navigation />
   </div>
 );
 

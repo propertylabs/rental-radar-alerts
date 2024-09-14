@@ -30,7 +30,7 @@ const adjustModalForSafeAreas = (standalone) => {
   const modal = document.querySelector('.modal-content');
   if (modal) {
     if (standalone) {
-      modal.style.height = `calc(100vh - 20px)`; 
+      modal.style.height = `calc(100vh - 20px)`;
       modal.style.paddingTop = '0px';
       modal.style.paddingBottom = '0px';
     } else {
@@ -55,12 +55,12 @@ const validManchesterPostcodes = [
 
 const setStepAndResetError = (newStep, setStep, setShowError, setError) => {
   setStep(newStep);
-  setShowError(false); 
-  setError('');        
+  setShowError(false);
+  setError('');
 };
 
 // ModalHeader component with icons
-const ModalHeader = ({ step, handleCloseModal, handleNextClick, setStep, setShowError, setError }) => {
+const ModalHeader = ({ step, handleCloseModal, handleNextClick, setStep, setShowError, setError, isEditing }) => {
   return (
     <div className="modal-header">
       <div className="header-left">
@@ -75,7 +75,7 @@ const ModalHeader = ({ step, handleCloseModal, handleNextClick, setStep, setShow
         )}
       </div>
       <div className="header-center">
-        <h3 className="modal-title">Create New Search</h3> {/* Always appears in the header */}
+        <h3 className="modal-title">{isEditing ? 'Edit Search' : 'Create New Search'}</h3> {/* Adjusted title */}
       </div>
       <div className="header-right">
         {step !== 5 && ( // Remove Next button for the final step
@@ -95,10 +95,10 @@ const MapWithSearch = ({ geoData, selectedPostcodes, onEachPostcode }) => {
     const provider = new OpenStreetMapProvider();
     const searchControl = new GeoSearchControl({
       provider,
-      style: 'bar', 
-      showMarker: true, 
-      retainZoomLevel: false, 
-      autoClose: true, 
+      style: 'bar',
+      showMarker: true,
+      retainZoomLevel: false,
+      autoClose: true,
     });
     map.addControl(searchControl);
 
@@ -124,13 +124,15 @@ const Searches = () => {
   const [showError, setShowError] = useState(false);
   const [step, setStep] = useState(1);
   const [selectedProperties, setSelectedProperties] = useState([]);
-  const [selectedMustHaves, setSelectedMustHaves] = useState([]); 
+  const [selectedMustHaves, setSelectedMustHaves] = useState([]);
   const [minBedrooms, setMinBedrooms] = useState('');
   const [maxBedrooms, setMaxBedrooms] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [searchName, setSearchName] = useState(''); // New state for search name
   const [showDropdownError, setShowDropdownError] = useState(false);
+  const [isEditing, setIsEditing] = useState(false); // New state to track if editing
+  const [editingSearchId, setEditingSearchId] = useState(null); // Store the ID of the search being edited
 
   useEffect(() => {
     if (viewMode === 'map') {
@@ -139,7 +141,7 @@ const Searches = () => {
         .then((data) => setGeoData(data))
         .catch((error) => console.error('Error fetching GeoJSON:', error));
     }
-  
+
     // Fetch user's saved searches when component mounts
     fetchUserSearches();
   }, [viewMode]);
@@ -155,7 +157,7 @@ const Searches = () => {
       adjustModalForSafeAreas(standalone);
 
       if (!standalone) {
-        setThemeColor('#767676'); 
+        setThemeColor('#767676');
       }
     }
 
@@ -171,20 +173,37 @@ const Searches = () => {
       }
 
       if (!standalone && !isModalOpen) {
-        setThemeColor('#f0f0f0'); 
+        setThemeColor('#f0f0f0');
       }
     };
   }, [isModalOpen]);
 
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+  }, [isModalOpen]);
+
   const handleOpenModal = () => {
+    resetForm(); // Reset the form when opening a new modal
     setIsModalOpen(true);
     setStep(1);
+    // Add modal-active class to the <nav> element
+    const nav = document.querySelector('nav');
+    if (nav) nav.classList.add('modal-active');
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setIsEditing(false); // Reset editing state
+    setEditingSearchId(null); // Reset editing search ID
+    // Remove modal-active class from the <nav> element
+    const nav = document.querySelector('nav');
+    if (nav) nav.classList.remove('modal-active');
     if (!isStandalone()) {
-      setThemeColor('#f0f0f0');
+        setThemeColor('#f0f0f0');
     }
   };
 
@@ -211,7 +230,7 @@ const Searches = () => {
   const triggerError = () => {
     setError('Room selection cannot be combined with other property types.');
     setShowError(true);
-    setTimeout(() => setShowError(false), 3000); 
+    setTimeout(() => setShowError(false), 3000);
   };
 
   const isGreyedOut = (type) => {
@@ -306,14 +325,15 @@ const Searches = () => {
 
   const handleSaveSearch = async () => {
     const whopUserId = localStorage.getItem('whop_user_id'); // Get the Whop user ID from localStorage
-  
+
     if (!whopUserId) {
       console.error('User not authenticated');
       return;
     }
-  
+
     const searchData = {
       userId: whopUserId,
+      searchId: editingSearchId, // Include searchId when editing
       searchName,
       criteria: {
         minBedrooms: minBedrooms !== "" ? minBedrooms : null,
@@ -325,18 +345,21 @@ const Searches = () => {
       },
       postcodes: selectedPostcodes.length > 0 ? selectedPostcodes : ['None'], // Send postcodes as an array
     };
-  
+
     console.log('Postcodes before sending to backend:', selectedPostcodes); // Log postcodes here
-  
+
     try {
-      const saveResponse = await fetch('/api/save-search', {
-        method: 'POST',
+      const url = isEditing ? '/api/update-search' : '/api/save-search';
+      const method = isEditing ? 'PUT' : 'POST';
+
+      const saveResponse = await fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(searchData), // Ensure searchData is stringified properly
       });
-  
+
       const result = await saveResponse.json();
       if (saveResponse.ok) {
         console.log('Search saved successfully!', result);
@@ -353,60 +376,117 @@ const Searches = () => {
   const fetchUserSearches = async () => {
     setIsLoading(true); // Start loading
     const whopUserId = localStorage.getItem('whop_user_id'); // Ensure you get the user ID
-  
+
     if (!whopUserId) {
-      console.error('User ID not found');
-      setIsLoading(false); // Stop loading in case of error
+        console.error('User ID not found');
+        setIsLoading(false); // Stop loading in case of error
+        return;
+    }
+
+    try {
+        console.log('Fetching searches for userId:', whopUserId); // Debug log
+
+        const response = await fetch(`/api/get-user-searches?userId=${whopUserId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log('Fetched searches:', result); // Debug: log the fetched searches
+
+            if (Array.isArray(result) && result.length > 0) {
+                setSearches(result); // Update the searches state
+                console.log('Updated searches state:', result);
+            } else {
+                console.warn('No searches found for user');
+            }
+        } else {
+            console.error('Failed to fetch searches:', response.status);
+        }
+    } catch (error) {
+        console.error('Error fetching searches:', error);
+    } finally {
+        setIsLoading(false); // Stop loading
+    }
+};
+
+  const handleDeleteSearch = async (searchId) => {
+    console.log('Delete button clicked with searchId:', searchId); // This should now display the correct ID
+  
+    if (!searchId) {
+      setDeleteError('Invalid search ID');
       return;
     }
   
-    try {
-      const response = await fetch(`/api/get-user-searches?userId=${whopUserId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Fetched searches:', result);
-        setSearches(result);
-      } else {
-        console.error('Failed to fetch searches');
-      }
-    } catch (error) {
-      console.error('Error fetching searches:', error);
-    }
-    setIsLoading(false); // Stop loading after fetch
-  };
-
-  const handleDeleteSearch = async (searchId) => {
     try {
       const response = await fetch(`/api/delete-search`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ searchId }), // Send the search ID to the server
+        body: JSON.stringify({ searchId }), // Send the correct searchId to the server
       });
-
+  
       if (response.ok) {
-        // Remove the search from the state after a successful delete
         setSearches((prevSearches) => prevSearches.filter((search) => search.id !== searchId));
+        setDeleteError(''); // Clear any previous errors
         console.log(`Search with ID ${searchId} deleted successfully.`);
       } else {
-        console.error('Failed to delete search');
+        setDeleteError('Failed to delete search');
       }
     } catch (error) {
+      setDeleteError('Error deleting search');
       console.error('Error deleting search:', error);
     }
   };
 
   const handleEditSearch = (searchId) => {
     console.log(`Editing search with ID: ${searchId}`);
-    // You can add functionality to open a modal for editing in the future
+    const searchToEdit = searches.find((search) => search.searchId === searchId);
+    if (searchToEdit) {
+      setIsEditing(true);
+      setEditingSearchId(searchId);
+      setIsModalOpen(true);
+      setStep(1);
+
+      // Pre-fill the state variables with the search data
+      setSelectedProperties(searchToEdit.criteria.propertyTypes || []);
+      setSelectedMustHaves(searchToEdit.criteria.mustHaves || []);
+      setMinBedrooms(searchToEdit.criteria.minBedrooms || '');
+      setMaxBedrooms(searchToEdit.criteria.maxBedrooms || '');
+      setMinPrice(searchToEdit.criteria.minPrice || '');
+      setMaxPrice(searchToEdit.criteria.maxPrice || '');
+      setSearchName(searchToEdit.searchName || '');
+
+      setSelectedPostcodes(searchToEdit.postcodes || []);
+      setPostcodeTiles(searchToEdit.postcodes || []);
+    } else {
+      console.error('Search not found for editing');
+    }
   };
+
+  const resetForm = () => {
+    // Reset all form fields
+    setSelectedProperties([]);
+    setSelectedMustHaves([]);
+    setMinBedrooms('');
+    setMaxBedrooms('');
+    setMinPrice('');
+    setMaxPrice('');
+    setSearchName('');
+    setSelectedPostcodes([]);
+    setPostcodeTiles([]);
+    setNewPostcode('');
+    setError('');
+    setShowError(false);
+    setIsAddingPostcode(false);
+    setShowDropdownError(false);
+  };
+
+  const [deleteError, setDeleteError] = useState(''); // Add this line
 
   return (
     <div className="searches-container">
@@ -426,25 +506,25 @@ const Searches = () => {
               </div>
             ) : (
               <>
-                {searches.map((search, index) => (
-                  <div key={index} className="search-item">
-                    <p><strong>Search Name:</strong> {search.searchName}</p>
+                {searches.map((search) => (
+                  <div key={search.id} className="search-item"> {/* Use search.id as the key */}
+                    <p><strong>Search Name:</strong> {search.search_name}</p>
                     {search.postcodes && search.postcodes.length > 0 ? (
                       <p><strong>Location:</strong> {search.postcodes.join(', ')}</p>
                     ) : (
                       <p><strong>Location:</strong> No postcodes selected</p>
                     )}
-                    <p><strong>Bedrooms:</strong> {`${search.criteria.minBedrooms || 0} - ${search.criteria.maxBedrooms || 'Any'}`}</p>
-                    <p><strong>Price Range:</strong> £{search.criteria.minPrice || 0} - £{search.criteria.maxPrice || 'Any'}</p>
+                    <p><strong>Bedrooms:</strong> {`${search.criteria.minBedrooms || 'Any'} - ${search.criteria.maxBedrooms || 'Any'}`}</p>
+                    <p><strong>Price Range:</strong> £{search.criteria.minPrice || 'Any'} - £{search.criteria.maxPrice || 'Any'}</p>
                     <p><strong>Property Types:</strong> {search.criteria.propertyTypes.join(', ')}</p>
                     <p><strong>Must Haves:</strong> {search.criteria.mustHaves.join(', ')}</p>
 
                     {/* Action buttons */}
                     <div className="action-buttons">
-                      <button className="edit-search-button" onClick={() => handleEditSearch(search.id)}>
+                      <button className="edit-search-button" onClick={() => handleEditSearch(search.id)}> {/* Pass search.id */}
                         <FaPencilAlt className="edit-icon" />
                       </button>
-                      <button className="delete-search-button" onClick={() => handleDeleteSearch(search.id)}>
+                      <button className="delete-search-button" onClick={() => handleDeleteSearch(search.id)}> {/* Pass search.id */}
                         <FaTrash className="trash-icon" />
                       </button>
                     </div>
@@ -470,13 +550,14 @@ const Searches = () => {
               setStep={setStep}
               setShowError={setShowError}
               setError={setError}
+              isEditing={isEditing}
             />
             <div className="modal-body">
               {step === 1 && (
                 <>
                   <h4 className="step-heading">Select Locations</h4>
                   <p className="step-subtitle">
-                    Enter any London or Manchester Postcode prefixes such as SE1, N6, M4, M23 etc.
+                    Enter any Manchester Postcode prefixes such as M4, M23, etc.
                   </p>
 
                   <div className="toggle-container">
@@ -548,7 +629,7 @@ const Searches = () => {
                 </>
               )}
 
-{step === 2 && (
+              {step === 2 && (
                 <>
                   <h4 className="step-heading">Select a Property Type</h4>
                   <p className="step-subtitle">Please select the type of property you're interested in: flat, house, room, etc.</p>
@@ -603,7 +684,7 @@ const Searches = () => {
                           className={`bedroom-dropdown ${selectedProperties.includes('Room') ? 'disabled' : ''}`}
                           disabled={selectedProperties.includes('Room')} // Disable if "Room" is selected
                         >
-                          <option value="-1">No Min</option>
+                          <option value="">No Min</option>
                           <option value="0">Studio</option>
                           <option value="1">1</option>
                           <option value="2">2</option>
@@ -632,7 +713,7 @@ const Searches = () => {
                           className={`bedroom-dropdown ${selectedProperties.includes('Room') ? 'disabled' : ''}`}
                           disabled={selectedProperties.includes('Room')} // Disable if "Room" is selected
                         >
-                          <option value="-1">No Max</option>
+                          <option value="">No Max</option>
                           <option value="0">Studio</option>
                           <option value="1">1</option>
                           <option value="2">2</option>
@@ -654,7 +735,7 @@ const Searches = () => {
 
                   {/* Error message for dropdown */}
                   {showDropdownError && (
-                    <div className="dropdown-error-message">    
+                    <div className="dropdown-error-message">
                       {error}
                     </div>
                   )}
@@ -675,6 +756,7 @@ const Searches = () => {
                         onChange={handleMinPriceChange}
                         className="price-dropdown"
                       >
+                        {/* Options for min price */}
                         <option value="">No min</option>
                         <option value="25">£25</option>
                         <option value="50">£50</option>
@@ -732,6 +814,7 @@ const Searches = () => {
                         onChange={handleMaxPriceChange}
                         className="price-dropdown"
                       >
+                        {/* Options for max price */}
                         <option value="">No max</option>
                         <option value="25">£25</option>
                         <option value="50">£50</option>
@@ -822,11 +905,13 @@ const Searches = () => {
                 </>
               )}
 
-              {step === 5 && ( // Final Step: Name Your Search
+              {step === 5 && (
                 <>
-                  <h4 className="step-heading">Name Your Search</h4>
-                  <p className="step-subtitle">Give your search a unique name so you can easily identify it later.</p>
-                  
+                  <h4 className="step-heading">{isEditing ? 'Review Your Changes' : 'Name Your Search'}</h4>
+                  {!isEditing && (
+                    <p className="step-subtitle">Give your search a unique name so you can easily identify it later.</p>
+                  )}
+
                   {/* Input field for search name */}
                   <input
                     type="text"
@@ -834,15 +919,15 @@ const Searches = () => {
                     value={searchName}
                     onChange={(e) => setSearchName(e.target.value)}
                     placeholder="Enter search name"
+                    disabled={isEditing} // Disable input when editing
                   />
-                  
+
                   {/* Save Search Button */}
                   <button className="save-search-button" onClick={handleSaveSearch}>
-                    Save Search
+                    {isEditing ? 'Save Changes' : 'Save Search'}
                   </button>
                 </>
               )}
-
             </div>
           </div>
         </div>
