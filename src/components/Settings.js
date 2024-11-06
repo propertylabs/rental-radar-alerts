@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Settings.css';
+import './Settings.css'; // Ensure this includes only minimal custom styles
 
 const Settings = () => {
   const [userData, setUserData] = useState(null);
@@ -23,7 +23,7 @@ const Settings = () => {
 
         const response = await fetch('/api/get-user-data', {
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -38,10 +38,10 @@ const Settings = () => {
         const data = await response.json();
         console.log('User data fetched successfully:', data);
         setUserData(data);
-        setWhatsappNumber(data.whatsapp_number || ''); // Set initial value for WhatsApp number
+        setWhatsappNumber(data.whatsapp_number || '');
       } catch (error) {
         console.error("Error fetching user data:", error);
-        navigate('/login'); // Navigate on error
+        navigate('/login');
       }
     };
 
@@ -57,17 +57,15 @@ const Settings = () => {
       const response = await fetch('/api/update-settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ whatsapp_number: whatsappNumber }), // Include whatsapp number
+        body: JSON.stringify({ whatsapp_number: whatsappNumber }),
       });
 
       console.log("Update response status:", response.status);
 
       if (response.ok) {
         console.log('Settings updated successfully.');
-        // Handle success (e.g., show a success message)
       } else {
         console.error('Failed to update settings.');
-        // Handle error
       }
     } catch (error) {
       console.error('Error updating settings:', error);
@@ -82,23 +80,29 @@ const Settings = () => {
   };
 
   return (
-    <div className="settings-container">
-      <h2 className="settings-title">Settings</h2>
-      <div className="user-info">
-        <p><strong>Name:</strong> {userData ? userData.name : <span className="placeholder">Loading...</span>}</p>
-        <p><strong>Email:</strong> {userData ? userData.email : <span className="placeholder">Loading...</span>}</p>
+    <div className="settings-container p-card">
+      <h2 className="settings-title p-card-title">Settings</h2>
+      <div className="p-card-content">
+        <div className="p-card-text">
+          <p><strong>Name:</strong> {userData ? userData.name : <span className="p-placeholder">Loading...</span>}</p>
+        </div>
+        <div className="p-card-text">
+          <p><strong>Email:</strong> {userData ? userData.email : <span className="p-placeholder">Loading...</span>}</p>
+        </div>
+        <div className="p-input-container">
+          <label className="p-form-label" htmlFor="whatsappNumber">WhatsApp Phone Number:</label>
+          <input
+            type="text"
+            id="whatsappNumber"
+            className="p-form-text"
+            value={whatsappNumber}
+            onChange={handleWhatsappChange}
+            placeholder="+1234567890"
+          />
+        </div>
+        <button className="p-btn p-prim-col p-btn-md" onClick={handleUpdateSettings}>Save Changes</button>
+        <button className="p-btn p-btn-md p-btn-destructive logout-button" onClick={handleLogout}>Logout</button>
       </div>
-      <label>
-        WhatsApp Phone Number:
-        <input
-          type="text"
-          value={whatsappNumber}
-          onChange={handleWhatsappChange}
-          placeholder="+1234567890"
-        />
-      </label>
-      <button onClick={handleUpdateSettings}>Save Changes</button>
-      <button className="logout-button" onClick={handleLogout}>Logout</button>
     </div>
   );
 };
