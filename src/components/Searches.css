@@ -23,7 +23,7 @@
 .searches-list {
     width: 100%;
     margin: 0 auto;
-    padding: 60px 15px;
+    /* padding: 60px 15px; */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -34,7 +34,13 @@
 
 @media (min-width: 769px) {
     .searches-list {
-        padding: 80px 15px;
+        /* padding: 80px 15px; */
+    }
+}
+
+@media (max-width: 769px) {
+    .searches-list {
+        padding-top: 65px !important;
     }
 }
 

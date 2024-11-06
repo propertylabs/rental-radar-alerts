@@ -1,17 +1,19 @@
+/*
+
 html, body {
-  background-color: #f0f0f0; /* Match the background color of your app */
-  height: 100%; /* Ensure the html and body take up the full height */
+  background-color: #f0f0f0; 
+  height: 100%; 
   margin: 0;
   padding: 0;
   overflow: hidden;
-  width: 100%; /* Prevent horizontal scrolling */
+  width: 100%; 
 }
 
 body {
   font-family: Arial, sans-serif;
   background-color: #f0f0f0;
   padding: 0px;
-  margin: 0; /* Add this line to remove the browser's default margin */
+  margin: 0; 
   overflow: hidden;
   padding-top: env(safe-area-inset-top, 0);
   padding-bottom: env(safe-area-inset-bottom, 0);
@@ -143,3 +145,5 @@ li button:nth-child(2) {
   border: none;
   cursor: pointer;
 }
+
+*/

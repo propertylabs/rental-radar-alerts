@@ -444,27 +444,87 @@ const Searches = () => {
   };
 
   const handleEditSearch = (searchId) => {
-    console.log(`Editing search with ID: ${searchId}`);
-    const searchToEdit = searches.find((search) => search.searchId === searchId);
+    console.log(`Editing search with ID: ${searchId}`); // Log to confirm the function is called
+    const searchToEdit = searches.find((search) => search.id === searchId); // Ensure this matches your `search.id` correctly
+    console.log('Search to edit:', searchToEdit); // Log the search data found
+  
     if (searchToEdit) {
       setIsEditing(true);
+      console.log('isEditing set to:', true); // Log after setting `isEditing`
+  
       setEditingSearchId(searchId);
+      console.log('editingSearchId set to:', searchId); // Log after setting `editingSearchId`
+  
       setIsModalOpen(true);
+      console.log('isModalOpen set to:', true); // Log after setting `isModalOpen`
+  
       setStep(1);
-
-      // Pre-fill the state variables with the search data
+      console.log('Step set to:', 1); // Log after setting the step
+  
+      // Log state updates to confirm their changes
       setSelectedProperties(searchToEdit.criteria.propertyTypes || []);
+      console.log('Selected properties set:', searchToEdit.criteria.propertyTypes);
+  
       setSelectedMustHaves(searchToEdit.criteria.mustHaves || []);
+      console.log('Selected must-haves set:', searchToEdit.criteria.mustHaves);
+  
       setMinBedrooms(searchToEdit.criteria.minBedrooms || '');
+      console.log('Min bedrooms set:', searchToEdit.criteria.minBedrooms);
+  
       setMaxBedrooms(searchToEdit.criteria.maxBedrooms || '');
+      console.log('Max bedrooms set:', searchToEdit.criteria.maxBedrooms);
+  
       setMinPrice(searchToEdit.criteria.minPrice || '');
+      console.log('Min price set:', searchToEdit.criteria.minPrice);
+  
       setMaxPrice(searchToEdit.criteria.maxPrice || '');
+      console.log('Max price set:', searchToEdit.criteria.maxPrice);
+  
       setSearchName(searchToEdit.searchName || '');
-
+      console.log('Search name set:', searchToEdit.searchName);
+  
       setSelectedPostcodes(searchToEdit.postcodes || []);
+      console.log('Selected postcodes set:', searchToEdit.postcodes);
+  
       setPostcodeTiles(searchToEdit.postcodes || []);
+      console.log('Postcode tiles set:', searchToEdit.postcodes);
     } else {
       console.error('Search not found for editing');
+    }
+  };
+
+  const handleToggleNotification = async (searchId, currentStatus) => {
+    const newStatus = currentStatus === 'enabled' ? 'disabled' : 'enabled';
+    console.log(`Toggling notification for search ID ${searchId} to ${newStatus}`);
+  
+    try {
+      const whopUserId = localStorage.getItem('whop_user_id');
+      if (!whopUserId) {
+        console.error('User not authenticated');
+        return;
+      }
+  
+      const response = await fetch('/api/update-notification', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: whopUserId, searchId, notifications: newStatus }),
+      });
+  
+      if (response.ok) {
+        console.log(`Notification status updated for search ID ${searchId}`);
+        // Update state with the new notification status
+        setSearches((prevSearches) =>
+          prevSearches.map((search) =>
+            search.id === searchId ? { ...search, notifications: newStatus } : search
+          )
+        );
+      } else {
+        console.error('Failed to update notification status');
+      }
+    } catch (error) {
+      console.error('Error updating notification status:', error);
     }
   };
 
@@ -518,6 +578,18 @@ const Searches = () => {
                     <p><strong>Price Range:</strong> £{search.criteria.minPrice || 'Any'} - £{search.criteria.maxPrice || 'Any'}</p>
                     <p><strong>Property Types:</strong> {search.criteria.propertyTypes.join(', ')}</p>
                     <p><strong>Must Haves:</strong> {search.criteria.mustHaves.join(', ')}</p>
+
+                    {/* Notification toggle */}
+                    <div className="notification-toggle">
+                      <label>
+                        Notifications:
+                        <input
+                          type="checkbox"
+                          checked={search.notifications === 'enabled'}
+                          onChange={() => handleToggleNotification(search.id, search.notifications)}
+                        />
+                      </label>
+                    </div>
 
                     {/* Action buttons */}
                     <div className="action-buttons">
