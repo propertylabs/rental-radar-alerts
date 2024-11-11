@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaHome, FaSearch, FaBell, FaCog, FaShareSquare, FaInfoCircle } from 'react-icons/fa'; // Import FaInfoCircle icon
+import { FaHome, FaSearch, FaBell, FaCog, FaShareSquare } from 'react-icons/fa';
 import './Navigation.css';
 
 const Navigation = () => {
   const [isStandalone, setIsStandalone] = useState(false);
   const [isIOSUser, setIsIOSUser] = useState(false);
-  const [showIOSPopup, setShowIOSPopup] = useState(false); // Separate state for iOS "Add to Home Screen" popup
-  const [showInfoPopup, setShowInfoPopup] = useState(false); // State to manage the info button popup
+  const [showIOSOverlay, setShowIOSOverlay] = useState(false); // Full-screen overlay state
 
   useEffect(() => {
     // Check if the app is running in standalone mode
@@ -18,27 +17,23 @@ const Navigation = () => {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     setIsIOSUser(isIOS);
 
-    // Show the iOS popup if the user is on iOS and not in standalone mode
+    // Show the iOS overlay if the user is on iOS and not in standalone mode
     if (isIOS && !standalone) {
-      setShowIOSPopup(true);
+      setShowIOSOverlay(true);
     }
   }, []);
 
-  const closeIOSPopup = () => {
-    setShowIOSPopup(false);
-  };
-
-  const toggleInfoPopup = () => {
-    setShowInfoPopup(!showInfoPopup);
+  const closeIOSOverlay = () => {
+    setShowIOSOverlay(false);
   };
 
   return (
     <>
-      {/* iOS "Add to Home Screen" Popup */}
-      {showIOSPopup && (
-        <div className="popup">
-          <div className="popup-content">
-            <button className="popup-close" onClick={closeIOSPopup}>&times;</button>
+      {/* Full-screen iOS "Add to Home Screen" Overlay */}
+      {showIOSOverlay && (
+        <div className="ios-overlay">
+          <div className="ios-overlay-content">
+            <button className="overlay-close" onClick={closeIOSOverlay}>&times;</button>
             <p>Install this app to your home screen for a better experience.</p>
             <p>
               Tap <FaShareSquare className="share-icon" /> then 'Add to Home Screen'.

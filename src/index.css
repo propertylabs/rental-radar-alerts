@@ -1,3 +1,10 @@
+/* Global CSS for all pages */
+html, body {
+  padding-top: 65px !important; /* 60px header height + 5px extra space */
+  box-sizing: border-box !important; /* Ensures padding is included in the total height */
+}
+
+
 /*
 
 html, body {

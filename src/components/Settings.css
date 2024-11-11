@@ -15,7 +15,7 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  min-height: auto; /* Allow container to grow based on content */
+  flex: 1; /* Allow container to grow and fill available space */
   overflow-y: auto; /* Enables vertical scrolling if needed */
   overflow-x: hidden; /* Prevents horizontal scrolling */
   -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
@@ -69,15 +69,23 @@
 }
 
 /* Additional styles to ensure consistent content appearance */
-body {
+html, body {
   font-family: Arial, sans-serif;
+  height: 100%; /* Ensure the html and body take the full height of the viewport */
   margin: 0;
   padding: 0;
-  background-color: #f8f9fa; /* Light gray background */
   display: flex;
   flex-direction: column;
-  min-height: 100vh - 60px; /* Ensure body covers the full viewport */
-  padding-top: 60px !important;
+  background-color: #f8f9fa; /* Light gray background */
+  min-height: 100vh; /* Ensure body covers the full viewport */
+}
+
+/* Wrapper to ensure content takes full viewport height */
+.main-content {
+  flex: 1; /* Allows content to fill the available space */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 /* Navbar styling */
@@ -102,7 +110,7 @@ h2, p {
   .settings-container {
     width: calc(100% - 60px); /* Adjust for smaller screens */
     padding: 15px; /* Slightly reduce padding on smaller screens */
-    margin-top: 75px !important;
+    margin-top: 5px !important;
   }
 
   .settings-title {

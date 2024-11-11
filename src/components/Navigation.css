@@ -209,3 +209,52 @@ nav.modal-active {
 .popup-close:focus {
     outline: none; /* Remove default focus outline */
 }
+
+/* Full-screen iOS "Add to Home Screen" Overlay */
+.ios-overlay {
+    position: fixed;
+    top: 10px; /* Small gap from the top */
+    left: 10px; /* Small gap from the left */
+    right: 10px; /* Small gap from the right */
+    bottom: 10px; /* Small gap from the bottom */
+    background-color: rgba(0, 0, 0, 0.95); /* Dark background for full blackout */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000; /* Ensure it covers the entire app */
+    border-radius: 12px; /* Rounded corners for aesthetic */
+    box-sizing: border-box;
+}
+
+/* Content within the iOS overlay */
+.ios-overlay-content {
+    background-color: #ffffff;
+    padding: 30px 20px; /* Increased padding for better spacing */
+    border-radius: 12px; /* Ensure it matches the overlay border */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 100%; /* Full width within the overlay */
+    height: 100%; /* Full height within the overlay */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box; /* Include padding in width/height calculations */
+}
+
+/* Text and icon spacing */
+.ios-overlay-content p {
+    font-size: 18px; /* Slightly larger for better readability */
+    margin-bottom: 15px; /* Space between paragraphs */
+    color: #333;
+}
+
+.ios-overlay-content .share-icon {
+    font-size: 28px; /* Larger size for better visibility */
+    margin-bottom: 10px; /* Space below the icon */
+    color: #007bff; /* Consistent color */
+}
+
+/* Button styling for call-to-action (if needed) */
+.ios-overlay-content button {
+    display: none; /* Ensure there is no close button */
+}
