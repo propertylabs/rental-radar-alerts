@@ -48,15 +48,15 @@ const Navigation = () => {
             <FaHome className="icon" />
             <span>Home</span>
           </NavLink>
-          <NavLink to="/dashboard/searches" className="nav-item" activeClassName="active-nav-item">
+          <NavLink to="/searches" className="nav-item" activeClassName="active-nav-item">
             <FaSearch className="icon" />
             <span>Searches</span>
           </NavLink>
-          <NavLink to="/dashboard/alerts" className="nav-item" activeClassName="active-nav-item">
+          <NavLink to="/alerts" className="nav-item" activeClassName="active-nav-item">
             <FaBell className="icon" />
             <span>Alerts</span>
           </NavLink>
-          <NavLink to="/dashboard/settings" className="nav-item" activeClassName="active-nav-item">
+          <NavLink to="/settings" className="nav-item" activeClassName="active-nav-item">
             <FaCog className="icon" />
             <span>Settings</span>
           </NavLink>
