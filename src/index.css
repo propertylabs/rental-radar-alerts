@@ -2,8 +2,27 @@
 html, body {
   padding-top: 65px !important; /* 60px header height + 5px extra space */
   box-sizing: border-box !important; /* Ensures padding is included in the total height */
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100vh; /* Use viewport height */
+  /* Prevent bounce/overflow scroll on iOS */
+  position: fixed;
+  width: 100%;
 }
 
+/* Specific fixes for standalone mode */
+@media all and (display-mode: standalone) {
+  html, body {
+    /* Use -webkit-fill-available instead of 100vh for iOS */
+    height: -webkit-fill-available;
+  }
+}
+
+#root {
+  overflow: hidden;
+  height: 100%;
+}
 
 /*
 
@@ -154,7 +173,3 @@ li button:nth-child(2) {
 }
 
 */
-
-body {
-  overflow: hidden;
-}
