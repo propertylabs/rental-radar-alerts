@@ -86,6 +86,7 @@ const styles = {
     position: 'fixed',
     top: 0,
     left: 0,
+    height: '100%',
   },
 
   imageSection: {
@@ -132,6 +133,7 @@ const styles = {
     alignItems: 'center',
     gap: '15px',
     width: '100%',
+    maxWidth: '600px',
   },
 
   description: {
@@ -212,18 +214,6 @@ const styles = {
       borderRadius: 0,
       justifyContent: 'center',
       padding: '40px',
-    },
-    
-    buttonContainer: {
-      width: '75%',
-    },
-    
-    loginButton: {
-      width: '100%',
-    },
-    
-    otherOptionsButton: {
-      width: '100%',
     },
   },
 };
