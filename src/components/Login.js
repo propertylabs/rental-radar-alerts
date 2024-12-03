@@ -120,7 +120,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     position: 'relative',
     zIndex: 1,
     overflow: 'hidden',
@@ -130,7 +130,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    gap: '5px',
+    gap: '15px',
   },
 
   description: {
