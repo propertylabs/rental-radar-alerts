@@ -71,23 +71,20 @@ const Searches = () => {
       }}>
         <div style={styles.header}>
           <h1 style={styles.title}>Saved Searches</h1>
-          <button style={styles.addButton} disabled>
-            <RiAddLine style={styles.addButtonIcon} />
-          </button>
+          <div style={styles.skeletonAddButton} />
         </div>
         <div style={styles.searchList}>
-          {[1, 2].map(i => (
-            <div key={i} style={{...styles.searchCard, opacity: 0.5}}>
-              <div style={styles.cardStatus}>
-                <div style={styles.statusIndicator}>
-                  <span style={styles.propertyCount}>--</span>
-                  <span style={styles.propertyLabel}>properties</span>
+          {[1, 2, 3].map(i => (
+            <div key={i} style={styles.skeletonCard}>
+              <div style={styles.skeletonContent}>
+                <div style={styles.skeletonTop}>
+                  <div style={styles.skeletonCount} />
+                  <div style={styles.skeletonDot} />
                 </div>
-              </div>
-              <div style={styles.mainContent}>
-                <div style={styles.locationSection}>
-                  <RiMapPinLine style={styles.locationIcon} />
-                  <h2 style={styles.locationText}>Loading...</h2>
+                <div style={styles.skeletonLocation} />
+                <div style={styles.skeletonPills}>
+                  <div style={styles.skeletonPill} />
+                  <div style={styles.skeletonPill} />
                 </div>
               </div>
             </div>
@@ -338,6 +335,88 @@ const styles = {
     fontSize: '16px',
     color: '#666',
     textAlign: 'center',
+  },
+
+  // Skeleton styles
+  skeletonAddButton: {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    background: 'rgba(0, 0, 0, 0.06)',
+    animation: 'pulse 1.5s ease-in-out infinite',
+  },
+
+  skeletonCard: {
+    background: 'rgba(255, 255, 255, 0.8)',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
+    borderRadius: '20px',
+    padding: '20px',
+    height: '160px', // Match height of actual cards
+    border: '1px solid rgba(0, 0, 0, 0.06)',
+    overflow: 'hidden',
+  },
+
+  skeletonContent: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+  },
+
+  skeletonTop: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  skeletonCount: {
+    width: '80px',
+    height: '28px',
+    borderRadius: '14px',
+    background: 'rgba(0, 0, 0, 0.06)',
+    animation: 'pulse 1.5s ease-in-out infinite',
+  },
+
+  skeletonDot: {
+    width: '24px',
+    height: '24px',
+    borderRadius: '50%',
+    background: 'rgba(0, 0, 0, 0.06)',
+    animation: 'pulse 1.5s ease-in-out infinite',
+  },
+
+  skeletonLocation: {
+    width: '70%',
+    height: '24px',
+    borderRadius: '12px',
+    background: 'rgba(0, 0, 0, 0.06)',
+    animation: 'pulse 1.5s ease-in-out infinite',
+  },
+
+  skeletonPills: {
+    display: 'flex',
+    gap: '8px',
+  },
+
+  skeletonPill: {
+    width: '100px',
+    height: '32px',
+    borderRadius: '16px',
+    background: 'rgba(0, 0, 0, 0.06)',
+    animation: 'pulse 1.5s ease-in-out infinite',
+  },
+
+  '@keyframes pulse': {
+    '0%': {
+      opacity: 0.6,
+    },
+    '50%': {
+      opacity: 0.4,
+    },
+    '100%': {
+      opacity: 0.6,
+    },
   },
 };
 
