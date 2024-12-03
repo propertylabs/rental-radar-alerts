@@ -56,18 +56,20 @@ const Login = () => {
           <span style={styles.gradientText}>Rental Radar:</span> Find your perfect rental property with real-time alerts and advanced search features.
         </p>
 
-        <button onClick={handleWhopLogin} style={styles.loginButton}>
-          <img 
-            src="/WhopIcon.svg" 
-            alt="Whop" 
-            style={styles.whopIcon}
-          />
-          Login with Whop
-        </button>
+        <div style={styles.buttonContainer}>
+          <button onClick={handleWhopLogin} style={styles.loginButton}>
+            <img 
+              src="/WhopIcon.svg" 
+              alt="Whop" 
+              style={styles.whopIcon}
+            />
+            Login with Whop
+          </button>
 
-        <button style={styles.otherOptionsButton}>
-          Other options
-        </button>
+          <button style={styles.otherOptionsButton}>
+            Other options
+          </button>
+        </div>
 
         <a href="#" style={styles.learnMore}>Learn more</a>
       </div>
@@ -118,11 +120,17 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     position: 'relative',
     zIndex: 1,
     overflow: 'hidden',
-    gap: '20px',
+  },
+
+  buttonContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '10px',
   },
 
   description: {
