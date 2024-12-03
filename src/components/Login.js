@@ -118,10 +118,11 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     position: 'relative',
     zIndex: 1,
     overflow: 'hidden',
+    gap: '20px',
   },
 
   description: {
@@ -153,7 +154,6 @@ const styles = {
     cursor: 'pointer',
     width: '100%',
     maxWidth: '400px',
-    marginBottom: 0,
     transition: 'background-color 0.2s ease',
     display: 'flex',
     alignItems: 'center',
@@ -177,7 +177,6 @@ const styles = {
     cursor: 'pointer',
     width: '100%',
     maxWidth: '400px',
-    marginBottom: 0,
     transition: 'background-color 0.2s ease',
   },
 
