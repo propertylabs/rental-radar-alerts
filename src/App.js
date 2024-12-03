@@ -10,10 +10,9 @@ import Header from './components/Header.js';
 import Navigation from './components/Navigation.js';
 import NotSub from './components/NotSub.js';
 
-const DashboardLayout = ({ children, pageTitle }) => (
+const DashboardLayout = ({ children }) => (
   <div>
     <Navigation />
-    <Header pageTitle={pageTitle} />
     <div className="content">
       {children}
     </div>
@@ -29,9 +28,9 @@ function App() {
         <Route path="/oauth/callback" element={<OAuthCallback />} />
         <Route path="/notsub" element={<NotSub />} />
         <Route element={<PrivateRoute />}>
-          <Route path="/searches" element={<DashboardLayout pageTitle="Searches"><Searches /></DashboardLayout>} />
-          <Route path="/alerts" element={<DashboardLayout pageTitle="Alerts"><Alerts /></DashboardLayout>} />
-          <Route path="/settings" element={<DashboardLayout pageTitle="Settings"><Settings /></DashboardLayout>} />
+          <Route path="/searches" element={<DashboardLayout><Searches /></DashboardLayout>} />
+          <Route path="/alerts" element={<DashboardLayout><Alerts /></DashboardLayout>} />
+          <Route path="/settings" element={<DashboardLayout><Settings /></DashboardLayout>} />
         </Route>
       </Routes>
     </Router>
