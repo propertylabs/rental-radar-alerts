@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { RiAddLine, RiMapPinLine, RiPriceTag3Line, RiHome4Line, RiMoreFill, RiSearchLine } from 'react-icons/ri';
+import { RiAddLine, RiMapPinLine, RiPriceTag3Line, RiHome4Line, RiMoreFill, RiSearchLine, RiEditBoxLine } from 'react-icons/ri';
+
+const SearchNameDisplay = ({ name }) => (
+  <div style={styles.nameContainer}>
+    <span style={styles.searchName}>{name}</span>
+    <RiEditBoxLine style={styles.editIcon} />
+  </div>
+);
 
 const Searches = () => {
   const [isStandalone, setIsStandalone] = useState(false);
@@ -117,10 +124,7 @@ const Searches = () => {
           searches.map(search => (
             <div key={search.id} style={styles.searchCard}>
               <div style={styles.cardStatus}>
-                <div style={styles.statusIndicator}>
-                  <span style={styles.propertyCount}>{search.propertyCount}</span>
-                  <span style={styles.propertyLabel}>properties</span>
-                </div>
+                <SearchNameDisplay name={search.name} />
                 <button style={styles.moreButton}>
                   <RiMoreFill />
                 </button>
@@ -230,17 +234,6 @@ const styles = {
     display: 'flex',
     alignItems: 'baseline',
     gap: '4px',
-  },
-
-  propertyCount: {
-    fontSize: '24px',
-    fontWeight: '700',
-    color: '#000',
-  },
-
-  propertyLabel: {
-    fontSize: '14px',
-    color: '#666',
   },
 
   moreButton: {
@@ -417,6 +410,36 @@ const styles = {
     '100%': {
       opacity: 0.6,
     },
+  },
+
+  nameContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '6px 12px',
+    background: 'rgba(0, 0, 0, 0.03)',
+    borderRadius: '8px',
+    border: '1px solid rgba(0, 0, 0, 0.06)',
+    transition: 'all 0.2s ease',
+    cursor: 'pointer',
+    ':hover': {
+      background: 'rgba(0, 0, 0, 0.05)',
+      borderColor: 'rgba(0, 0, 0, 0.1)',
+    },
+  },
+
+  searchName: {
+    fontFamily: 'SF Mono, Menlo, monospace',
+    fontSize: '15px',
+    fontWeight: '500',
+    color: '#000',
+    letterSpacing: '-0.3px',
+  },
+
+  editIcon: {
+    fontSize: '14px',
+    color: 'rgba(0, 0, 0, 0.4)',
+    transition: 'color 0.2s ease',
   },
 };
 
