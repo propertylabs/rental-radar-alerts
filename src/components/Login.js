@@ -209,7 +209,7 @@ const styles = {
     
     contentSection: {
       width: '40%',
-      height: '40%',
+      height: '40% !important',
       margin: 0,
       borderRadius: 0,
       justifyContent: 'center',
