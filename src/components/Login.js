@@ -1,10 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const navigate = useNavigate();
   const clientId = process.env.REACT_APP_WHOP_CLIENT_ID;
   const redirectUri = process.env.REACT_APP_WHOP_REDIRECT_URI;
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+
+  // Update height when window resizes or when mobile browser chrome appears/disappears
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowHeight(window.innerHeight);
+    };
+
+    window.addEventListener('resize', handleResize);
+    // For mobile browsers, also listen to visual viewport changes
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize);
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleResize);
+      }
+    };
+  }, []);
 
   const handleWhopLogin = () => {
     const authUrl = `https://whop.com/oauth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}`;
@@ -16,11 +37,11 @@ const Login = () => {
   };
 
   return (
-    <div style={styles.container}>
+    <div style={{ ...styles.container, height: windowHeight }}>
       {/* Top Image Section */}
       <div style={styles.imageSection}>
         <img 
-          src="/path-to-your-image.jpg" 
+          src="https://picsum.photos/1200/800" 
           alt="Rental Search" 
           style={styles.backgroundImage}
         />
@@ -44,11 +65,13 @@ const Login = () => {
 
 const styles = {
   container: {
-    height: '100vh',
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
     overflow: 'hidden',
+    position: 'fixed', // Prevent scrolling
+    top: 0,
+    left: 0,
   },
 
   imageSection: {
@@ -66,10 +89,10 @@ const styles = {
 
   contentSection: {
     backgroundColor: '#fff',
-    minHeight: '50%',
+    height: '40%', // Fixed height instead of minHeight
     borderTopLeftRadius: '20px',
     borderTopRightRadius: '20px',
-    marginTop: '-20px', // Creates overlap with image
+    marginTop: '-20px',
     padding: '30px 20px',
     display: 'flex',
     flexDirection: 'column',
@@ -77,6 +100,7 @@ const styles = {
     justifyContent: 'space-between',
     position: 'relative',
     zIndex: 1,
+    overflow: 'hidden', // Prevent content scrolling
   },
 
   description: {
@@ -114,7 +138,6 @@ const styles = {
   '@media (min-width: 768px)': {
     container: {
       flexDirection: 'row',
-      height: '100vh',
     },
     
     imageSection: {
