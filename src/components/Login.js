@@ -113,7 +113,6 @@ const styles = {
 
   contentSection: {
     backgroundColor: '#fff',
-    height: '325px',
     borderTopLeftRadius: '20px',
     borderTopRightRadius: '20px',
     marginTop: '-20px',
@@ -125,6 +124,32 @@ const styles = {
     position: 'relative',
     zIndex: 1,
     overflow: 'hidden',
+  },
+
+  '@media (max-width: 767px)': {
+    contentSection: {
+      height: '325px', // Mobile height
+    },
+  },
+
+  '@media (min-width: 768px)': {
+    container: {
+      flexDirection: 'row',
+    },
+    
+    imageSection: {
+      width: '60%',
+      height: '100%',
+    },
+    
+    contentSection: {
+      width: '40%',
+      height: '40%', // Desktop height
+      margin: 0,
+      borderRadius: 0,
+      justifyContent: 'center',
+      padding: '40px',
+    },
   },
 
   buttonContainer: {
@@ -195,26 +220,6 @@ const styles = {
     fontSize: '1rem',
     padding: '10px',
     marginTop: 0,
-  },
-
-  '@media (min-width: 768px)': {
-    container: {
-      flexDirection: 'row',
-    },
-    
-    imageSection: {
-      width: '60%',
-      height: '100%',
-    },
-    
-    contentSection: {
-      width: '40%',
-      height: '40% !important',
-      margin: 0,
-      borderRadius: 0,
-      justifyContent: 'center',
-      padding: '40px',
-    },
   },
 };
 

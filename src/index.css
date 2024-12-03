@@ -10,8 +10,8 @@ html, body {
 /* Specific fixes for standalone mode */
 @media all and (display-mode: standalone) {
   html, body {
-    height: 100vh;
-    min-height: -webkit-fill-available;
+    height: 100vh !important;
+    min-height: -webkit-fill-available !important;
   }
 }
 
