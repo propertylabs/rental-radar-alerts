@@ -1,42 +1,107 @@
 import React, { useEffect, useState } from 'react';
-import { RiAddLine, RiMapPinLine, RiPriceTag3Line, RiHome4Line, RiMoreFill } from 'react-icons/ri';
+import { RiAddLine, RiMapPinLine, RiPriceTag3Line, RiHome4Line, RiMoreFill, RiSearchLine } from 'react-icons/ri';
 
 const Searches = () => {
   const [isStandalone, setIsStandalone] = useState(false);
+  const [searches, setSearches] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
     setIsStandalone(standalone);
   }, []);
 
-  // Dummy data
-  const savedSearches = [
-    {
-      id: 1,
-      location: 'Manchester City Centre',
-      price: '£800-1200',
-      type: 'Flat',
-      propertyCount: 42,
-      lastAlert: '2h ago',
-      active: true
-    },
-    {
-      id: 2,
-      location: 'Didsbury',
-      price: '£1000-1500',
-      type: 'House',
-      propertyCount: 28,
-      lastAlert: '5h ago',
-      active: true
+  // Fetch user's saved searches
+  const fetchUserSearches = async () => {
+    setIsLoading(true);
+    const whopUserId = localStorage.getItem('whop_user_id');
+
+    if (!whopUserId) {
+      console.error('User ID not found');
+      setIsLoading(false);
+      return;
     }
-  ];
+
+    try {
+      const response = await fetch(`/api/get-user-searches?userId=${whopUserId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (Array.isArray(result)) {
+          // Transform the data to match our UI structure
+          const formattedSearches = result.map(search => ({
+            id: search.id,
+            location: search.postcodes.join(', '),
+            price: search.criteria.minPrice && search.criteria.maxPrice 
+              ? `£${search.criteria.minPrice}-${search.criteria.maxPrice}`
+              : 'Any price',
+            type: search.criteria.propertyTypes[0] || 'Any type',
+            propertyCount: search.property_count || 0,
+            lastAlert: search.last_alert || 'No alerts yet',
+            active: search.notifications === 'enabled'
+          }));
+          setSearches(formattedSearches);
+        }
+      } else {
+        console.error('Failed to fetch searches:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching searches:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fetch searches when component mounts
+  useEffect(() => {
+    fetchUserSearches();
+  }, []);
+
+  // Loading state UI
+  if (isLoading) {
+    return (
+      <div style={{
+        ...styles.container,
+        paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px'
+      }}>
+        <div style={styles.header}>
+          <h1 style={styles.title}>Saved Searches</h1>
+          <button style={styles.addButton} disabled>
+            <RiAddLine style={styles.addButtonIcon} />
+          </button>
+        </div>
+        <div style={styles.searchList}>
+          {[1, 2].map(i => (
+            <div key={i} style={{...styles.searchCard, opacity: 0.5}}>
+              <div style={styles.cardStatus}>
+                <div style={styles.statusIndicator}>
+                  <span style={styles.propertyCount}>--</span>
+                  <span style={styles.propertyLabel}>properties</span>
+                </div>
+              </div>
+              <div style={styles.mainContent}>
+                <div style={styles.locationSection}>
+                  <RiMapPinLine style={styles.locationIcon} />
+                  <h2 style={styles.locationText}>Loading...</h2>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{
       ...styles.container,
       paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px'
     }}>
-      {/* Header Section */}
       <div style={styles.header}>
         <h1 style={styles.title}>Saved Searches</h1>
         <button style={styles.addButton}>
@@ -44,47 +109,50 @@ const Searches = () => {
         </button>
       </div>
 
-      {/* Search Cards */}
       <div style={styles.searchList}>
-        {savedSearches.map(search => (
-          <div key={search.id} style={styles.searchCard}>
-            {/* Card Status Bar */}
-            <div style={styles.cardStatus}>
-              <div style={styles.statusIndicator}>
-                <span style={styles.propertyCount}>{search.propertyCount}</span>
-                <span style={styles.propertyLabel}>properties</span>
-              </div>
-              <button style={styles.moreButton}>
-                <RiMoreFill />
-              </button>
-            </div>
-
-            {/* Main Content */}
-            <div style={styles.mainContent}>
-              <div style={styles.locationSection}>
-                <RiMapPinLine style={styles.locationIcon} />
-                <h2 style={styles.locationText}>{search.location}</h2>
-              </div>
-
-              {/* Criteria Pills */}
-              <div style={styles.criteriaSection}>
-                <div style={styles.pill}>
-                  <RiPriceTag3Line style={styles.pillIcon} />
-                  <span>{search.price}</span>
-                </div>
-                <div style={styles.pill}>
-                  <RiHome4Line style={styles.pillIcon} />
-                  <span>{search.type}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Last Updated */}
-            <div style={styles.lastUpdated}>
-              Updated {search.lastAlert}
-            </div>
+        {searches.length === 0 ? (
+          <div style={styles.emptyState}>
+            <RiSearchLine style={styles.emptyStateIcon} />
+            <p style={styles.emptyStateText}>No saved searches yet</p>
+            <p style={styles.emptyStateSubtext}>Create your first search to get started</p>
           </div>
-        ))}
+        ) : (
+          searches.map(search => (
+            <div key={search.id} style={styles.searchCard}>
+              <div style={styles.cardStatus}>
+                <div style={styles.statusIndicator}>
+                  <span style={styles.propertyCount}>{search.propertyCount}</span>
+                  <span style={styles.propertyLabel}>properties</span>
+                </div>
+                <button style={styles.moreButton}>
+                  <RiMoreFill />
+                </button>
+              </div>
+
+              <div style={styles.mainContent}>
+                <div style={styles.locationSection}>
+                  <RiMapPinLine style={styles.locationIcon} />
+                  <h2 style={styles.locationText}>{search.location}</h2>
+                </div>
+
+                <div style={styles.criteriaSection}>
+                  <div style={styles.pill}>
+                    <RiPriceTag3Line style={styles.pillIcon} />
+                    <span>{search.price}</span>
+                  </div>
+                  <div style={styles.pill}>
+                    <RiHome4Line style={styles.pillIcon} />
+                    <span>{search.type}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.lastUpdated}>
+                Updated {search.lastAlert}
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
@@ -239,6 +307,37 @@ const styles = {
     fontSize: '12px',
     color: '#666',
     marginTop: '16px',
+  },
+
+  emptyState: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '32px',
+    borderRadius: '20px',
+    background: 'rgba(255, 255, 255, 0.8)',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
+    border: '1px solid rgba(0, 0, 0, 0.06)',
+  },
+
+  emptyStateIcon: {
+    fontSize: '48px',
+    color: '#666',
+  },
+
+  emptyStateText: {
+    fontSize: '24px',
+    fontWeight: '700',
+    color: '#000',
+    margin: 0,
+  },
+
+  emptyStateSubtext: {
+    fontSize: '16px',
+    color: '#666',
+    textAlign: 'center',
   },
 };
 
