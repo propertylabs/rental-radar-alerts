@@ -19,7 +19,6 @@ export default async function handler(req, res) {
     });
   }
 
-  // Extract the authorization code from the request query
   const { code } = req.query;
 
   if (!code) {
