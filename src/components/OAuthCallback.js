@@ -27,9 +27,9 @@ const OAuthCallback = () => {
             console.log('Popup detected, sending message to parent...');
             window.opener.postMessage({ 
               type: 'WHOP_LOGIN_SUCCESS',
-              token: data.access_token,  // Pass any necessary data
+              token: data.access_token,
               whop_user_id: data.whop_user_id
-            }, '*'); // Temporarily use * for debugging
+            }, window.location.origin);
             
             console.log('Message sent, closing window...');
             window.close();

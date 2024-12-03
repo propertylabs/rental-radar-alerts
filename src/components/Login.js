@@ -47,8 +47,28 @@ const Login = () => {
     const left = (window.screen.width - width) / 2;
     const top = (window.screen.height - height) / 2;
     
-    console.log('Opening popup...');
-    window.open(authUrl, "_blank", `width=${width},height=${height},top=${top},left=${left},noopener`);
+    // Store reference to popup
+    const popup = window.open(
+      authUrl,
+      'whop_login',
+      `width=${width},height=${height},top=${top},left=${left}`
+    );
+
+    // Check if popup exists and set up message listener
+    if (popup) {
+      console.log('Popup opened, setting up message listener...');
+      const messageHandler = (event) => {
+        console.log('Message received:', event.data);
+        if (event.data.type === 'WHOP_LOGIN_SUCCESS') {
+          console.log('Success message received, navigating...');
+          popup.close();
+          navigate('/searches');
+          // Clean up listener
+          window.removeEventListener('message', messageHandler);
+        }
+      };
+      window.addEventListener('message', messageHandler);
+    }
   };
 
   return (
