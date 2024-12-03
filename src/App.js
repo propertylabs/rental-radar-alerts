@@ -24,15 +24,14 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to={localStorage.getItem('token') ? "/dashboard/searches" : "/login"} />} />
+        <Route path="/" element={<Navigate to={localStorage.getItem('token') ? "/searches" : "/login"} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/oauth/callback" element={<OAuthCallback />} />
         <Route path="/notsub" element={<NotSub />} />
         <Route element={<PrivateRoute />}>
-          <Route path="/dashboard" element={<Navigate to="/dashboard/searches" />} />
-          <Route path="/dashboard/searches" element={<DashboardLayout pageTitle="Searches"><Searches /></DashboardLayout>} />
-          <Route path="/dashboard/alerts" element={<DashboardLayout pageTitle="Alerts"><Alerts /></DashboardLayout>} />
-          <Route path="/dashboard/settings" element={<DashboardLayout pageTitle="Settings"><Settings /></DashboardLayout>} />
+          <Route path="/searches" element={<DashboardLayout pageTitle="Searches"><Searches /></DashboardLayout>} />
+          <Route path="/alerts" element={<DashboardLayout pageTitle="Alerts"><Alerts /></DashboardLayout>} />
+          <Route path="/settings" element={<DashboardLayout pageTitle="Settings"><Settings /></DashboardLayout>} />
         </Route>
       </Routes>
     </Router>
