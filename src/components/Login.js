@@ -128,9 +128,9 @@ const styles = {
     fontSize: '1.2rem',
     color: '#333',
     textAlign: 'center',
-    marginBottom: '30px',
     maxWidth: '600px',
     lineHeight: 1.4,
+    marginBottom: 0,
   },
 
   gradientText: {
@@ -153,12 +153,12 @@ const styles = {
     cursor: 'pointer',
     width: '100%',
     maxWidth: '400px',
-    marginBottom: '20px',
+    marginBottom: 0,
     transition: 'background-color 0.2s ease',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '10px', // Space between icon and text
+    gap: '10px',
   },
 
   whopIcon: {
@@ -177,7 +177,7 @@ const styles = {
     cursor: 'pointer',
     width: '100%',
     maxWidth: '400px',
-    marginBottom: '20px',
+    marginBottom: 0,
     transition: 'background-color 0.2s ease',
   },
 
@@ -185,8 +185,8 @@ const styles = {
     color: '#666',
     textDecoration: 'none',
     fontSize: '1rem',
-    marginTop: 'auto',
     padding: '10px',
+    marginTop: 0,
   },
 
   '@media (min-width: 768px)': {

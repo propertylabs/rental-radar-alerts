@@ -21,3 +21,9 @@ html, body {
   display: flex;
   flex-direction: column;
 }
+
+@supports (-webkit-touch-callout: none) {
+  html, body {
+    height: -webkit-fill-available;
+  }
+}
