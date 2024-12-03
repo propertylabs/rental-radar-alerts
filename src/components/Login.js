@@ -6,10 +6,12 @@ const Login = () => {
   const clientId = process.env.REACT_APP_WHOP_CLIENT_ID;
   const redirectUri = process.env.REACT_APP_WHOP_REDIRECT_URI;
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
     const handleResize = () => {
       setWindowHeight(window.innerHeight);
+      setIsMobile(window.innerWidth < 768);
     };
 
     window.addEventListener('resize', handleResize);
@@ -51,7 +53,10 @@ const Login = () => {
       </div>
 
       {/* Bottom Content Section */}
-      <div style={styles.contentSection}>
+      <div style={{
+        ...styles.contentSection,
+        height: isMobile ? '325px' : '40%'
+      }}>
         <p style={styles.description}>
           <span style={styles.gradientText}>Rental Radar:</span> Find your perfect rental property with real-time alerts and advanced search features.
         </p>
@@ -126,12 +131,6 @@ const styles = {
     overflow: 'hidden',
   },
 
-  '@media (max-width: 767px)': {
-    contentSection: {
-      height: '325px', // Mobile height
-    },
-  },
-
   '@media (min-width: 768px)': {
     container: {
       flexDirection: 'row',
@@ -144,7 +143,6 @@ const styles = {
     
     contentSection: {
       width: '40%',
-      height: '40%', // Desktop height
       margin: 0,
       borderRadius: 0,
       justifyContent: 'center',
