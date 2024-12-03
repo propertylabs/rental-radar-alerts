@@ -17,7 +17,7 @@ const Navigation = () => {
   return (
     <nav style={{
       ...styles.navbar,
-      paddingBottom: isStandalone ? 'env(safe-area-inset-bottom)' : '0'
+      paddingBottom: isStandalone ? 'calc(env(safe-area-inset-bottom) - 17px)' : '0'
     }}>
       <div style={styles.navContainer}>
         <NavLink 
