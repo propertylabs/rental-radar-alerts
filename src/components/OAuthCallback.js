@@ -24,16 +24,25 @@ const OAuthCallback = () => {
           localStorage.setItem('token', data.access_token);
           localStorage.setItem('whop_user_id', data.whop_user_id);
 
-          setTimeout(() => {
+          // If this window was opened by another window (popup scenario)
+          if (window.opener) {
+            // Notify the parent window of successful login
+            window.opener.postMessage({ 
+              type: 'WHOP_LOGIN_SUCCESS' 
+            }, window.location.origin);
+            // Close this window
+            window.close();
+          } else {
+            // If not a popup, navigate normally
             navigate('/searches');
-          }, 1000); // Delay navigation by 1 second
+          }
         } else {
           console.error("User is not a paying subscriber.");
-          navigate('/notsub'); // Redirect non-subscribers to the notsub page
+          navigate('/notsub');
         }
       } catch (error) {
         console.error('Error during API request:', error.message);
-        navigate('/notsub'); // Redirect to notsub on error
+        navigate('/notsub');
       }
     };
 

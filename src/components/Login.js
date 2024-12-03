@@ -33,7 +33,17 @@ const Login = () => {
     const height = 700;
     const left = (window.screen.width - width) / 2;
     const top = (window.screen.height - height) / 2;
-    window.open(authUrl, "_blank", `width=${width},height=${height},top=${top},left=${left},noopener`);
+    
+    const popup = window.open(authUrl, "_blank", `width=${width},height=${height},top=${top},left=${left},noopener`);
+
+    window.addEventListener('message', function(event) {
+      if (event.origin === window.location.origin) {
+        if (event.data.type === 'WHOP_LOGIN_SUCCESS') {
+          popup?.close();
+          navigate('/searches');
+        }
+      }
+    });
   };
 
   return (
