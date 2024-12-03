@@ -14,14 +14,16 @@ html, body {
 /* Specific fixes for standalone mode */
 @media all and (display-mode: standalone) {
   html, body {
-    /* Use -webkit-fill-available instead of 100vh for iOS */
-    height: -webkit-fill-available;
+    height: 100vh; /* Use full viewport height */
+    min-height: -webkit-fill-available; /* Ensure it fills available space */
   }
 }
 
 #root {
   overflow: hidden;
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 /*

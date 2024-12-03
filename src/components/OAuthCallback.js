@@ -25,7 +25,7 @@ const OAuthCallback = () => {
           localStorage.setItem('whop_user_id', data.whop_user_id);
 
           setTimeout(() => {
-            navigate('/dashboard');
+            navigate('/searches');
           }, 1000); // Delay navigation by 1 second
         } else {
           console.error("User is not a paying subscriber.");
