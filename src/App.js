@@ -6,7 +6,6 @@ import PrivateRoute from './components/PrivateRoute.js';
 import Searches from './components/Searches.js';
 import Alerts from './components/Alerts.js';
 import Settings from './components/Settings.js';
-import Header from './components/Header.js';
 import Navigation from './components/Navigation.js';
 import NotSub from './components/NotSub.js';
 
