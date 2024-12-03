@@ -7,14 +7,12 @@ const Login = () => {
   const redirectUri = process.env.REACT_APP_WHOP_REDIRECT_URI;
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
-  // Update height when window resizes or when mobile browser chrome appears/disappears
   useEffect(() => {
     const handleResize = () => {
       setWindowHeight(window.innerHeight);
     };
 
     window.addEventListener('resize', handleResize);
-    // For mobile browsers, also listen to visual viewport changes
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', handleResize);
     }
@@ -41,9 +39,14 @@ const Login = () => {
       {/* Top Image Section */}
       <div style={styles.imageSection}>
         <img 
-          src="https://picsum.photos/1200/800" 
+          src="/login-bk.jpg" 
           alt="Rental Search" 
           style={styles.backgroundImage}
+        />
+        <img 
+          src="/radar-icon.png" 
+          alt="Radar Icon" 
+          style={styles.radarIcon}
         />
       </div>
 
@@ -69,7 +72,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     overflow: 'hidden',
-    position: 'fixed', // Prevent scrolling
+    position: 'fixed',
     top: 0,
     left: 0,
   },
@@ -87,9 +90,18 @@ const styles = {
     objectFit: 'cover',
   },
 
+  radarIcon: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '100px', // Adjust size as needed
+    height: '100px', // Adjust size as needed
+  },
+
   contentSection: {
     backgroundColor: '#fff',
-    height: '40%', // Fixed height instead of minHeight
+    height: '40%',
     borderTopLeftRadius: '20px',
     borderTopRightRadius: '20px',
     marginTop: '-20px',
@@ -100,7 +112,7 @@ const styles = {
     justifyContent: 'space-between',
     position: 'relative',
     zIndex: 1,
-    overflow: 'hidden', // Prevent content scrolling
+    overflow: 'hidden',
   },
 
   description: {

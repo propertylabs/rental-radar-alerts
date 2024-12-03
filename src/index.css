@@ -154,3 +154,7 @@ li button:nth-child(2) {
 }
 
 */
+
+body {
+  overflow: hidden;
+}
