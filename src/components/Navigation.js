@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { RiSearchLine, RiNotification3Line, RiSettings4Line } from 'react-icons/ri';
+import { 
+  RiSearchLine, RiSearchFill,
+  RiNotification3Line, RiNotification3Fill,
+  RiSettings4Line, RiSettings4Fill
+} from 'react-icons/ri';
 
 const Navigation = () => {
   const [isStandalone, setIsStandalone] = useState(false);
@@ -23,8 +27,12 @@ const Navigation = () => {
             color: isActive ? '#000' : '#666'
           })}
         >
-          <RiSearchLine style={styles.icon} />
-          <span style={styles.label}>Searches</span>
+          {({ isActive }) => (
+            <>
+              {isActive ? <RiSearchFill style={styles.icon} /> : <RiSearchLine style={styles.icon} />}
+              <span style={styles.label}>Searches</span>
+            </>
+          )}
         </NavLink>
         <NavLink 
           to="/alerts" 
@@ -33,8 +41,12 @@ const Navigation = () => {
             color: isActive ? '#000' : '#666'
           })}
         >
-          <RiNotification3Line style={styles.icon} />
-          <span style={styles.label}>Alerts</span>
+          {({ isActive }) => (
+            <>
+              {isActive ? <RiNotification3Fill style={styles.icon} /> : <RiNotification3Line style={styles.icon} />}
+              <span style={styles.label}>Alerts</span>
+            </>
+          )}
         </NavLink>
         <NavLink 
           to="/settings" 
@@ -43,8 +55,12 @@ const Navigation = () => {
             color: isActive ? '#000' : '#666'
           })}
         >
-          <RiSettings4Line style={styles.icon} />
-          <span style={styles.label}>Settings</span>
+          {({ isActive }) => (
+            <>
+              {isActive ? <RiSettings4Fill style={styles.icon} /> : <RiSettings4Line style={styles.icon} />}
+              <span style={styles.label}>Settings</span>
+            </>
+          )}
         </NavLink>
       </div>
     </nav>
@@ -68,9 +84,12 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-around',
     alignItems: 'center',
-    padding: '12px 0',
+    padding: '8px 0',
     maxWidth: '500px',
     margin: '0 auto',
+    '@media (min-width: 768px)': {
+      padding: '12px 0',
+    },
   },
 
   navItem: {
@@ -80,20 +99,30 @@ const styles = {
     textDecoration: 'none',
     fontSize: '0.82rem',
     fontWeight: '500',
-    gap: '4px',
-    padding: '8px 16px',
+    gap: '2px',
+    padding: '6px 16px',
     transition: 'color 0.2s ease',
     WebkitTapHighlightColor: 'transparent',
+    '@media (min-width: 768px)': {
+      gap: '4px',
+      padding: '8px 16px',
+    },
   },
 
   icon: {
-    fontSize: '1.5rem',
+    fontSize: '1.3rem',
     transition: 'transform 0.2s ease',
+    '@media (min-width: 768px)': {
+      fontSize: '1.5rem',
+    },
   },
 
   label: {
-    fontSize: '0.75rem',
+    fontSize: '0.7rem',
     fontWeight: '500',
+    '@media (min-width: 768px)': {
+      fontSize: '0.75rem',
+    },
   },
 };
 
