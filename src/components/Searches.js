@@ -351,7 +351,7 @@ const styles = {
     backdropFilter: 'blur(20px)',
     WebkitBackdropFilter: 'blur(20px)',
     borderRadius: '20px',
-    padding: '20px',
+    padding: '10px',
     height: '160px', // Match height of actual cards
     border: '1px solid rgba(0, 0, 0, 0.06)',
     overflow: 'hidden',
