@@ -112,11 +112,11 @@ const styles = {
 
   contentSection: {
     backgroundColor: '#fff',
-    height: '40%',
+    height: '325px',
     borderTopLeftRadius: '20px',
     borderTopRightRadius: '20px',
     marginTop: '-20px',
-    padding: '30px 20px',
+    padding: '20px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -131,6 +131,7 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     gap: '15px',
+    width: '100%',
   },
 
   description: {
@@ -138,8 +139,8 @@ const styles = {
     color: '#333',
     textAlign: 'center',
     maxWidth: '600px',
+    width: '100%',
     lineHeight: 1.4,
-    marginBottom: 0,
   },
 
   gradientText: {
@@ -161,7 +162,6 @@ const styles = {
     fontWeight: '500',
     cursor: 'pointer',
     width: '100%',
-    maxWidth: '400px',
     transition: 'background-color 0.2s ease',
     display: 'flex',
     alignItems: 'center',
@@ -184,7 +184,6 @@ const styles = {
     fontWeight: '500',
     cursor: 'pointer',
     width: '100%',
-    maxWidth: '400px',
     transition: 'background-color 0.2s ease',
   },
 
@@ -215,8 +214,16 @@ const styles = {
       padding: '40px',
     },
     
+    buttonContainer: {
+      width: '75%',
+    },
+    
     loginButton: {
-      width: '80%',
+      width: '100%',
+    },
+    
+    otherOptionsButton: {
+      width: '100%',
     },
   },
 };
