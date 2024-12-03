@@ -44,10 +44,6 @@ const Navigation = () => {
 
       <nav className={isStandalone ? 'standalone-navbar' : 'navbar'}>
         <div className="nav-container">
-          <NavLink to="/dashboard" className="nav-item" activeClassName="active-nav-item">
-            <FaHome className="icon" />
-            <span>Home</span>
-          </NavLink>
           <NavLink to="/searches" className="nav-item" activeClassName="active-nav-item">
             <FaSearch className="icon" />
             <span>Searches</span>
