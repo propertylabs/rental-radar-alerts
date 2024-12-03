@@ -27,6 +27,19 @@ const Login = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleMessage = (event) => {
+      console.log('Message received:', event.data);
+      if (event.data.type === 'WHOP_LOGIN_SUCCESS') {
+        console.log('Login success message received, navigating...');
+        navigate('/searches');
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [navigate]);
+
   const handleWhopLogin = () => {
     const authUrl = `https://whop.com/oauth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}`;
     const width = 600;
@@ -34,16 +47,8 @@ const Login = () => {
     const left = (window.screen.width - width) / 2;
     const top = (window.screen.height - height) / 2;
     
-    const popup = window.open(authUrl, "_blank", `width=${width},height=${height},top=${top},left=${left},noopener`);
-
-    window.addEventListener('message', function(event) {
-      if (event.origin === window.location.origin) {
-        if (event.data.type === 'WHOP_LOGIN_SUCCESS') {
-          popup?.close();
-          navigate('/searches');
-        }
-      }
-    });
+    console.log('Opening popup...');
+    window.open(authUrl, "_blank", `width=${width},height=${height},top=${top},left=${left},noopener`);
   };
 
   return (

@@ -20,20 +20,21 @@ const OAuthCallback = () => {
         const data = await response.json();
 
         if (data.access_token && data.whop_user_id && data.isSubscriber) {
-          // Store the token and Whop user ID if the user is a paying subscriber
           localStorage.setItem('token', data.access_token);
           localStorage.setItem('whop_user_id', data.whop_user_id);
 
-          // If this window was opened by another window (popup scenario)
           if (window.opener) {
-            // Notify the parent window of successful login
+            console.log('Popup detected, sending message to parent...');
             window.opener.postMessage({ 
-              type: 'WHOP_LOGIN_SUCCESS' 
-            }, window.location.origin);
-            // Close this window
+              type: 'WHOP_LOGIN_SUCCESS',
+              token: data.access_token,  // Pass any necessary data
+              whop_user_id: data.whop_user_id
+            }, '*'); // Temporarily use * for debugging
+            
+            console.log('Message sent, closing window...');
             window.close();
           } else {
-            // If not a popup, navigate normally
+            console.log('No opener found, navigating normally');
             navigate('/searches');
           }
         } else {
