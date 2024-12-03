@@ -28,10 +28,7 @@ const Navigation = () => {
           })}
         >
           {({ isActive }) => (
-            <>
-              {isActive ? <RiSearchFill style={styles.icon} /> : <RiSearchLine style={styles.icon} />}
-              <span style={styles.label}>Searches</span>
-            </>
+            isActive ? <RiSearchFill style={styles.icon} /> : <RiSearchLine style={styles.icon} />
           )}
         </NavLink>
         <NavLink 
@@ -42,10 +39,7 @@ const Navigation = () => {
           })}
         >
           {({ isActive }) => (
-            <>
-              {isActive ? <RiNotification3Fill style={styles.icon} /> : <RiNotification3Line style={styles.icon} />}
-              <span style={styles.label}>Alerts</span>
-            </>
+            isActive ? <RiNotification3Fill style={styles.icon} /> : <RiNotification3Line style={styles.icon} />
           )}
         </NavLink>
         <NavLink 
@@ -56,10 +50,7 @@ const Navigation = () => {
           })}
         >
           {({ isActive }) => (
-            <>
-              {isActive ? <RiSettings4Fill style={styles.icon} /> : <RiSettings4Line style={styles.icon} />}
-              <span style={styles.label}>Settings</span>
-            </>
+            isActive ? <RiSettings4Fill style={styles.icon} /> : <RiSettings4Line style={styles.icon} />
           )}
         </NavLink>
       </div>
@@ -88,41 +79,24 @@ const styles = {
     maxWidth: '500px',
     margin: '0 auto',
     '@media (min-width: 768px)': {
-      padding: '12px 0',
+      padding: '16px 0',
     },
   },
 
   navItem: {
     display: 'flex',
-    flexDirection: 'column',
     alignItems: 'center',
+    justifyContent: 'center',
     textDecoration: 'none',
-    fontSize: '0.82rem',
-    fontWeight: '500',
-    gap: '2px',
-    padding: '6px 16px',
+    padding: '8px',
     transition: 'color 0.2s ease',
     WebkitTapHighlightColor: 'transparent',
-    '@media (min-width: 768px)': {
-      gap: '4px',
-      padding: '8px 16px',
-    },
+    borderRadius: '50%',
   },
 
   icon: {
-    fontSize: '1.3rem',
+    fontSize: '1.7rem',
     transition: 'transform 0.2s ease',
-    '@media (min-width: 768px)': {
-      fontSize: '1.5rem',
-    },
-  },
-
-  label: {
-    fontSize: '0.7rem',
-    fontWeight: '500',
-    '@media (min-width: 768px)': {
-      fontSize: '0.75rem',
-    },
   },
 };
 
