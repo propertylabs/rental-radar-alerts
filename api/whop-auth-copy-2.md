@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 export default async function handler(req, res) {
-  // Log the environment variables to see if they are being accessed
   const clientId = process.env.WHOP_CLIENT_ID;
   const clientSecret = process.env.WHOP_CLIENT_SECRET;
   const redirectUri = process.env.WHOP_REDIRECT_URI;
