@@ -53,11 +53,20 @@ const Login = () => {
       {/* Bottom Content Section */}
       <div style={styles.contentSection}>
         <p style={styles.description}>
-          Find your perfect rental property with real-time alerts and advanced search features.
+          <span style={styles.gradientText}>Rental Radar:</span> Find your perfect rental property with real-time alerts and advanced search features.
         </p>
 
         <button onClick={handleWhopLogin} style={styles.loginButton}>
+          <img 
+            src="/WhopIcon.svg" 
+            alt="Whop" 
+            style={styles.whopIcon}
+          />
           Login with Whop
+        </button>
+
+        <button style={styles.otherOptionsButton}>
+          Other options
         </button>
 
         <a href="#" style={styles.learnMore}>Learn more</a>
@@ -124,10 +133,43 @@ const styles = {
     lineHeight: 1.4,
   },
 
+  gradientText: {
+    fontWeight: 'bold',
+    background: 'linear-gradient(to right, #147c5e, #9adf6a)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+    display: 'inline',
+  },
+
   loginButton: {
     backgroundColor: '#000',
     color: '#fff',
     border: 'none',
+    borderRadius: '30px',
+    padding: '16px 32px',
+    fontSize: '1.1rem',
+    fontWeight: '500',
+    cursor: 'pointer',
+    width: '100%',
+    maxWidth: '400px',
+    marginBottom: '20px',
+    transition: 'background-color 0.2s ease',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '10px', // Space between icon and text
+  },
+
+  whopIcon: {
+    width: '20px',
+    height: '20px',
+  },
+
+  otherOptionsButton: {
+    backgroundColor: '#fff',
+    color: '#000',
+    border: '2px solid #000',
     borderRadius: '30px',
     padding: '16px 32px',
     fontSize: '1.1rem',
