@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import PostcodesStep from './steps/PostcodesStep';
-import PropertyTypeStep from './steps/PropertyTypeStep';
+import PostcodesStep from './steps/PostcodesStep.js';
+import PropertyTypeStep from './steps/PropertyTypeStep.js';
 
 const SearchModal = ({ isOpen, onClose }) => {
   const [step, setStep] = useState(1);
@@ -80,14 +80,8 @@ const SearchModal = ({ isOpen, onClose }) => {
           onNext={() => setStep(3)}
           onBack={() => setStep(1)}
         />;
-      case 3:
-        return <PriceStep 
-          values={formData.price}
-          onChange={(price) => setFormData({...formData, price})}
-          onNext={() => setStep(4)}
-          onBack={() => setStep(2)}
-        />;
-      // ... other steps
+      default:
+        return null;
     }
   };
 
