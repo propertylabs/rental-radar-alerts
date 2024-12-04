@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { RiAddLine, RiMapPinLine, RiPriceTag3Line, RiHome4Line, RiMoreFill, RiSearchLine, RiEditBoxLine } from 'react-icons/ri';
+import { RiAddLine, RiMapPinLine, RiPriceTag3Line, RiHome4Line, RiMoreFill, RiSearchLine, RiEditBoxLine, RiDeleteBinLine, RiNotificationLine, RiNotificationOffLine } from 'react-icons/ri';
 
 const ACCENT = '#2E3F32'; // Deep forest green
 
@@ -18,6 +18,9 @@ const Searches = () => {
   );
   const [searches, setSearches] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeMenu, setActiveMenu] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [searchToDelete, setSearchToDelete] = useState(null);
 
   // Fetch user's saved searches
   const fetchUserSearches = async () => {
@@ -69,6 +72,69 @@ const Searches = () => {
   useEffect(() => {
     fetchUserSearches();
   }, []);
+
+  const handleMoreClick = (searchId, event) => {
+    event.stopPropagation();
+    setActiveMenu(searchId);
+  };
+
+  const handleDeleteClick = async (searchId, event) => {
+    event.stopPropagation();
+    setActiveMenu(null);
+    setSearchToDelete(searchId);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!searchToDelete) return;
+    
+    try {
+      const response = await fetch(`/api/delete-search?searchId=${searchToDelete}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setSearches(searches.filter(search => search.id !== searchToDelete));
+      } else {
+        console.error('Failed to delete search');
+      }
+    } catch (error) {
+      console.error('Error deleting search:', error);
+    }
+    
+    setShowDeleteConfirm(false);
+    setSearchToDelete(null);
+  };
+
+  const handleToggleNotifications = async (searchId, currentStatus, event) => {
+    event.stopPropagation();
+    setActiveMenu(null);
+    
+    const newStatus = currentStatus === 'enabled' ? 'disabled' : 'enabled';
+    
+    try {
+      const response = await fetch(`/api/update-search-notifications`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          searchId,
+          notifications: newStatus
+        })
+      });
+
+      if (response.ok) {
+        setSearches(searches.map(search => 
+          search.id === searchId 
+            ? {...search, active: newStatus === 'enabled'}
+            : search
+        ));
+      }
+    } catch (error) {
+      console.error('Error updating notifications:', error);
+    }
+  };
 
   // Loading state UI
   if (isLoading) {
@@ -129,7 +195,10 @@ const Searches = () => {
               <div key={search.id} style={styles.searchCard}>
                 <div style={styles.cardStatus}>
                   <SearchNameDisplay name={search.name} />
-                  <button style={styles.moreButton}>
+                  <button 
+                    style={styles.moreButton}
+                    onClick={(e) => handleMoreClick(search.id, e)}
+                  >
                     <RiMoreFill style={{ fontSize: '24px' }} />
                   </button>
                 </div>
@@ -160,6 +229,56 @@ const Searches = () => {
           )}
         </div>
       </div>
+
+      {activeMenu === search.id && (
+        <div style={styles.menu}>
+          <button 
+            style={styles.menuItem} 
+            onClick={(e) => handleDeleteClick(search.id, e)}
+          >
+            <RiDeleteBinLine style={styles.menuIcon} />
+            <span style={{color: '#ff4444'}}>Delete</span>
+          </button>
+          <button style={styles.menuItem}>
+            <RiEditBoxLine style={styles.menuIcon} />
+            <span>Edit</span>
+          </button>
+          <button 
+            style={styles.menuItem}
+            onClick={(e) => handleToggleNotifications(search.id, search.active ? 'enabled' : 'disabled', e)}
+          >
+            {search.active ? (
+              <RiNotificationLine style={styles.menuIcon} />
+            ) : (
+              <RiNotificationOffLine style={styles.menuIcon} />
+            )}
+            <span>Notifications {search.active ? 'On' : 'Off'}</span>
+          </button>
+        </div>
+      )}
+
+      {showDeleteConfirm && (
+        <div style={styles.modalBackdrop}>
+          <div style={styles.modal}>
+            <h3 style={styles.modalTitle}>Delete Search?</h3>
+            <p style={styles.modalText}>Are you sure you want to delete this search?</p>
+            <div style={styles.modalButtons}>
+              <button 
+                style={{...styles.modalButton, ...styles.cancelButton}}
+                onClick={() => setShowDeleteConfirm(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                style={{...styles.modalButton, ...styles.deleteButton}}
+                onClick={handleConfirmDelete}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -241,6 +360,7 @@ const styles = {
       transform: 'translateY(-2px)',
       boxShadow: '0 8px 24px rgba(46, 63, 50, 0.12)',
     },
+    position: 'relative',
   },
 
   cardStatus: {
@@ -463,6 +583,106 @@ const styles = {
     borderRadius: '50%',
     background: 'rgba(46, 63, 50, 0.08)',
     animation: 'pulse 1.5s ease-in-out infinite',
+  },
+
+  menu: {
+    position: 'absolute',
+    right: '16px',
+    top: '50px',
+    background: 'white',
+    borderRadius: '12px',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+    padding: '8px',
+    zIndex: 100,
+    minWidth: '200px',
+  },
+
+  menuItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    padding: '12px 16px',
+    width: '100%',
+    border: 'none',
+    background: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    ':hover': {
+      background: 'rgba(46, 63, 50, 0.04)',
+    },
+  },
+
+  menuIcon: {
+    fontSize: '20px',
+    color: ACCENT,
+  },
+
+  modalBackdrop: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+  },
+
+  modal: {
+    background: 'white',
+    borderRadius: '20px',
+    padding: '24px',
+    width: '90%',
+    maxWidth: '320px',
+  },
+
+  modalTitle: {
+    margin: 0,
+    marginBottom: '16px',
+    fontSize: '20px',
+    fontWeight: '600',
+    color: ACCENT,
+  },
+
+  modalText: {
+    margin: 0,
+    marginBottom: '24px',
+    color: '#666',
+  },
+
+  modalButtons: {
+    display: 'flex',
+    gap: '12px',
+  },
+
+  modalButton: {
+    flex: 1,
+    padding: '12px',
+    borderRadius: '12px',
+    border: 'none',
+    fontSize: '16px',
+    fontWeight: '500',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+  },
+
+  cancelButton: {
+    background: '#f5f5f5',
+    color: '#666',
+    ':hover': {
+      background: '#eeeeee',
+    },
+  },
+
+  deleteButton: {
+    background: '#ff4444',
+    color: 'white',
+    ':hover': {
+      background: '#ff2222',
+    },
   },
 };
 
