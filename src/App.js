@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login.js';
 import OAuthCallback from './components/OAuthCallback.js';
@@ -9,14 +9,18 @@ import Settings from './components/Settings.js';
 import Navigation from './components/Navigation.js';
 import NotSub from './components/NotSub.js';
 
-const DashboardLayout = ({ children }) => (
-  <div>
-    <Navigation />
-    <div className="content">
-      {children}
+const DashboardLayout = ({ children }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  return (
+    <div>
+      <Navigation isModalOpen={isModalOpen} />
+      <div className="content">
+        {React.cloneElement(children, { setModalState: setIsModalOpen })}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 function App() {
   return (

@@ -6,7 +6,7 @@ import {
   RiSettings4Line, RiSettings4Fill
 } from 'react-icons/ri';
 
-const Navigation = () => {
+const Navigation = ({ isModalOpen }) => {
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
@@ -17,7 +17,8 @@ const Navigation = () => {
   return (
     <nav style={{
       ...styles.navbar,
-      paddingBottom: isStandalone ? 'calc(env(safe-area-inset-bottom) - 17px)' : '0'
+      paddingBottom: isStandalone ? 'calc(env(safe-area-inset-bottom) - 17px)' : '0',
+      zIndex: isModalOpen ? -1 : 1000
     }}>
       <div style={styles.navContainer}>
         <NavLink 
@@ -67,7 +68,6 @@ const styles = {
     background: 'rgba(255, 255, 255, 0.8)',
     backdropFilter: 'blur(10px)',
     WebkitBackdropFilter: 'blur(10px)',
-    zIndex: 1000,
     borderTop: '1px solid rgba(0, 0, 0, 0.06)',
   },
 

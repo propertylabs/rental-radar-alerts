@@ -10,7 +10,7 @@ const SearchNameDisplay = ({ name }) => (
   </div>
 );
 
-const Searches = () => {
+const Searches = ({ setModalState }) => {
   const [isStandalone] = useState(() => 
     window.matchMedia('(display-mode: standalone)').matches || 
     window.navigator.standalone || 
@@ -128,8 +128,8 @@ const Searches = () => {
     setActiveMenu(null);
     setSearchToDelete(searchId);
     setShowDeleteConfirm(true);
-    setIsModalOpen(true);
     document.body.style.overflow = 'hidden';
+    setModalState(true);
   };
 
   const handleConfirmDelete = async () => {
@@ -221,8 +221,8 @@ const Searches = () => {
   const handleCloseModal = () => {
     setShowDeleteConfirm(false);
     setSearchToDelete(null);
-    setIsModalOpen(false);
-    document.body.style.overflow = ''; // Re-enable scrolling
+    document.body.style.overflow = '';
+    setModalState(false);
   };
 
   // Loading state UI
