@@ -8,16 +8,22 @@ import Alerts from './components/Alerts.js';
 import Settings from './components/Settings.js';
 import Navigation from './components/Navigation.js';
 import NotSub from './components/NotSub.js';
+import ModalBackdrop from './components/ModalBackdrop';
 
 const DashboardLayout = ({ children }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
   
   return (
     <div>
-      <Navigation isModalOpen={isModalOpen} />
+      <Navigation />
       <div className="content">
-        {React.cloneElement(children, { setModalState: setIsModalOpen })}
+        {React.cloneElement(children, { 
+          setModalState: setIsModalOpen,
+          setModalContent: setModalContent 
+        })}
       </div>
+      {isModalOpen && <ModalBackdrop>{modalContent}</ModalBackdrop>}
     </div>
   );
 };

@@ -10,7 +10,7 @@ const SearchNameDisplay = ({ name }) => (
   </div>
 );
 
-const Searches = ({ setModalState }) => {
+const Searches = ({ setModalState, setModalContent }) => {
   const [isStandalone] = useState(() => 
     window.matchMedia('(display-mode: standalone)').matches || 
     window.navigator.standalone || 
@@ -123,12 +123,33 @@ const Searches = ({ setModalState }) => {
     setActiveMenu(activeMenu === searchId ? null : searchId);
   };
 
-  const handleDeleteClick = async (searchId, event) => {
+  const handleDeleteClick = (searchId, event) => {
     event.stopPropagation();
     setActiveMenu(null);
     setSearchToDelete(searchId);
-    setShowDeleteConfirm(true);
     document.body.style.overflow = 'hidden';
+    
+    // Set the modal content
+    setModalContent(
+      <div style={styles.modal}>
+        <h3 style={styles.modalTitle}>Delete Search?</h3>
+        <p style={styles.modalText}>Are you sure you want to delete this search?</p>
+        <div style={styles.modalButtons}>
+          <button 
+            style={{...styles.modalButton, ...styles.cancelButton}}
+            onClick={handleCloseModal}
+          >
+            Cancel
+          </button>
+          <button 
+            style={{...styles.modalButton, ...styles.deleteButton}}
+            onClick={handleConfirmDelete}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    );
     setModalState(true);
   };
 
@@ -357,29 +378,6 @@ const Searches = ({ setModalState }) => {
           )}
         </div>
       </div>
-
-      {showDeleteConfirm && (
-        <div style={styles.modalBackdrop}>
-          <div style={styles.modal}>
-            <h3 style={styles.modalTitle}>Delete Search?</h3>
-            <p style={styles.modalText}>Are you sure you want to delete this search?</p>
-            <div style={styles.modalButtons}>
-              <button 
-                style={{...styles.modalButton, ...styles.cancelButton}}
-                onClick={handleCloseModal}
-              >
-                Cancel
-              </button>
-              <button 
-                style={{...styles.modalButton, ...styles.deleteButton}}
-                onClick={handleConfirmDelete}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
@@ -720,25 +718,6 @@ const styles = {
     ':active': {
       background: 'rgba(46, 63, 50, 0.06)',
     },
-  },
-
-  modalBackdrop: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 'env(safe-area-inset-bottom, 0px)',
-    background: 'rgba(0, 0, 0, 0.4)',
-    backdropFilter: 'blur(8px)',
-    WebkitBackdropFilter: 'blur(8px)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 100000,
-    height: 'calc(100dvh + env(safe-area-inset-bottom, 0px))',
-    width: '100vw',
-    overflow: 'hidden',
-    touchAction: 'none',
   },
 
   modal: {
