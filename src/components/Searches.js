@@ -181,21 +181,32 @@ const Searches = ({ setModalState, setModalContent }) => {
   };
 
   const handleConfirmDelete = async (searchId) => {
-    console.log('3. handleConfirmDelete called with searchId:', searchId);
     if (!searchId) {
       console.log('No searchId provided');
       return;
     }
     
-    // Rest of the function using searchId instead of searchToDelete
+    // Close modal immediately
     setModalState(false);
     setModalContent(null);
     
+    // Store the search for potential restore
     const searchToRestore = searches.find(s => s.id === searchId);
-    console.log('4. Found search to restore:', searchToRestore);
+    
+    // First mark the card for deletion (triggers fade out)
+    setSearches(prev => prev.map(search => 
+      search.id === searchId 
+        ? { ...search, isDeleting: true }
+        : search
+    ));
+
+    // Wait for fade out animation
+    setTimeout(() => {
+      // Then remove the card (other cards will smoothly reposition)
+      setSearches(prev => prev.filter(search => search.id !== searchId));
+    }, 300); // Match animation duration
     
     try {
-      console.log('5. Making delete API call');
       const response = await fetch('/api/delete-search', {
         method: 'DELETE',
         headers: {
@@ -206,14 +217,14 @@ const Searches = ({ setModalState, setModalContent }) => {
         })
       });
 
-      console.log('6. API response:', response.status);
       if (!response.ok) {
-        console.error('Delete failed:', await response.json());
+        // If delete fails, restore the card
         setSearches(prev => [...prev, searchToRestore]);
       }
     } catch (error) {
-      console.error('7. API error:', error);
+      // If request fails, restore the card
       setSearches(prev => [...prev, searchToRestore]);
+      console.error('API error:', error);
     }
   };
 
@@ -491,6 +502,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
+    transition: 'all 0.3s ease',
   },
 
   searchCard: {
