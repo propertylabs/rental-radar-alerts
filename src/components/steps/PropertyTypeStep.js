@@ -32,7 +32,7 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
   };
 
   const showError = () => {
-    setErrorMessage("Room searches cannot be combined with other property types.");
+    setErrorMessage("Room searches cannot be combined with other property types. Please create a separate search for Rooms.");
     setTimeout(() => setErrorMessage(null), 3000);
   };
 
@@ -126,13 +126,33 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
     }),
 
     errorMessage: {
-      color: '#ff3b30',
-      fontSize: '14px',
-      textAlign: 'center',
-      margin: '12px 0 0 0',
+      position: 'relative',
+      background: 'rgba(255, 59, 48, 0.08)',
+      borderRadius: '12px',
+      padding: '12px 16px',
+      margin: '4px 0',
       opacity: errorMessage ? 1 : 0,
       transform: `translateY(${errorMessage ? '0' : '-10px'})`,
       transition: 'all 0.3s ease',
+      pointerEvents: 'none',
+    },
+
+    errorText: {
+      color: '#ff3b30',
+      fontSize: '14px',
+      lineHeight: '1.4',
+      textAlign: 'center',
+      margin: 0,
+      fontWeight: '500',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '8px',
+    },
+
+    errorIcon: {
+      fontSize: '16px',
+      flexShrink: 0,
     },
 
     nextButton: {
@@ -181,8 +201,13 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
         })}
       </div>
 
-      <div style={styles.errorMessage}>
-        {errorMessage}
+      <div style={{...styles.errorMessage, visibility: errorMessage ? 'visible' : 'hidden'}}>
+        {errorMessage && (
+          <p style={styles.errorText}>
+            <span style={styles.errorIcon}>⚠️</span>
+            {errorMessage}
+          </p>
+        )}
       </div>
 
       <button 
