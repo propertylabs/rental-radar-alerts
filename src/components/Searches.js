@@ -734,11 +734,11 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 100000, // Much higher than nav bar
-    height: '100vh',
+    zIndex: 100000,
+    height: '100dvh',
     width: '100vw',
     overflow: 'hidden',
-    touchAction: 'none', // Disable touch events
+    touchAction: 'none',
   },
 
   modal: {
