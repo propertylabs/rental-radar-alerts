@@ -72,30 +72,32 @@ const Searches = () => {
   // Loading state UI
   if (isLoading) {
     return (
-      <div style={{
-        ...styles.container,
-        paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px'
-      }}>
-        <div style={styles.header}>
-          <h1 style={styles.title}>Saved Searches</h1>
-          <div style={styles.skeletonAddButton} />
-        </div>
-        <div style={styles.searchList}>
-          {[1, 2, 3].map(i => (
-            <div key={i} style={styles.skeletonCard}>
-              <div style={styles.skeletonContent}>
-                <div style={styles.skeletonTop}>
-                  <div style={styles.skeletonCount} />
-                  <div style={styles.skeletonDot} />
-                </div>
-                <div style={styles.skeletonLocation} />
-                <div style={styles.skeletonPills}>
-                  <div style={styles.skeletonPill} />
-                  <div style={styles.skeletonPill} />
+      <div style={styles.pageContainer}>
+        <div style={{
+          ...styles.contentWrapper,
+          paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px'
+        }}>
+          <div style={styles.header}>
+            <h1 style={styles.title}>Saved Searches</h1>
+            <div style={styles.skeletonAddButton} />
+          </div>
+          <div style={styles.searchList}>
+            {[1, 2, 3].map(i => (
+              <div key={i} style={styles.skeletonCard}>
+                <div style={styles.skeletonContent}>
+                  <div style={styles.skeletonTop}>
+                    <div style={styles.skeletonCount} />
+                    <div style={styles.skeletonDot} />
+                  </div>
+                  <div style={styles.skeletonLocation} />
+                  <div style={styles.skeletonPills}>
+                    <div style={styles.skeletonPill} />
+                    <div style={styles.skeletonPill} />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -171,7 +173,7 @@ const styles = {
     overflow: 'auto',
     WebkitOverflowScrolling: 'touch',
     background: '#fff',
-    '-webkit-transform': 'translateZ(0)', // Force GPU acceleration
+    '-webkit-transform': 'translateZ(0)',
   },
 
   contentWrapper: {
