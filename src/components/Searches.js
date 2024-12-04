@@ -250,34 +250,32 @@ const Searches = () => {
                 </div>
 
                 {activeMenu === search.id && (
-                  <div style={styles.menuWrapper}>
-                    <div style={styles.menu} data-menu>
-                      <button 
-                        style={{
-                          ...styles.menuItem,
-                          color: '#ff3b30', // iOS red
-                        }} 
-                        onClick={(e) => handleDeleteClick(search.id, e)}
-                      >
-                        <RiDeleteBinLine style={{ fontSize: '20px', color: '#ff3b30' }} />
-                        <span>Delete</span>
-                      </button>
-                      <button style={styles.menuItem}>
-                        <RiEditBoxLine style={{ fontSize: '20px', color: ACCENT }} />
-                        <span>Edit</span>
-                      </button>
-                      <button 
-                        style={styles.menuItem}
-                        onClick={(e) => handleToggleNotifications(search.id, search.active ? 'enabled' : 'disabled', e)}
-                      >
-                        {search.active ? (
-                          <RiNotificationLine style={{ fontSize: '20px', color: ACCENT }} />
-                        ) : (
-                          <RiNotificationOffLine style={{ fontSize: '20px', color: ACCENT }} />
-                        )}
-                        <span>Notifications {search.active ? 'On' : 'Off'}</span>
-                      </button>
-                    </div>
+                  <div style={styles.menu} data-menu>
+                    <button 
+                      style={{
+                        ...styles.menuItem,
+                        color: '#ff3b30', // iOS red
+                      }} 
+                      onClick={(e) => handleDeleteClick(search.id, e)}
+                    >
+                      <RiDeleteBinLine style={{ fontSize: '20px', color: '#ff3b30' }} />
+                      <span>Delete</span>
+                    </button>
+                    <button style={styles.menuItem}>
+                      <RiEditBoxLine style={{ fontSize: '20px', color: ACCENT }} />
+                      <span>Edit</span>
+                    </button>
+                    <button 
+                      style={styles.menuItem}
+                      onClick={(e) => handleToggleNotifications(search.id, search.active ? 'enabled' : 'disabled', e)}
+                    >
+                      {search.active ? (
+                        <RiNotificationLine style={{ fontSize: '20px', color: ACCENT }} />
+                      ) : (
+                        <RiNotificationOffLine style={{ fontSize: '20px', color: ACCENT }} />
+                      )}
+                      <span>Notifications {search.active ? 'On' : 'Off'}</span>
+                    </button>
                   </div>
                 )}
               </div>
@@ -711,19 +709,6 @@ const styles = {
     ':hover': {
       background: '#ff2222',
     },
-  },
-
-  menuWrapper: {
-    position: 'absolute',
-    right: '16px',
-    top: '50px',
-    zIndex: 100,
-    animation: 'fadeIn 0.15s ease',
-  },
-
-  '@keyframes fadeIn': {
-    from: { opacity: 0 },
-    to: { opacity: 1 }
   },
 };
 
