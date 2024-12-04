@@ -175,21 +175,22 @@ const Searches = ({ setModalState, setModalContent }) => {
     if (!searchToDelete) return;
     
     // Close modal immediately
-    handleCloseModal();
+    setModalState(false);
+    setModalContent(null);
     
     // Store the search for potential restore
     const searchToRestore = searches.find(s => s.id === searchToDelete);
     
     // Optimistically update UI
-    setSearches(searches.map(search => 
+    setSearches(prev => prev.map(search => 
       search.id === searchToDelete 
-        ? { ...search, isDeleting: true } // Add flag for animation
+        ? { ...search, isDeleting: true }
         : search
     ));
 
     // Remove after animation
     setTimeout(() => {
-      setSearches(searches.filter(search => search.id !== searchToDelete));
+      setSearches(prev => prev.filter(search => search.id !== searchToDelete));
     }, 300); // Match animation duration
     
     try {
