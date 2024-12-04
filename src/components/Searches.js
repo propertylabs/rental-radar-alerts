@@ -624,8 +624,6 @@ const styles = {
     padding: '8px',
     zIndex: 100,
     minWidth: '200px',
-    transform: 'scale(0.96)',
-    opacity: 0,
   },
 
   menuItem: {
