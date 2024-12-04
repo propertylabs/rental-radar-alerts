@@ -233,7 +233,7 @@ const styles = {
   searchCard: {
     background: '#fff',
     borderRadius: '20px',
-    padding: '24px',
+    padding: '16px',
     border: '1px solid rgba(46, 63, 50, 0.08)',
     boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
     transition: 'all 0.2s ease',
@@ -281,7 +281,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
-    marginTop: '16px',
+    marginTop: '12px',
   },
 
   locationIcon: {
@@ -300,7 +300,7 @@ const styles = {
     display: 'flex',
     gap: '8px',
     flexWrap: 'wrap',
-    marginTop: '12px',
+    marginTop: '8px',
   },
 
   pill: {
@@ -322,7 +322,7 @@ const styles = {
   lastUpdated: {
     fontSize: '13px',
     color: 'rgba(46, 63, 50, 0.6)',
-    marginTop: '16px',
+    marginTop: '12px',
   },
 
   emptyState: {
@@ -360,7 +360,7 @@ const styles = {
   skeletonCard: {
     background: '#fff',
     borderRadius: '20px',
-    padding: '24px',
+    padding: '16px',
     border: '1px solid rgba(46, 63, 50, 0.08)',
     boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
   },
