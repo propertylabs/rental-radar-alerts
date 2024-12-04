@@ -102,11 +102,11 @@ const Searches = () => {
   }
 
   return (
-    <div style={{
-      ...styles.wrapper,
-      paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px'
-    }}>
-      <div style={styles.container}>
+    <div style={styles.pageContainer}>
+      <div style={{
+        ...styles.contentWrapper,
+        paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px'
+      }}>
         <div style={styles.header}>
           <h1 style={styles.title}>Saved Searches</h1>
           <button style={styles.addButton}>
@@ -162,27 +162,24 @@ const Searches = () => {
 };
 
 const styles = {
-  wrapper: {
-    position: 'fixed',
+  pageContainer: {
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    overflowY: 'auto',
+    overflow: 'auto',
     WebkitOverflowScrolling: 'touch',
     background: '#fff',
-    zIndex: 1,
-    touchAction: 'pan-y',
-    WebkitTapHighlightColor: 'transparent',
+    '-webkit-transform': 'translateZ(0)', // Force GPU acceleration
   },
 
-  container: {
+  contentWrapper: {
     padding: '16px',
     paddingBottom: '80px',
     maxWidth: '800px',
     margin: '0 auto',
-    position: 'relative',
-    zIndex: 1,
+    minHeight: '100%',
   },
 
   header: {
