@@ -73,13 +73,10 @@ const Searches = () => {
     fetchUserSearches();
   }, []);
 
-  // Update the useEffect for click outside handling
+  // Revert the useEffect for click outside handling
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Only close if clicking outside menu and button
-      if (activeMenu && 
-          !event.target.closest('[data-menu]') && 
-          !event.target.closest('[data-more-button]')) {
+      if (activeMenu) {
         setActiveMenu(null);
       }
     };
@@ -90,10 +87,10 @@ const Searches = () => {
     };
   }, [activeMenu]);
 
+  // Revert the handleMoreClick to its simpler form
   const handleMoreClick = (searchId, event) => {
-    event.preventDefault();
     event.stopPropagation();
-    setActiveMenu(searchId === activeMenu ? null : searchId);
+    setActiveMenu(activeMenu === searchId ? null : searchId);
   };
 
   const handleDeleteClick = async (searchId, event) => {
@@ -225,7 +222,6 @@ const Searches = () => {
                   <button 
                     style={styles.moreButton}
                     onClick={(e) => handleMoreClick(search.id, e)}
-                    data-more-button
                   >
                     <RiMoreFill style={{ fontSize: '24px' }} />
                   </button>
@@ -620,17 +616,12 @@ const styles = {
     position: 'absolute',
     right: '16px',
     top: '50px',
-    background: 'rgba(255, 255, 255, 0.98)',
-    backdropFilter: 'blur(20px)',
-    WebkitBackdropFilter: 'blur(20px)',
-    borderRadius: '14px',
-    boxShadow: '0 2px 24px rgba(0, 0, 0, 0.08), 0 0 1px rgba(0, 0, 0, 0.1)',
-    padding: '6px',
+    background: 'white',
+    borderRadius: '12px',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+    padding: '8px',
     zIndex: 100,
     minWidth: '200px',
-    transform: 'scale(0.96)',
-    opacity: 0,
-    animation: 'menuAppear 0.2s cubic-bezier(0.2, 0.85, 0.4, 1.2) forwards',
   },
 
   menuItem: {
@@ -641,26 +632,11 @@ const styles = {
     width: '100%',
     border: 'none',
     background: 'none',
-    borderRadius: '10px',
+    borderRadius: '8px',
     cursor: 'pointer',
-    transition: 'all 0.15s ease',
-    WebkitTapHighlightColor: 'transparent',
-    fontWeight: '500',
-    fontSize: '16px',
-    color: '#000',
+    transition: 'all 0.2s ease',
     ':hover': {
-      background: 'rgba(46, 63, 50, 0.06)',
-    },
-  },
-
-  '@keyframes menuAppear': {
-    '0%': {
-      transform: 'scale(0.96)',
-      opacity: 0,
-    },
-    '100%': {
-      transform: 'scale(1)',
-      opacity: 1,
+      background: 'rgba(46, 63, 50, 0.04)',
     },
   },
 
