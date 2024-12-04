@@ -10,6 +10,24 @@ const SearchNameDisplay = ({ name }) => (
   </div>
 );
 
+const menuStyles = `
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .menu-animation {
+    animation: scaleIn 0.2s ease-out forwards;
+    transform-origin: top right;
+  }
+`;
+
 const Searches = () => {
   const [isStandalone] = useState(() => 
     window.matchMedia('(display-mode: standalone)').matches || 
@@ -225,6 +243,17 @@ const Searches = () => {
     cursor: cooldownButtons.has(searchId) ? 'default' : 'pointer',
   });
 
+  useEffect(() => {
+    // Inject the styles
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = menuStyles;
+    document.head.appendChild(styleSheet);
+
+    return () => {
+      document.head.removeChild(styleSheet);
+    };
+  }, []);
+
   return (
     <div style={styles.pageContainer}>
       <div style={{
@@ -281,7 +310,10 @@ const Searches = () => {
                 </div>
 
                 {activeMenu === search.id && (
-                  <div style={styles.menu} data-menu>
+                  <div 
+                    className="menu-animation"
+                    style={styles.menu}
+                  >
                     <button 
                       style={{
                         ...styles.menuItem,
@@ -655,19 +687,6 @@ const styles = {
     padding: '6px',
     zIndex: 100,
     minWidth: '220px',
-    transformOrigin: 'top right',
-    animation: 'scaleIn 0.2s ease-out',
-  },
-
-  '@keyframes scaleIn': {
-    '0%': {
-      opacity: 0,
-      transform: 'scale(0.8)',
-    },
-    '100%': {
-      opacity: 1,
-      transform: 'scale(1)',
-    },
   },
 
   menuItem: {
