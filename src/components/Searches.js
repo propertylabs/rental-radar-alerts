@@ -122,7 +122,6 @@ const Searches = () => {
 
   const handleToggleNotifications = async (searchId, currentStatus, event) => {
     event.stopPropagation();
-    setActiveMenu(null);
     
     const newStatus = currentStatus === 'enabled' ? 'disabled' : 'enabled';
     const whopUserId = localStorage.getItem('whop_user_id');
@@ -141,6 +140,12 @@ const Searches = () => {
       });
 
       if (response.ok) {
+        const button = event.currentTarget;
+        button.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          button.style.transform = 'scale(1)';
+        }, 100);
+
         setSearches(searches.map(search => 
           search.id === searchId 
             ? {...search, active: newStatus === 'enabled'}
@@ -246,15 +251,15 @@ const Searches = () => {
                 {activeMenu === search.id && (
                   <div style={styles.menu}>
                     <button 
-                      style={styles.menuItem} 
+                      style={{...styles.menuItem, color: '#ff4444'}} 
                       onClick={(e) => handleDeleteClick(search.id, e)}
                     >
-                      <RiDeleteBinLine style={styles.menuIcon} />
-                      <span style={{color: '#ff4444'}}>Delete</span>
+                      <RiDeleteBinLine style={{...styles.menuIcon, color: '#ff4444'}} />
+                      <span>Delete</span>
                     </button>
                     <button style={styles.menuItem}>
                       <RiEditBoxLine style={styles.menuIcon} />
-                      <span>Edit</span>
+                      <span style={{color: ACCENT}}>Edit</span>
                     </button>
                     <button 
                       style={styles.menuItem}
@@ -265,7 +270,9 @@ const Searches = () => {
                       ) : (
                         <RiNotificationOffLine style={styles.menuIcon} />
                       )}
-                      <span>Notifications {search.active ? 'On' : 'Off'}</span>
+                      <span style={{color: ACCENT}}>
+                        Notifications {search.active ? 'On' : 'Off'}
+                      </span>
                     </button>
                   </div>
                 )}
@@ -608,12 +615,17 @@ const styles = {
     position: 'absolute',
     right: '16px',
     top: '50px',
-    background: 'white',
+    background: 'rgba(255, 255, 255, 0.9)',
+    backdropFilter: 'blur(12px)',
+    WebkitBackdropFilter: 'blur(12px)',
     borderRadius: '12px',
-    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+    boxShadow: '0 4px 24px rgba(0, 0, 0, 0.12)',
     padding: '8px',
     zIndex: 100,
     minWidth: '200px',
+    transform: 'scale(0.98)',
+    opacity: 0,
+    animation: 'menuAppear 0.2s ease forwards',
   },
 
   menuItem: {
@@ -629,6 +641,9 @@ const styles = {
     WebkitTapHighlightColor: 'transparent',
     '-webkit-touch-callout': 'none',
     userSelect: 'none',
+    textDecoration: 'none',
+    color: 'inherit',
+    fontWeight: '600',
     ':active': {
       background: 'rgba(46, 63, 50, 0.08)',
     },
@@ -705,6 +720,17 @@ const styles = {
     color: 'white',
     ':hover': {
       background: '#ff2222',
+    },
+  },
+
+  '@keyframes menuAppear': {
+    '0%': {
+      transform: 'scale(0.98)',
+      opacity: 0,
+    },
+    '100%': {
+      transform: 'scale(1)',
+      opacity: 1,
     },
   },
 };
