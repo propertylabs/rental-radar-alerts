@@ -22,6 +22,7 @@ const Searches = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [searchToDelete, setSearchToDelete] = useState(null);
   const [cooldownButtons, setCooldownButtons] = useState(new Set());
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const menuStyles = `
     @keyframes scaleIn {
@@ -127,6 +128,8 @@ const Searches = () => {
     setActiveMenu(null);
     setSearchToDelete(searchId);
     setShowDeleteConfirm(true);
+    setIsModalOpen(true);
+    document.body.style.overflow = 'hidden';
   };
 
   const handleConfirmDelete = async () => {
@@ -148,6 +151,7 @@ const Searches = () => {
     
     setShowDeleteConfirm(false);
     setSearchToDelete(null);
+    handleCloseModal();
   };
 
   
@@ -212,6 +216,13 @@ const Searches = () => {
       ));
       console.error('Error updating notifications:', error);
     }
+  };
+
+  const handleCloseModal = () => {
+    setShowDeleteConfirm(false);
+    setSearchToDelete(null);
+    setIsModalOpen(false);
+    document.body.style.overflow = ''; // Re-enable scrolling
   };
 
   // Loading state UI
@@ -355,7 +366,7 @@ const Searches = () => {
             <div style={styles.modalButtons}>
               <button 
                 style={{...styles.modalButton, ...styles.cancelButton}}
-                onClick={() => setShowDeleteConfirm(false)}
+                onClick={handleCloseModal}
               >
                 Cancel
               </button>
@@ -723,7 +734,11 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 1000,
+    zIndex: 100000, // Much higher than nav bar
+    height: '100vh',
+    width: '100vw',
+    overflow: 'hidden',
+    touchAction: 'none', // Disable touch events
   },
 
   modal: {
