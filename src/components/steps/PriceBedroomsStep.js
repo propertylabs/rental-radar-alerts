@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RiBedLine, RiMoneyPoundCircleLine } from 'react-icons/ri';
+import { RiHotelBedLine, RiMoneyPoundCircleLine } from 'react-icons/ri';
 
 const PriceBedroomsStep = ({ values, onChange, onNext }) => {
   // Destructure or set default values
@@ -211,7 +211,7 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
       {/* Bedrooms Section */}
       <div style={styles.section}>
         <div style={styles.sectionHeader}>
-          <RiBedLine style={styles.sectionIcon} />
+          <RiHotelBedLine style={styles.sectionIcon} />
           <h4 style={styles.sectionTitle}>Bedrooms</h4>
         </div>
         
