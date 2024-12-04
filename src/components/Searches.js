@@ -624,7 +624,8 @@ const styles = {
     padding: '8px',
     zIndex: 100,
     minWidth: '200px',
-    animation: 'menuAppear 0.2s cubic-bezier(0.2, 0.85, 0.4, 1.2) forwards',
+    willChange: 'transform, opacity',
+    animation: 'menuAppear 0.25s cubic-bezier(0.2, 0.85, 0.4, 1.2)',
   },
 
   menuItem: {
@@ -713,11 +714,11 @@ const styles = {
   },
 
   '@keyframes menuAppear': {
-    '0%': {
-      transform: 'scale(0.96)',
+    'from': {
+      transform: 'scale(0.95)',
       opacity: 0,
     },
-    '100%': {
+    'to': {
       transform: 'scale(1)',
       opacity: 1,
     },
