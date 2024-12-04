@@ -40,15 +40,15 @@ const Searches = () => {
       if (response.ok) {
         const result = await response.json();
         if (Array.isArray(result)) {
-          // Transform the data to match our UI structure
+          // Updated transformation to use search_name from PostgreSQL
           const formattedSearches = result.map(search => ({
             id: search.id,
+            name: search.search_name,
             location: search.postcodes.join(', '),
             price: search.criteria.minPrice && search.criteria.maxPrice 
               ? `£${search.criteria.minPrice}-${search.criteria.maxPrice}`
               : 'Any price',
             type: search.criteria.propertyTypes[0] || 'Any type',
-            propertyCount: search.property_count || 0,
             lastAlert: search.last_alert || 'No alerts yet',
             active: search.notifications === 'enabled'
           }));
