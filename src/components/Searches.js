@@ -10,24 +10,6 @@ const SearchNameDisplay = ({ name }) => (
   </div>
 );
 
-const menuStyles = `
-  @keyframes scaleIn {
-    from {
-      opacity: 0;
-      transform: scale(0.8);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  .menu-animation {
-    animation: scaleIn 0.2s ease-out forwards;
-    transform-origin: top right;
-  }
-`;
-
 const Searches = () => {
   const [isStandalone] = useState(() => 
     window.matchMedia('(display-mode: standalone)').matches || 
@@ -40,6 +22,25 @@ const Searches = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [searchToDelete, setSearchToDelete] = useState(null);
   const [cooldownButtons, setCooldownButtons] = useState(new Set());
+
+  // Move menuStyles inside the component
+  const menuStyles = `
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .menu-animation {
+      animation: scaleIn 0.2s ease-out forwards;
+      transform-origin: top right;
+    }
+  `;
 
   // Fetch user's saved searches
   const fetchUserSearches = async () => {
@@ -244,7 +245,6 @@ const Searches = () => {
   });
 
   useEffect(() => {
-    // Inject the styles
     const styleSheet = document.createElement("style");
     styleSheet.innerText = menuStyles;
     document.head.appendChild(styleSheet);
@@ -252,7 +252,7 @@ const Searches = () => {
     return () => {
       document.head.removeChild(styleSheet);
     };
-  }, []);
+  }, [menuStyles]);
 
   return (
     <div style={styles.pageContainer}>
