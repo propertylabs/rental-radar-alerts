@@ -324,7 +324,9 @@ const Searches = ({ onOpenSearchModal }) => {
     <div style={styles.pageContainer}>
       <div style={{
         ...styles.contentWrapper,
-        paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px'
+        paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px',
+        maxHeight: searches.length === 0 ? '100%' : 'auto',
+        minHeight: searches.length === 0 ? '100%' : 'auto',
       }}>
         <div style={styles.header}>
           <h1 style={styles.title}>Saved Searches</h1>
@@ -593,34 +595,36 @@ const styles = {
   },
 
   emptyState: {
+    background: '#fff',
+    borderRadius: '20px',
+    padding: '32px 24px',
+    border: '1px solid rgba(46, 63, 50, 0.08)',
+    boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '32px',
-    borderRadius: '20px',
-    background: 'rgba(255, 255, 255, 0.8)',
-    backdropFilter: 'blur(20px)',
-    WebkitBackdropFilter: 'blur(20px)',
-    border: '1px solid rgba(0, 0, 0, 0.06)',
+    gap: '8px',
+    height: '160px',
   },
 
   emptyStateIcon: {
-    fontSize: '48px',
-    color: '#666',
+    fontSize: '32px',
+    color: 'rgba(46, 63, 50, 0.2)',
+    marginBottom: '8px',
   },
 
   emptyStateText: {
-    fontSize: '24px',
-    fontWeight: '700',
-    color: '#000',
+    fontSize: '18px',
+    fontWeight: '600',
+    color: ACCENT,
     margin: 0,
   },
 
   emptyStateSubtext: {
-    fontSize: '16px',
+    fontSize: '15px',
     color: '#666',
-    textAlign: 'center',
+    margin: 0,
   },
 
   // Skeleton styles with matching theme
