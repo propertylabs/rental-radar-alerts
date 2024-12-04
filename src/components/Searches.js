@@ -76,7 +76,7 @@ const Searches = () => {
   // Add this useEffect near the other useEffects
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (activeMenu) {
+      if (activeMenu && !event.target.closest('[data-menu]')) {
         setActiveMenu(null);
       }
     };
@@ -88,8 +88,9 @@ const Searches = () => {
   }, [activeMenu]);
 
   const handleMoreClick = (searchId, event) => {
+    event.preventDefault();
     event.stopPropagation();
-    setActiveMenu(activeMenu === searchId ? null : searchId);
+    setActiveMenu(searchId === activeMenu ? null : searchId);
   };
 
   const handleDeleteClick = async (searchId, event) => {
@@ -221,6 +222,7 @@ const Searches = () => {
                   <button 
                     style={styles.moreButton}
                     onClick={(e) => handleMoreClick(search.id, e)}
+                    type="button"
                   >
                     <RiMoreFill style={{ fontSize: '24px' }} />
                   </button>
@@ -249,7 +251,7 @@ const Searches = () => {
                 </div>
 
                 {activeMenu === search.id && (
-                  <div style={styles.menu}>
+                  <div style={styles.menu} data-menu>
                     <button 
                       style={{...styles.menuItem, color: '#ff4444'}} 
                       onClick={(e) => handleDeleteClick(search.id, e)}
