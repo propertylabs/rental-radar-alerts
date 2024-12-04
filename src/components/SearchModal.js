@@ -25,10 +25,11 @@ const SearchModal = ({ isOpen, onClose }) => {
       WebkitBackdropFilter: 'blur(8px)',
       zIndex: 100000,
       display: 'flex',
-      alignItems: 'flex-end', // Align to bottom
+      alignItems: 'flex-end',
       transition: 'opacity 0.3s ease',
       opacity: isOpen ? 1 : 0,
       pointerEvents: isOpen ? 'auto' : 'none',
+      touchAction: 'none',
     },
 
     modal: {
@@ -41,6 +42,8 @@ const SearchModal = ({ isOpen, onClose }) => {
       padding: '24px',
       transform: `translateY(${isOpen ? '0' : '100%'})`,
       transition: 'transform 0.3s ease',
+      overflowY: 'hidden',
+      touchAction: 'none',
     },
 
     header: {

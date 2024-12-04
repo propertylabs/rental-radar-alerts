@@ -605,7 +605,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     gap: '8px',
-    height: '160px',
+    height: '142px',
   },
 
   emptyStateIcon: {
