@@ -10,9 +10,11 @@ export default async function handler(req, res) {
     const { userId, searchId, notifications } = req.body;
 
     try {
+      console.log('Full request body:', req.body);
+
       // Check if the search belongs to the user
       const searchOwnerResult = await pool.query(
-        'SELECT user_id FROM searches WHERE id = $1',
+        'SELECT user_id FROM user_searches WHERE id = $1',
         [searchId]
       );
 
@@ -24,9 +26,9 @@ export default async function handler(req, res) {
         return res.status(403).json({ error: 'Unauthorized to update this search' });
       }
 
-      // Update the notifications status
+      // Update the notifications status in the search_criteria table
       await pool.query(
-        'UPDATE searches SET notifications = $1 WHERE id = $2',
+        'UPDATE search_criteria SET notifications = $1 WHERE search_id = $2',
         [notifications, searchId]
       );
 

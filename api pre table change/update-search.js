@@ -10,14 +10,18 @@ export default async function handler(req, res) {
     const { userId, searchId, searchName, criteria, postcodes } = req.body;
 
     try {
-      // Ensure arrays are properly formatted
+      // Ensure that propertyTypes, mustHaves, and postcodes are defined and arrays
       const propertyTypes = criteria.propertyTypes && Array.isArray(criteria.propertyTypes) ? criteria.propertyTypes : [];
       const mustHaves = criteria.mustHaves && Array.isArray(criteria.mustHaves) ? criteria.mustHaves : [];
       const postcodesArray = postcodes && Array.isArray(postcodes) ? postcodes : [];
 
+      console.log('Full request body:', req.body);
+      console.log('Criteria received on backend:', criteria);
+      console.log('Postcodes received on backend:', postcodesArray);
+
       // Check if the search belongs to the user
       const searchOwnerResult = await pool.query(
-        'SELECT user_id FROM searches WHERE id = $1',
+        'SELECT user_id FROM user_searches WHERE id = $1',
         [searchId]
       );
 
@@ -29,27 +33,31 @@ export default async function handler(req, res) {
         return res.status(403).json({ error: 'Unauthorized to update this search' });
       }
 
-      // Update all fields in the unified searches table
+      // Update the search name in user_searches table
       await pool.query(
-        `UPDATE searches SET
-          search_name = $1,
-          postcodes = $2,
+        'UPDATE user_searches SET search_name = $1 WHERE id = $2',
+        [searchName, searchId]
+      );
+
+      // Update the search criteria in search_criteria table
+      await pool.query(
+        `UPDATE search_criteria SET
+          min_bedrooms = $1,
+          max_bedrooms = $2,
           min_price = $3,
           max_price = $4,
-          min_bedrooms = $5,
-          max_bedrooms = $6,
-          property_types = $7,
-          must_haves = $8
-        WHERE id = $9`,
+          property_types = $5::text[],
+          must_haves = $6::text[],
+          postcodes = $7::text[]
+        WHERE search_id = $8`,
         [
-          searchName,
-          postcodesArray,
-          criteria.minPrice,
-          criteria.maxPrice,
           criteria.minBedrooms,
           criteria.maxBedrooms,
+          criteria.minPrice,
+          criteria.maxPrice,
           propertyTypes,
           mustHaves,
+          postcodesArray,
           searchId
         ]
       );

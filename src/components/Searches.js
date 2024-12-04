@@ -10,7 +10,7 @@ const SearchNameDisplay = ({ name }) => (
   </div>
 );
 
-const Searches = ({ setModalState, setModalContent }) => {
+const Searches = ({ onOpenSearchModal }) => {
   const [isStandalone] = useState(() => 
     window.matchMedia('(display-mode: standalone)').matches || 
     window.navigator.standalone || 
@@ -347,7 +347,10 @@ const Searches = ({ setModalState, setModalContent }) => {
       }}>
         <div style={styles.header}>
           <h1 style={styles.title}>Saved Searches</h1>
-          <button style={styles.addButton}>
+          <button 
+            style={styles.addButton}
+            onClick={onOpenSearchModal}
+          >
             <RiAddLine style={styles.addButtonIcon} />
           </button>
         </div>

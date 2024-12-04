@@ -9,10 +9,12 @@ import Settings from './components/Settings.js';
 import Navigation from './components/Navigation.js';
 import NotSub from './components/NotSub.js';
 import ModalBackdrop from './components/ModalBackdrop.js';
+import SearchModal from './components/SearchModal';
 
 const DashboardLayout = ({ children }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   
   return (
     <div>
@@ -20,10 +22,15 @@ const DashboardLayout = ({ children }) => {
       <div className="content">
         {React.cloneElement(children, { 
           setModalState: setIsModalOpen,
-          setModalContent: setModalContent 
+          setModalContent: setModalContent,
+          onOpenSearchModal: () => setIsSearchModalOpen(true)
         })}
       </div>
       {isModalOpen && <ModalBackdrop>{modalContent}</ModalBackdrop>}
+      <SearchModal 
+        isOpen={isSearchModalOpen}
+        onClose={() => setIsSearchModalOpen(false)}
+      />
     </div>
   );
 };

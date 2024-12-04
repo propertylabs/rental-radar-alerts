@@ -10,21 +10,26 @@ export default async function handler(req, res) {
     const { userId } = req.query;
 
     try {
+      // Fetch user searches along with their criteria and notification status
       const result = await pool.query(
         `SELECT 
-          id,
-          search_name,
-          postcodes,
-          min_price,
-          max_price,
-          min_bedrooms,
-          max_bedrooms,
-          property_types,
-          must_haves,
-          notifications,
-          last_alert
-        FROM searches 
-        WHERE user_id = $1`,
+          us.id,
+          us.search_name,
+          us.user_id,
+          sc.min_bedrooms,
+          sc.max_bedrooms,
+          sc.min_price,
+          sc.max_price,
+          sc.property_types,
+          sc.must_haves,
+          sc.postcodes,
+          sc.notifications -- Include the notifications column
+        FROM 
+          user_searches us
+        JOIN 
+          search_criteria sc ON us.id = sc.search_id
+        WHERE 
+          us.user_id = $1`,
         [userId]
       );
 
@@ -32,17 +37,17 @@ export default async function handler(req, res) {
         return res.status(404).json({ error: 'No searches found for the user' });
       }
 
-      // Format the response to match the frontend expectations
+      // Format the response to match the old API's structure
       const searches = result.rows.map(row => ({
         id: row.id,
         searchName: row.search_name,
-        postcodes: row.postcodes,
-        notifications: row.notifications,
+        postcodes: row.postcodes, // Ensure this is already in array format
+        notifications: row.notifications, // Include the notifications status
         criteria: {
-          minPrice: row.min_price,
-          maxPrice: row.max_price,
           minBedrooms: row.min_bedrooms,
           maxBedrooms: row.max_bedrooms,
+          minPrice: row.min_price,
+          maxPrice: row.max_price,
           propertyTypes: row.property_types,
           mustHaves: row.must_haves,
         }
