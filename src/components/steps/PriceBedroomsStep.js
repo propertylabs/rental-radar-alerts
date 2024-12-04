@@ -5,6 +5,7 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
   const [activeDragHandle, setActiveDragHandle] = useState(null);
   const [sliderWidth, setSliderWidth] = useState(0);
   const sliderRef = useRef(null);
+  const bedroomSliderRef = useRef(null);
 
   // Price range configuration
   const MAX_PRICE = 25000;
@@ -40,6 +41,7 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
   // Format price for display
   const formatPrice = (price) => {
     if (price === null || price === 0) return 'No min';
+    if (price >= MAX_PRICE) return 'No max';
     if (price >= 1000) {
       return `£${(price/1000).toFixed(1)}k`;
     }
@@ -53,7 +55,9 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
   const handleDrag = useCallback((event) => {
     if (!activeDragHandle || !sliderRef.current) return;
 
-    const rect = sliderRef.current.getBoundingClientRect();
+    const isBedroomHandle = activeDragHandle.includes('Bed');
+    const currentRef = isBedroomHandle ? bedroomSliderRef.current : sliderRef.current;
+    const rect = currentRef.getBoundingClientRect();
     const x = event.type.includes('touch') 
       ? event.touches[0].clientX 
       : event.clientX;
@@ -61,21 +65,39 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
     let percentage = ((x - rect.left) / rect.width) * 100;
     percentage = Math.max(0, Math.min(100, percentage));
     
-    const newPrice = positionToPrice(percentage);
-    
-    if (activeDragHandle === 'min') {
-      if (newPrice < values.maxPrice) {
-        onChange({
-          ...values,
-          minPrice: newPrice
-        });
+    if (isBedroomHandle) {
+      const newValue = positionToBedroomValue(percentage);
+      if (activeDragHandle === 'minBed') {
+        if (newValue < values.maxBedrooms) {
+          onChange({
+            ...values,
+            minBedrooms: newValue
+          });
+        }
+      } else {
+        if (newValue > values.minBedrooms) {
+          onChange({
+            ...values,
+            maxBedrooms: newValue
+          });
+        }
       }
     } else {
-      if (newPrice > values.minPrice) {
-        onChange({
-          ...values,
-          maxPrice: newPrice
-        });
+      const newPrice = positionToPrice(percentage);
+      if (activeDragHandle === 'min') {
+        if (newPrice < values.maxPrice) {
+          onChange({
+            ...values,
+            minPrice: newPrice
+          });
+        }
+      } else {
+        if (newPrice > values.minPrice) {
+          onChange({
+            ...values,
+            maxPrice: newPrice === MAX_PRICE ? MAX_PRICE : newPrice
+          });
+        }
       }
     }
   }, [activeDragHandle, values, onChange]);
@@ -136,6 +158,29 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
       minBedrooms: newRange[0],
       maxBedrooms: newRange[1]
     });
+  };
+
+  // Add bedroom configuration
+  const BEDROOM_TYPES = ['Studio', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10+'];
+
+  // Convert bedroom value to display text
+  const formatBedrooms = (value) => {
+    if (value === 0) return 'Studio';
+    if (value >= 10) return '10+';
+    return value.toString();
+  };
+
+  // Convert bedroom position to value (0 = Studio, 10 = 10+)
+  const positionToBedroomValue = (position) => {
+    const value = Math.round((position / 100) * 10);
+    return Math.max(0, Math.min(10, value));
+  };
+
+  // Convert bedroom value to position
+  const bedroomValueToPosition = (value) => {
+    if (value === 0) return 0; // Studio
+    if (value >= 10) return 100; // 10+
+    return (value / 10) * 100;
   };
 
   const styles = {
@@ -329,21 +374,36 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
         </div>
         
         {/* Bedrooms Range Slider Implementation */}
-        <div style={styles.rangeContainer}>
+        <div style={styles.rangeContainer} ref={bedroomSliderRef}>
           <div style={styles.rangeTrack} />
           <div 
             style={{
               ...styles.rangeProgress,
-              left: `${((bedroomRange[0] - 1) / 4) * 100}%`,
-              width: `${((bedroomRange[1] - bedroomRange[0]) / 4) * 100}%`
+              left: `${bedroomValueToPosition(values.minBedrooms)}%`,
+              width: `${bedroomValueToPosition(values.maxBedrooms) - bedroomValueToPosition(values.minBedrooms)}%`
             }} 
           />
-          {/* Range handles */}
+          <div
+            style={{
+              ...styles.rangeHandle(activeDragHandle === 'minBed'),
+              left: `${bedroomValueToPosition(values.minBedrooms)}%`,
+            }}
+            onMouseDown={() => handleDragStart('minBed')}
+            onTouchStart={() => handleDragStart('minBed')}
+          />
+          <div
+            style={{
+              ...styles.rangeHandle(activeDragHandle === 'maxBed'),
+              left: `${bedroomValueToPosition(values.maxBedrooms)}%`,
+            }}
+            onMouseDown={() => handleDragStart('maxBed')}
+            onTouchStart={() => handleDragStart('maxBed')}
+          />
         </div>
         
         <div style={styles.valueDisplay}>
-          <span style={styles.value}>{bedroomRange[0]} bed</span>
-          <span style={styles.value}>{bedroomRange[1]} bed</span>
+          <span style={styles.value}>{formatBedrooms(values.minBedrooms)}</span>
+          <span style={styles.value}>{formatBedrooms(values.maxBedrooms)}</span>
         </div>
       </div>
 
