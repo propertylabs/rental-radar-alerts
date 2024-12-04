@@ -702,6 +702,9 @@ const styles = {
     fontWeight: '510',
     fontSize: '16px',
     WebkitTapHighlightColor: 'transparent',
+    color: 'inherit',
+    textDecoration: 'none',
+    WebkitAppearance: 'none',
     ':active': {
       background: 'rgba(46, 63, 50, 0.06)',
     },
