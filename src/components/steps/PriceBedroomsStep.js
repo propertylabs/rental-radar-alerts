@@ -1,7 +1,111 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { RiHotelBedLine, RiMoneyPoundCircleLine } from 'react-icons/ri';
 
 const PriceBedroomsStep = ({ values, onChange, onNext }) => {
+  const [activeDragHandle, setActiveDragHandle] = useState(null);
+  const [sliderWidth, setSliderWidth] = useState(0);
+  const sliderRef = useRef(null);
+
+  // Price range configuration
+  const MAX_PRICE = 25000;
+  const TRANSITION_POINT = 5000; // Where the scale changes
+  const TRANSITION_PERCENTAGE = 0.75; // 75% of slider for 0-5000
+
+  // Convert price to slider position (non-linear)
+  const priceToPosition = (price) => {
+    if (price === null) return 0;
+    if (price <= TRANSITION_POINT) {
+      return (price / TRANSITION_POINT) * TRANSITION_PERCENTAGE * 100;
+    }
+    const remainingPercentage = 100 - (TRANSITION_PERCENTAGE * 100);
+    const priceAboveTransition = price - TRANSITION_POINT;
+    const maxPriceAboveTransition = MAX_PRICE - TRANSITION_POINT;
+    return (TRANSITION_PERCENTAGE * 100) + 
+           (priceAboveTransition / maxPriceAboveTransition) * remainingPercentage;
+  };
+
+  // Convert slider position to price (non-linear)
+  const positionToPrice = (position) => {
+    const percentage = position / 100;
+    const transitionPosition = TRANSITION_PERCENTAGE;
+    
+    if (percentage <= transitionPosition) {
+      return Math.round((percentage / transitionPosition) * TRANSITION_POINT);
+    } else {
+      const remainingPercentage = (percentage - transitionPosition) / (1 - transitionPosition);
+      return Math.round(TRANSITION_POINT + (remainingPercentage * (MAX_PRICE - TRANSITION_POINT)));
+    }
+  };
+
+  // Format price for display
+  const formatPrice = (price) => {
+    if (price === null || price === 0) return 'No min';
+    if (price >= 1000) {
+      return `£${(price/1000).toFixed(1)}k`;
+    }
+    return `£${price}`;
+  };
+
+  const handleDragStart = (handle) => {
+    setActiveDragHandle(handle);
+  };
+
+  const handleDrag = useCallback((event) => {
+    if (!activeDragHandle || !sliderRef.current) return;
+
+    const rect = sliderRef.current.getBoundingClientRect();
+    const x = event.type.includes('touch') 
+      ? event.touches[0].clientX 
+      : event.clientX;
+    
+    let percentage = ((x - rect.left) / rect.width) * 100;
+    percentage = Math.max(0, Math.min(100, percentage));
+    
+    const newPrice = positionToPrice(percentage);
+    
+    if (activeDragHandle === 'min') {
+      if (newPrice < values.maxPrice) {
+        onChange({
+          ...values,
+          minPrice: newPrice
+        });
+      }
+    } else {
+      if (newPrice > values.minPrice) {
+        onChange({
+          ...values,
+          maxPrice: newPrice
+        });
+      }
+    }
+  }, [activeDragHandle, values, onChange]);
+
+  const handleDragEnd = () => {
+    setActiveDragHandle(null);
+  };
+
+  useEffect(() => {
+    if (activeDragHandle) {
+      window.addEventListener('mousemove', handleDrag);
+      window.addEventListener('mouseup', handleDragEnd);
+      window.addEventListener('touchmove', handleDrag);
+      window.addEventListener('touchend', handleDragEnd);
+
+      return () => {
+        window.removeEventListener('mousemove', handleDrag);
+        window.removeEventListener('mouseup', handleDragEnd);
+        window.removeEventListener('touchmove', handleDrag);
+        window.removeEventListener('touchend', handleDragEnd);
+      };
+    }
+  }, [activeDragHandle, handleDrag]);
+
+  useEffect(() => {
+    if (sliderRef.current) {
+      setSliderWidth(sliderRef.current.offsetWidth);
+    }
+  }, []);
+
   // Destructure or set default values
   const {
     minBedrooms = 1,
@@ -13,14 +117,6 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
   const [priceRange, setPriceRange] = useState([minPrice, maxPrice]);
   const [bedroomRange, setBedroomRange] = useState([minBedrooms, maxBedrooms]);
   const [isDragging, setIsDragging] = useState(false);
-
-  // Format price for display
-  const formatPrice = (price) => {
-    if (price >= 1000) {
-      return `£${(price/1000).toFixed(1)}k`;
-    }
-    return `£${price}`;
-  };
 
   // Handle price range change
   const handlePriceChange = (newRange) => {
@@ -137,8 +233,10 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
         ? '0 2px 12px rgba(46, 63, 50, 0.2)' 
         : '0 2px 8px rgba(46, 63, 50, 0.15)',
       cursor: 'pointer',
-      transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+      transition: active ? 'none' : 'transform 0.2s ease, box-shadow 0.2s ease',
       border: '2px solid #2E3F32',
+      zIndex: active ? 2 : 1,
+      touchAction: 'none',
     }),
 
     valueDisplay: {
@@ -190,21 +288,36 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
         </div>
         
         {/* Price Range Slider Implementation */}
-        <div style={styles.rangeContainer}>
+        <div style={styles.rangeContainer} ref={sliderRef}>
           <div style={styles.rangeTrack} />
           <div 
             style={{
               ...styles.rangeProgress,
-              left: `${(priceRange[0] / 3000) * 100}%`,
-              width: `${((priceRange[1] - priceRange[0]) / 3000) * 100}%`
+              left: `${priceToPosition(values.minPrice)}%`,
+              width: `${priceToPosition(values.maxPrice) - priceToPosition(values.minPrice)}%`
             }} 
           />
-          {/* Range handles */}
+          <div
+            style={{
+              ...styles.rangeHandle(activeDragHandle === 'min'),
+              left: `${priceToPosition(values.minPrice)}%`,
+            }}
+            onMouseDown={() => handleDragStart('min')}
+            onTouchStart={() => handleDragStart('min')}
+          />
+          <div
+            style={{
+              ...styles.rangeHandle(activeDragHandle === 'max'),
+              left: `${priceToPosition(values.maxPrice)}%`,
+            }}
+            onMouseDown={() => handleDragStart('max')}
+            onTouchStart={() => handleDragStart('max')}
+          />
         </div>
         
         <div style={styles.valueDisplay}>
-          <span style={styles.value}>{formatPrice(priceRange[0])}</span>
-          <span style={styles.value}>{formatPrice(priceRange[1])}</span>
+          <span style={styles.value}>{formatPrice(values.minPrice)}</span>
+          <span style={styles.value}>{formatPrice(values.maxPrice)}</span>
         </div>
       </div>
 
