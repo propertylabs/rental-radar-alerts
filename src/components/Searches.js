@@ -624,6 +624,7 @@ const styles = {
     padding: '8px',
     zIndex: 100,
     minWidth: '200px',
+    animation: 'menuAppear 0.2s cubic-bezier(0.2, 0.85, 0.4, 1.2) forwards',
   },
 
   menuItem: {
