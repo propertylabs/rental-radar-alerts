@@ -251,28 +251,29 @@ const Searches = () => {
                 {activeMenu === search.id && (
                   <div style={styles.menu} data-menu>
                     <button 
-                      style={{...styles.menuItem, color: '#ff4444'}} 
+                      style={{
+                        ...styles.menuItem,
+                        color: '#ff3b30', // iOS red
+                      }} 
                       onClick={(e) => handleDeleteClick(search.id, e)}
                     >
-                      <RiDeleteBinLine style={{...styles.menuIcon, color: '#ff4444'}} />
+                      <RiDeleteBinLine style={{ fontSize: '20px', color: '#ff3b30' }} />
                       <span>Delete</span>
                     </button>
                     <button style={styles.menuItem}>
-                      <RiEditBoxLine style={styles.menuIcon} />
-                      <span style={{color: ACCENT}}>Edit</span>
+                      <RiEditBoxLine style={{ fontSize: '20px', color: ACCENT }} />
+                      <span>Edit</span>
                     </button>
                     <button 
                       style={styles.menuItem}
                       onClick={(e) => handleToggleNotifications(search.id, search.active ? 'enabled' : 'disabled', e)}
                     >
                       {search.active ? (
-                        <RiNotificationLine style={styles.menuIcon} />
+                        <RiNotificationLine style={{ fontSize: '20px', color: ACCENT }} />
                       ) : (
-                        <RiNotificationOffLine style={styles.menuIcon} />
+                        <RiNotificationOffLine style={{ fontSize: '20px', color: ACCENT }} />
                       )}
-                      <span style={{color: ACCENT}}>
-                        Notifications {search.active ? 'On' : 'Off'}
-                      </span>
+                      <span>Notifications {search.active ? 'On' : 'Off'}</span>
                     </button>
                   </div>
                 )}
@@ -615,12 +616,17 @@ const styles = {
     position: 'absolute',
     right: '16px',
     top: '50px',
-    background: 'white',
-    borderRadius: '12px',
-    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
-    padding: '8px',
+    background: 'rgba(255, 255, 255, 0.98)',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
+    borderRadius: '14px',
+    boxShadow: '0 2px 24px rgba(0, 0, 0, 0.08), 0 0 1px rgba(0, 0, 0, 0.1)',
+    padding: '6px',
     zIndex: 100,
     minWidth: '200px',
+    transform: 'scale(0.96)',
+    opacity: 0,
+    animation: 'menuAppear 0.2s cubic-bezier(0.2, 0.85, 0.4, 1.2) forwards',
   },
 
   menuItem: {
@@ -631,17 +637,28 @@ const styles = {
     width: '100%',
     border: 'none',
     background: 'none',
-    borderRadius: '8px',
+    borderRadius: '10px',
     cursor: 'pointer',
-    transition: 'all 0.2s ease',
-    ':hover': {
-      background: 'rgba(46, 63, 50, 0.04)',
+    transition: 'all 0.15s ease',
+    WebkitTapHighlightColor: 'transparent',
+    fontWeight: '500',
+    fontSize: '16px',
+    color: '#000',
+    ':active': {
+      background: 'rgba(46, 63, 50, 0.06)',
+      transform: 'scale(0.98)',
     },
   },
 
-  menuIcon: {
-    fontSize: '20px',
-    color: ACCENT,
+  '@keyframes menuAppear': {
+    '0%': {
+      transform: 'scale(0.96)',
+      opacity: 0,
+    },
+    '100%': {
+      transform: 'scale(1)',
+      opacity: 1,
+    },
   },
 
   modalBackdrop: {
@@ -710,17 +727,6 @@ const styles = {
     color: 'white',
     ':hover': {
       background: '#ff2222',
-    },
-  },
-
-  '@keyframes menuAppear': {
-    '0%': {
-      transform: 'scale(0.98)',
-      opacity: 0,
-    },
-    '100%': {
-      transform: 'scale(1)',
-      opacity: 1,
     },
   },
 };
