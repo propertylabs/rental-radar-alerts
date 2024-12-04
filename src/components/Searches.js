@@ -23,6 +23,8 @@ const Searches = ({ onOpenSearchModal }) => {
   const [searchToDelete, setSearchToDelete] = useState(null);
   const [cooldownButtons, setCooldownButtons] = useState(new Set());
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalState, setModalState] = useState(false);
 
   const menuStyles = `
     @keyframes scaleIn {
@@ -139,13 +141,38 @@ const Searches = ({ onOpenSearchModal }) => {
   };
 
   const handleDeleteClick = (searchId, event) => {
-    console.log('1. Delete clicked for searchId:', searchId);
     event.stopPropagation();
     setActiveMenu(null);
     setSearchToDelete(searchId);
     document.body.style.overflow = 'hidden';
     
-    setShowDeleteConfirm(true);
+    // Create modal content for delete confirmation
+    const modalContent = (
+      <div style={styles.modal}>
+        <h3 style={styles.modalTitle}>Delete Search?</h3>
+        <p style={styles.modalText}>Are you sure you want to delete this search?</p>
+        <div style={styles.modalButtons}>
+          <button 
+            style={{...styles.modalButton, ...styles.cancelButton}}
+            onClick={() => {
+              handleCloseModal();
+              document.body.style.overflow = '';
+            }}
+          >
+            Cancel
+          </button>
+          <button 
+            style={{...styles.modalButton, ...styles.deleteButton}}
+            onClick={() => handleConfirmDelete(searchId)}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    );
+    
+    setModalContent(modalContent);
+    setModalState(true);
   };
 
   const handleConfirmDelete = async (searchId) => {

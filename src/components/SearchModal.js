@@ -22,7 +22,7 @@ const SearchModal = ({ isOpen, onClose }) => {
     modal: {
       position: 'relative',
       width: '100%',
-      height: 'calc(100dvh - env(safe-area-inset-top) - 16px)',
+      height: 'calc(100dvh - env(safe-area-inset-top) - 100px)',
       background: 'white',
       borderTopLeftRadius: '20px',
       borderTopRightRadius: '20px',
