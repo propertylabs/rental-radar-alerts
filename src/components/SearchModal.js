@@ -153,8 +153,27 @@ const SearchModal = ({ isOpen, onClose, whopUserId }) => {
     }
   };
 
+  const handleCloseButton = () => {
+    onClose();
+    setStep(1);
+    setSearchCriteria({
+      propertyTypes: [],
+      minBedrooms: 1,
+      maxBedrooms: 5,
+      minPrice: 0,
+      maxPrice: 3000,
+      postcodes: []
+    });
+  };
+
+  const handleBackdropClose = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div style={styles.backdrop} onClick={onClose}>
+    <div style={styles.backdrop} onClick={handleBackdropClose}>
       <div 
         style={styles.modal} 
         onClick={(e) => e.stopPropagation()}
@@ -172,7 +191,7 @@ const SearchModal = ({ isOpen, onClose, whopUserId }) => {
               <h2 style={styles.title}>New Search</h2>
             </div>
             <div style={styles.headerRight}>
-              <button style={styles.closeButton} onClick={onClose}>×</button>
+              <button style={styles.closeButton} onClick={handleCloseButton}>×</button>
             </div>
           </div>
         </div>

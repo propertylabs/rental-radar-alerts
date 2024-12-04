@@ -183,6 +183,9 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
     return (value / 10) * 100;
   };
 
+  // Add check for Room type
+  const isRoomSelected = values.propertyTypes?.includes('Room');
+
   const styles = {
     container: {
       flex: 1,
@@ -290,6 +293,26 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
       marginTop: '12px',
     },
 
+    valueContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-start',  // Left value
+    },
+
+    valueContainerRight: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-end',  // Right value
+    },
+
+    valueLabel: {
+      fontSize: '13px',
+      color: '#999',
+      marginBottom: '4px',
+      fontWeight: '500',
+      letterSpacing: '-0.2px',
+    },
+
     value: {
       fontSize: '15px',
       fontWeight: '600',
@@ -313,6 +336,31 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
       transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
       letterSpacing: '-0.2px',
       boxShadow: '0 4px 12px rgba(46, 63, 50, 0.2)',
+    },
+
+    sectionDisabled: {
+      background: 'rgba(46, 63, 50, 0.02)',
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      borderRadius: '24px',
+      padding: '24px',
+      border: '1px solid rgba(46, 63, 50, 0.08)',
+      opacity: 0.5,
+      pointerEvents: 'none',
+      position: 'relative',
+    },
+
+    disabledMessage: {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      color: '#666',
+      fontSize: '15px',
+      fontWeight: '500',
+      textAlign: 'center',
+      width: '100%',
+      padding: '0 20px',
     },
   };
 
@@ -361,49 +409,69 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
         </div>
         
         <div style={styles.valueDisplay}>
-          <span style={styles.value}>{formatPrice(values.minPrice)}</span>
-          <span style={styles.value}>{formatPrice(values.maxPrice)}</span>
+          <div style={styles.valueContainer}>
+            <span style={styles.valueLabel}>min</span>
+            <span style={styles.value}>{formatPrice(values.minPrice)}</span>
+          </div>
+          <div style={styles.valueContainerRight}>
+            <span style={styles.valueLabel}>max</span>
+            <span style={styles.value}>{formatPrice(values.maxPrice)}</span>
+          </div>
         </div>
       </div>
 
       {/* Bedrooms Section */}
-      <div style={styles.section}>
+      <div style={isRoomSelected ? styles.sectionDisabled : styles.section}>
         <div style={styles.sectionHeader}>
           <RiHotelBedLine style={styles.sectionIcon} />
           <h4 style={styles.sectionTitle}>Bedrooms</h4>
         </div>
         
-        {/* Bedrooms Range Slider Implementation */}
-        <div style={styles.rangeContainer} ref={bedroomSliderRef}>
-          <div style={styles.rangeTrack} />
-          <div 
-            style={{
-              ...styles.rangeProgress,
-              left: `${bedroomValueToPosition(values.minBedrooms)}%`,
-              width: `${bedroomValueToPosition(values.maxBedrooms) - bedroomValueToPosition(values.minBedrooms)}%`
-            }} 
-          />
-          <div
-            style={{
-              ...styles.rangeHandle(activeDragHandle === 'minBed'),
-              left: `${bedroomValueToPosition(values.minBedrooms)}%`,
-            }}
-            onMouseDown={() => handleDragStart('minBed')}
-            onTouchStart={() => handleDragStart('minBed')}
-          />
-          <div
-            style={{
-              ...styles.rangeHandle(activeDragHandle === 'maxBed'),
-              left: `${bedroomValueToPosition(values.maxBedrooms)}%`,
-            }}
-            onMouseDown={() => handleDragStart('maxBed')}
-            onTouchStart={() => handleDragStart('maxBed')}
-          />
-        </div>
+        {isRoomSelected ? (
+          <div style={styles.disabledMessage}>
+            Not applicable for room searches
+          </div>
+        ) : (
+          <>
+            {/* Bedrooms Range Slider Implementation */}
+            <div style={styles.rangeContainer} ref={bedroomSliderRef}>
+              <div style={styles.rangeTrack} />
+              <div 
+                style={{
+                  ...styles.rangeProgress,
+                  left: `${bedroomValueToPosition(values.minBedrooms)}%`,
+                  width: `${bedroomValueToPosition(values.maxBedrooms) - bedroomValueToPosition(values.minBedrooms)}%`
+                }} 
+              />
+              <div
+                style={{
+                  ...styles.rangeHandle(activeDragHandle === 'minBed'),
+                  left: `${bedroomValueToPosition(values.minBedrooms)}%`,
+                }}
+                onMouseDown={() => handleDragStart('minBed')}
+                onTouchStart={() => handleDragStart('minBed')}
+              />
+              <div
+                style={{
+                  ...styles.rangeHandle(activeDragHandle === 'maxBed'),
+                  left: `${bedroomValueToPosition(values.maxBedrooms)}%`,
+                }}
+                onMouseDown={() => handleDragStart('maxBed')}
+                onTouchStart={() => handleDragStart('maxBed')}
+              />
+            </div>
+          </>
+        )}
         
         <div style={styles.valueDisplay}>
-          <span style={styles.value}>{formatBedrooms(values.minBedrooms)}</span>
-          <span style={styles.value}>{formatBedrooms(values.maxBedrooms)}</span>
+          <div style={styles.valueContainer}>
+            <span style={styles.valueLabel}>min</span>
+            <span style={styles.value}>{formatBedrooms(values.minBedrooms)}</span>
+          </div>
+          <div style={styles.valueContainerRight}>
+            <span style={styles.valueLabel}>max</span>
+            <span style={styles.value}>{formatBedrooms(values.maxBedrooms)}</span>
+          </div>
         </div>
       </div>
 
