@@ -166,9 +166,9 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
 
     errorMessage: {
       background: 'rgba(46, 63, 50, 0.04)',
-      borderRadius: '14px',
-      padding: '14px 18px',
-      margin: '4px 0',
+      borderRadius: '12px', // Slightly smaller
+      padding: '10px 16px', // Reduced padding
+      margin: '0', // Remove margin
       opacity: errorMessage ? 1 : 0,
       transform: `translateY(${errorMessage ? '0' : '-10px'})`,
       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -181,12 +181,15 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
 
     errorText: {
       color: '#2E3F32',
-      fontSize: '15px',
-      lineHeight: 1.4,
+      fontSize: '14px', // Slightly smaller
+      lineHeight: 1.3, // Tighter line height
       textAlign: 'center',
       margin: 0,
       fontWeight: '500',
       letterSpacing: '-0.2px',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '6px', // Space between icon and text
     },
 
     errorIcon: {
@@ -262,7 +265,7 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
         {errorMessage && (
           <p style={styles.errorText}>
             <span style={styles.errorIcon}>ⓘ</span>
-            {errorMessage}
+            {" " + errorMessage} {/* Add space after icon */}
           </p>
         )}
       </div>
