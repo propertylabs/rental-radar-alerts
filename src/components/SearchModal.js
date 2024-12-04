@@ -51,6 +51,7 @@ const SearchModal = ({ isOpen, onClose }) => {
       justifyContent: 'space-between',
       alignItems: 'center',
       marginBottom: '24px',
+      position: 'relative',
     },
 
     title: {
@@ -59,13 +60,37 @@ const SearchModal = ({ isOpen, onClose }) => {
       margin: 0,
     },
 
-    closeButton: {
+    backButton: {
       background: 'none',
       border: 'none',
-      padding: '8px',
+      padding: '8px 16px',
+      color: '#007AFF',
+      fontSize: '17px',
+      fontWeight: '500',
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '4px',
+    },
+
+    closeButton: {
+      position: 'absolute',
+      right: 0,
+      top: '50%',
+      transform: 'translateY(-50%)',
+      width: '32px',
+      height: '32px',
+      borderRadius: '50%',
+      background: 'rgba(0, 0, 0, 0.06)',
+      border: 'none',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
       cursor: 'pointer',
       color: '#666',
-    }
+      fontSize: '18px',
+      transition: 'background-color 0.2s ease',
+    },
   };
 
   const renderStep = () => {
@@ -95,11 +120,13 @@ const SearchModal = ({ isOpen, onClose }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div style={styles.header}>
-          <button style={styles.backButton} onClick={() => setStep(prev => prev - 1)}>
-            Back
-          </button>
+          {step > 1 && (
+            <button style={styles.backButton} onClick={() => setStep(prev => prev - 1)}>
+              ← Back
+            </button>
+          )}
           <h2 style={styles.title}>New Search</h2>
-          <button style={styles.closeButton} onClick={onClose}>✕</button>
+          <button style={styles.closeButton} onClick={onClose}>×</button>
         </div>
         {renderStep()}
       </div>
