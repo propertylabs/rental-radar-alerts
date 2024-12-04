@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login.js';
 import OAuthCallback from './components/OAuthCallback.js';
@@ -12,21 +12,25 @@ import ModalBackdrop from './components/ModalBackdrop.js';
 import SearchModal from './components/SearchModal.js';
 
 const DashboardLayout = ({ children }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   
+  // Add effect to control body scroll
+  useEffect(() => {
+    if (isSearchModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }, [isSearchModalOpen]);
+
   return (
     <div>
       <Navigation />
       <div className="content">
         {React.cloneElement(children, { 
-          setModalState: setIsModalOpen,
-          setModalContent: setModalContent,
           onOpenSearchModal: () => setIsSearchModalOpen(true)
         })}
       </div>
-      {isModalOpen && <ModalBackdrop>{modalContent}</ModalBackdrop>}
       <SearchModal 
         isOpen={isSearchModalOpen}
         onClose={() => setIsSearchModalOpen(false)}

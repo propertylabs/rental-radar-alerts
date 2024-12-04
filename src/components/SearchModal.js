@@ -87,7 +87,10 @@ const SearchModal = ({ isOpen, onClose }) => {
 
   return (
     <div style={styles.backdrop} onClick={onClose}>
-      <div style={styles.modal}>
+      <div 
+        style={styles.modal} 
+        onClick={(e) => e.stopPropagation()}
+      >
         <div style={styles.header}>
           <button style={styles.backButton} onClick={() => setStep(prev => prev - 1)}>
             Back
