@@ -13,18 +13,36 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: '16px',
+      gap: '24px',
       padding: '0 16px',
     },
 
-    optionsGrid: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(2, 1fr)',
+    header: {
+      marginBottom: '8px',
+    },
+
+    subtitle: {
+      fontSize: '20px',
+      fontWeight: '600',
+      color: '#2E3F32',
+      margin: '0 0 8px 0',
+    },
+
+    description: {
+      fontSize: '15px',
+      color: '#666',
+      margin: 0,
+      lineHeight: 1.4,
+    },
+
+    optionsStack: {
+      display: 'flex',
+      flexDirection: 'column',
       gap: '12px',
-      marginTop: '8px',
     },
 
     option: (isSelected) => ({
+      width: '100%',
       background: isSelected 
         ? 'linear-gradient(145deg, #2E3F32, #3A4F3E)'
         : 'rgba(46, 63, 50, 0.03)',
@@ -34,11 +52,11 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
       borderColor: isSelected 
         ? 'rgba(255, 255, 255, 0.1)'
         : 'rgba(46, 63, 50, 0.08)',
-      borderRadius: '20px',
-      padding: '24px 20px',
+      borderRadius: '16px',
+      padding: '16px',
       display: 'flex',
-      flexDirection: 'column',
       alignItems: 'center',
+      justifyContent: 'center',
       gap: '12px',
       cursor: 'pointer',
       transition: 'all 0.2s ease',
@@ -80,7 +98,14 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
 
   return (
     <div style={styles.container}>
-      <div style={styles.optionsGrid}>
+      <div style={styles.header}>
+        <h3 style={styles.subtitle}>Property Type</h3>
+        <p style={styles.description}>
+          Select the type of property you're interested in. You can choose multiple options.
+        </p>
+      </div>
+
+      <div style={styles.optionsStack}>
         {options.map(({ id, icon: Icon, label }) => (
           <button
             key={id}

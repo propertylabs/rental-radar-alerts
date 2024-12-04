@@ -48,10 +48,11 @@ const SearchModal = ({ isOpen, onClose }) => {
 
     header: {
       display: 'flex',
-      justifyContent: 'space-between',
+      justifyContent: 'center',
       alignItems: 'center',
       marginBottom: '24px',
       position: 'relative',
+      padding: '0 16px',
     },
 
     title: {
@@ -61,6 +62,8 @@ const SearchModal = ({ isOpen, onClose }) => {
     },
 
     backButton: {
+      position: 'absolute',
+      left: 16,
       background: 'none',
       border: 'none',
       padding: '8px 16px',
@@ -75,11 +78,11 @@ const SearchModal = ({ isOpen, onClose }) => {
 
     closeButton: {
       position: 'absolute',
-      right: 0,
+      right: 16,
       top: '50%',
       transform: 'translateY(-50%)',
-      width: '32px',
-      height: '32px',
+      width: '28px',
+      height: '28px',
       borderRadius: '50%',
       background: 'rgba(0, 0, 0, 0.06)',
       border: 'none',
@@ -88,8 +91,10 @@ const SearchModal = ({ isOpen, onClose }) => {
       justifyContent: 'center',
       cursor: 'pointer',
       color: '#666',
-      fontSize: '18px',
+      fontSize: '16px',
       transition: 'background-color 0.2s ease',
+      padding: 0,
+      lineHeight: 1,
     },
   };
 
