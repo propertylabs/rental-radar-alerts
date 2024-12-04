@@ -142,11 +142,12 @@ const Searches = ({ setModalState, setModalContent }) => {
     console.log('1. Delete clicked for searchId:', searchId);
     event.stopPropagation();
     setActiveMenu(null);
-    setSearchToDelete(searchId);
-    document.body.style.overflow = 'hidden';
     
-    // Set the modal content with proper handlers
-    setModalContent(
+    // Set searchToDelete first
+    setSearchToDelete(searchId);
+    
+    // Then create and set modal content with searchId directly
+    const modalContent = (
       <div style={styles.modal}>
         <h3 style={styles.modalTitle}>Delete Search?</h3>
         <p style={styles.modalText}>Are you sure you want to delete this search?</p>
@@ -164,8 +165,8 @@ const Searches = ({ setModalState, setModalContent }) => {
           <button 
             style={{...styles.modalButton, ...styles.deleteButton}}
             onClick={() => {
-              console.log('2. Confirm delete clicked');
-              handleConfirmDelete();
+              console.log('2. Confirm delete clicked with ID:', searchId);
+              handleConfirmDelete(searchId); // Pass searchId directly
             }}
           >
             Delete
@@ -173,22 +174,24 @@ const Searches = ({ setModalState, setModalContent }) => {
         </div>
       </div>
     );
+    
+    document.body.style.overflow = 'hidden';
+    setModalContent(modalContent);
     setModalState(true);
   };
 
-  const handleConfirmDelete = async () => {
-    console.log('3. handleConfirmDelete called with searchToDelete:', searchToDelete);
-    if (!searchToDelete) {
-      console.log('No searchToDelete ID found');
+  const handleConfirmDelete = async (searchId) => {
+    console.log('3. handleConfirmDelete called with searchId:', searchId);
+    if (!searchId) {
+      console.log('No searchId provided');
       return;
     }
     
-    // Close modal immediately
+    // Rest of the function using searchId instead of searchToDelete
     setModalState(false);
     setModalContent(null);
     
-    // Store the search for potential restore
-    const searchToRestore = searches.find(s => s.id === searchToDelete);
+    const searchToRestore = searches.find(s => s.id === searchId);
     console.log('4. Found search to restore:', searchToRestore);
     
     try {
@@ -199,7 +202,7 @@ const Searches = ({ setModalState, setModalContent }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          searchId: searchToDelete
+          searchId: searchId
         })
       });
 
