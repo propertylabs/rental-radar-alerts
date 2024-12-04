@@ -103,66 +103,79 @@ const Searches = () => {
 
   return (
     <div style={{
-      ...styles.container,
+      ...styles.wrapper,
       paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px'
     }}>
-      <div style={styles.header}>
-        <h1 style={styles.title}>Saved Searches</h1>
-        <button style={styles.addButton}>
-          <RiAddLine style={styles.addButtonIcon} />
-        </button>
-      </div>
+      <div style={styles.container}>
+        <div style={styles.header}>
+          <h1 style={styles.title}>Saved Searches</h1>
+          <button style={styles.addButton}>
+            <RiAddLine style={styles.addButtonIcon} />
+          </button>
+        </div>
 
-      <div style={styles.searchList}>
-        {searches.length === 0 ? (
-          <div style={styles.emptyState}>
-            <RiSearchLine style={styles.emptyStateIcon} />
-            <p style={styles.emptyStateText}>No saved searches yet</p>
-            <p style={styles.emptyStateSubtext}>Create your first search to get started</p>
-          </div>
-        ) : (
-          searches.map(search => (
-            <div key={search.id} style={styles.searchCard}>
-              <div style={styles.cardStatus}>
-                <SearchNameDisplay name={search.name} />
-                <button style={styles.moreButton}>
-                  <RiMoreFill />
-                </button>
-              </div>
-
-              <div style={styles.mainContent}>
-                <div style={styles.locationSection}>
-                  <RiMapPinLine style={styles.locationIcon} />
-                  <h2 style={styles.locationText}>{search.location}</h2>
-                </div>
-
-                <div style={styles.criteriaSection}>
-                  <div style={styles.pill}>
-                    <RiPriceTag3Line style={styles.pillIcon} />
-                    <span>{search.price}</span>
-                  </div>
-                  <div style={styles.pill}>
-                    <RiHome4Line style={styles.pillIcon} />
-                    <span>{search.type}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div style={styles.lastUpdated}>
-                Updated {search.lastAlert}
-              </div>
+        <div style={styles.searchList}>
+          {searches.length === 0 ? (
+            <div style={styles.emptyState}>
+              <RiSearchLine style={styles.emptyStateIcon} />
+              <p style={styles.emptyStateText}>No saved searches yet</p>
+              <p style={styles.emptyStateSubtext}>Create your first search to get started</p>
             </div>
-          ))
-        )}
+          ) : (
+            searches.map(search => (
+              <div key={search.id} style={styles.searchCard}>
+                <div style={styles.cardStatus}>
+                  <SearchNameDisplay name={search.name} />
+                  <button style={styles.moreButton}>
+                    <RiMoreFill />
+                  </button>
+                </div>
+
+                <div style={styles.mainContent}>
+                  <div style={styles.locationSection}>
+                    <RiMapPinLine style={styles.locationIcon} />
+                    <h2 style={styles.locationText}>{search.location}</h2>
+                  </div>
+
+                  <div style={styles.criteriaSection}>
+                    <div style={styles.pill}>
+                      <RiPriceTag3Line style={styles.pillIcon} />
+                      <span>{search.price}</span>
+                    </div>
+                    <div style={styles.pill}>
+                      <RiHome4Line style={styles.pillIcon} />
+                      <span>{search.type}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={styles.lastUpdated}>
+                  Updated {search.lastAlert}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
 const styles = {
+  wrapper: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    overflowY: 'auto',
+    WebkitOverflowScrolling: 'touch', // For smooth scrolling on iOS
+    background: '#fff',
+  },
+
   container: {
     padding: '16px',
-    paddingBottom: '80px',
+    paddingBottom: '80px', // Space for navigation bar
     maxWidth: '800px',
     margin: '0 auto',
   },
