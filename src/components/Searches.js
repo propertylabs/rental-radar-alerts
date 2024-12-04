@@ -3,7 +3,7 @@ import { RiAddLine, RiMapPinLine, RiPriceTag3Line, RiHome4Line, RiMoreFill, RiSe
 
 const SearchNameDisplay = ({ name }) => (
   <div style={styles.nameContainer}>
-    <span style={styles.searchName}>{name}</span>
+    <span style={styles.searchName}>{name.toUpperCase()}</span>
     <RiEditBoxLine style={styles.editIcon} />
   </div>
 );
@@ -434,6 +434,7 @@ const styles = {
     fontWeight: '500',
     color: '#000',
     letterSpacing: '-0.3px',
+    textTransform: 'uppercase',
   },
 
   editIcon: {
