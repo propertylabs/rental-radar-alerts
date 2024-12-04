@@ -64,7 +64,7 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
       display: 'flex',
       flexDirection: 'column',
       gap: '20px',
-      padding: '0 16px',
+      padding: '0px',
     },
 
     header: {
@@ -164,28 +164,34 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
       letterSpacing: '-0.1px',
     }),
 
-    optionError: {
-      position: 'absolute',
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(255, 59, 48, 0.08)',
-      padding: '12px',
-      transform: 'translateY(100%)',
-      animation: 'slideUp 0.3s forwards',
+    errorMessage: {
+      background: 'rgba(46, 63, 50, 0.04)',
+      borderRadius: '14px',
+      padding: '14px 18px',
+      margin: '4px 0',
+      opacity: errorMessage ? 1 : 0,
+      transform: `translateY(${errorMessage ? '0' : '-10px'})`,
+      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+      pointerEvents: 'none',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '8px',
     },
 
-    optionErrorText: {
-      color: '#ff3b30',
-      fontSize: '13px',
+    errorText: {
+      color: '#2E3F32',
+      fontSize: '15px',
+      lineHeight: 1.4,
       textAlign: 'center',
       margin: 0,
       fontWeight: '500',
+      letterSpacing: '-0.2px',
     },
 
-    '@keyframes slideUp': {
-      from: { transform: 'translateY(100%)' },
-      to: { transform: 'translateY(0)' }
+    errorIcon: {
+      fontSize: '16px',
+      color: '#2E3F32',
     },
 
     nextButton: {
@@ -247,16 +253,18 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
               <span style={styles.optionDescription(isSelected, isDisabledOption)}>
                 {description}
               </span>
-              {showingError && (
-                <div style={styles.optionError}>
-                  <p style={styles.optionErrorText}>
-                    Room searches cannot be combined with other property types
-                  </p>
-                </div>
-              )}
             </button>
           );
         })}
+      </div>
+
+      <div style={{...styles.errorMessage, visibility: errorMessage ? 'visible' : 'hidden'}}>
+        {errorMessage && (
+          <p style={styles.errorText}>
+            <span style={styles.errorIcon}>ⓘ</span>
+            {errorMessage}
+          </p>
+        )}
       </div>
 
       <button 
