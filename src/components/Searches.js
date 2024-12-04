@@ -142,42 +142,10 @@ const Searches = ({ onOpenSearchModal }) => {
     console.log('1. Delete clicked for searchId:', searchId);
     event.stopPropagation();
     setActiveMenu(null);
-    
-    // Set searchToDelete first
     setSearchToDelete(searchId);
-    
-    // Then create and set modal content with searchId directly
-    const modalContent = (
-      <div style={styles.modal}>
-        <h3 style={styles.modalTitle}>Delete Search?</h3>
-        <p style={styles.modalText}>Are you sure you want to delete this search?</p>
-        <div style={styles.modalButtons}>
-          <button 
-            style={{...styles.modalButton, ...styles.cancelButton}}
-            onClick={() => {
-              console.log('Cancel clicked');
-              handleCloseModal();
-              document.body.style.overflow = '';
-            }}
-          >
-            Cancel
-          </button>
-          <button 
-            style={{...styles.modalButton, ...styles.deleteButton}}
-            onClick={() => {
-              console.log('2. Confirm delete clicked with ID:', searchId);
-              handleConfirmDelete(searchId); // Pass searchId directly
-            }}
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    );
-    
     document.body.style.overflow = 'hidden';
-    setModalContent(modalContent);
-    setModalState(true);
+    
+    setShowDeleteConfirm(true);
   };
 
   const handleConfirmDelete = async (searchId) => {
@@ -186,25 +154,20 @@ const Searches = ({ onOpenSearchModal }) => {
       return;
     }
     
-    // Close modal immediately
-    setModalState(false);
-    setModalContent(null);
+    setShowDeleteConfirm(false);
+    document.body.style.overflow = '';
     
-    // Store the search for potential restore
     const searchToRestore = searches.find(s => s.id === searchId);
     
-    // First mark the card for deletion (triggers fade out)
     setSearches(prev => prev.map(search => 
       search.id === searchId 
         ? { ...search, isDeleting: true }
         : search
     ));
 
-    // Wait for fade out animation
     setTimeout(() => {
-      // Then remove the card (other cards will smoothly reposition)
       setSearches(prev => prev.filter(search => search.id !== searchId));
-    }, 300); // Match animation duration
+    }, 300);
     
     try {
       const response = await fetch('/api/delete-search', {
@@ -218,11 +181,9 @@ const Searches = ({ onOpenSearchModal }) => {
       });
 
       if (!response.ok) {
-        // If delete fails, restore the card
         setSearches(prev => [...prev, searchToRestore]);
       }
     } catch (error) {
-      // If request fails, restore the card
       setSearches(prev => [...prev, searchToRestore]);
       console.error('API error:', error);
     }
@@ -232,7 +193,6 @@ const Searches = ({ onOpenSearchModal }) => {
   const handleToggleNotifications = async (searchId, currentStatus, event) => {
     event.stopPropagation();
     
-    // If button is in cooldown, ignore the click
     if (cooldownButtons.has(searchId)) {
       return;
     }
@@ -240,17 +200,14 @@ const Searches = ({ onOpenSearchModal }) => {
     const newStatus = currentStatus === 'enabled' ? 'disabled' : 'enabled';
     const whopUserId = localStorage.getItem('whop_user_id');
     
-    // Optimistically update UI
     setSearches(searches.map(search => 
       search.id === searchId 
         ? {...search, active: newStatus === 'enabled'}
         : search
     ));
 
-    // Add button to cooldown
     setCooldownButtons(prev => new Set(prev).add(searchId));
     
-    // Remove from cooldown after 2 seconds
     setTimeout(() => {
       setCooldownButtons(prev => {
         const next = new Set(prev);
@@ -273,7 +230,6 @@ const Searches = ({ onOpenSearchModal }) => {
       });
 
       if (!response.ok) {
-        // If API call fails, revert the UI change
         setSearches(searches.map(search => 
           search.id === searchId 
             ? {...search, active: currentStatus === 'enabled'}
@@ -282,7 +238,6 @@ const Searches = ({ onOpenSearchModal }) => {
         console.error('Failed to update notifications:', await response.json());
       }
     } catch (error) {
-      // If API call errors, revert the UI change
       setSearches(searches.map(search => 
         search.id === searchId 
           ? {...search, active: currentStatus === 'enabled'}
@@ -296,7 +251,6 @@ const Searches = ({ onOpenSearchModal }) => {
     setShowDeleteConfirm(false);
     setSearchToDelete(null);
     document.body.style.overflow = '';
-    setModalState(false);
   };
 
   // Loading state UI
