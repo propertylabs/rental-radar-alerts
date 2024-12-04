@@ -73,9 +73,23 @@ const Searches = () => {
     fetchUserSearches();
   }, []);
 
+  // Add this useEffect near the other useEffects
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (activeMenu) {
+        setActiveMenu(null);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [activeMenu]);
+
   const handleMoreClick = (searchId, event) => {
     event.stopPropagation();
-    setActiveMenu(searchId);
+    setActiveMenu(activeMenu === searchId ? null : searchId);
   };
 
   const handleDeleteClick = async (searchId, event) => {
@@ -224,38 +238,38 @@ const Searches = () => {
                 <div style={styles.lastUpdated}>
                   Updated {search.lastAlert}
                 </div>
+
+                {activeMenu === search.id && (
+                  <div style={styles.menu}>
+                    <button 
+                      style={styles.menuItem} 
+                      onClick={(e) => handleDeleteClick(search.id, e)}
+                    >
+                      <RiDeleteBinLine style={styles.menuIcon} />
+                      <span style={{color: '#ff4444'}}>Delete</span>
+                    </button>
+                    <button style={styles.menuItem}>
+                      <RiEditBoxLine style={styles.menuIcon} />
+                      <span>Edit</span>
+                    </button>
+                    <button 
+                      style={styles.menuItem}
+                      onClick={(e) => handleToggleNotifications(search.id, search.active ? 'enabled' : 'disabled', e)}
+                    >
+                      {search.active ? (
+                        <RiNotificationLine style={styles.menuIcon} />
+                      ) : (
+                        <RiNotificationOffLine style={styles.menuIcon} />
+                      )}
+                      <span>Notifications {search.active ? 'On' : 'Off'}</span>
+                    </button>
+                  </div>
+                )}
               </div>
             ))
           )}
         </div>
       </div>
-
-      {activeMenu === search.id && (
-        <div style={styles.menu}>
-          <button 
-            style={styles.menuItem} 
-            onClick={(e) => handleDeleteClick(search.id, e)}
-          >
-            <RiDeleteBinLine style={styles.menuIcon} />
-            <span style={{color: '#ff4444'}}>Delete</span>
-          </button>
-          <button style={styles.menuItem}>
-            <RiEditBoxLine style={styles.menuIcon} />
-            <span>Edit</span>
-          </button>
-          <button 
-            style={styles.menuItem}
-            onClick={(e) => handleToggleNotifications(search.id, search.active ? 'enabled' : 'disabled', e)}
-          >
-            {search.active ? (
-              <RiNotificationLine style={styles.menuIcon} />
-            ) : (
-              <RiNotificationOffLine style={styles.menuIcon} />
-            )}
-            <span>Notifications {search.active ? 'On' : 'Off'}</span>
-          </button>
-        </div>
-      )}
 
       {showDeleteConfirm && (
         <div style={styles.modalBackdrop}>
