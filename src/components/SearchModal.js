@@ -1,6 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
+import PostcodesStep from './steps/PostcodesStep';
+import PropertyTypeStep from './steps/PropertyTypeStep';
 
 const SearchModal = ({ isOpen, onClose }) => {
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    name: '',
+    postcodes: [],
+    price: { min: null, max: null },
+    bedrooms: { min: null, max: null },
+    propertyTypes: [],
+    mustHaves: []
+  });
+
   const styles = {
     backdrop: {
       position: 'fixed',
@@ -53,19 +65,43 @@ const SearchModal = ({ isOpen, onClose }) => {
     }
   };
 
+  const renderStep = () => {
+    switch(step) {
+      case 1:
+        return <PostcodesStep 
+          values={formData.postcodes}
+          onChange={(postcodes) => setFormData({...formData, postcodes})}
+          onNext={() => setStep(2)}
+        />;
+      case 2:
+        return <PropertyTypeStep 
+          values={formData.propertyTypes}
+          onChange={(types) => setFormData({...formData, propertyTypes: types})}
+          onNext={() => setStep(3)}
+          onBack={() => setStep(1)}
+        />;
+      case 3:
+        return <PriceStep 
+          values={formData.price}
+          onChange={(price) => setFormData({...formData, price})}
+          onNext={() => setStep(4)}
+          onBack={() => setStep(2)}
+        />;
+      // ... other steps
+    }
+  };
+
   return (
     <div style={styles.backdrop} onClick={onClose}>
-      <div 
-        style={styles.modal} 
-        onClick={e => e.stopPropagation()}
-      >
+      <div style={styles.modal}>
         <div style={styles.header}>
-          <h2 style={styles.title}>New Search</h2>
-          <button style={styles.closeButton} onClick={onClose}>
-            ✕
+          <button style={styles.backButton} onClick={() => setStep(prev => prev - 1)}>
+            Back
           </button>
+          <h2 style={styles.title}>New Search</h2>
+          <button style={styles.closeButton} onClick={onClose}>✕</button>
         </div>
-        {/* Form content will go here */}
+        {renderStep()}
       </div>
     </div>
   );
