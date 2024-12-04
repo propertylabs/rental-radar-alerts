@@ -1,12 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { RiHome4Line, RiBuilding2Line, RiDoorLine } from 'react-icons/ri';
 
 const PropertyTypeStep = ({ values, onChange, onNext }) => {
+  const [errorMessage, setErrorMessage] = useState(null);
+
   const options = [
     { id: 'House', icon: RiHome4Line, label: 'House' },
     { id: 'Flat', icon: RiBuilding2Line, label: 'Flat' },
     { id: 'Room', icon: RiDoorLine, label: 'Room' }
   ];
+
+  const isRoomSelected = values.includes('Room');
+  const hasNonRoomSelection = values.some(v => v !== 'Room');
+
+  const handleOptionClick = (id) => {
+    if (id === 'Room' && hasNonRoomSelection) {
+      showError();
+      return;
+    }
+    
+    if (id !== 'Room' && isRoomSelected) {
+      showError();
+      return;
+    }
+
+    if (values.includes(id)) {
+      onChange(values.filter(v => v !== id));
+    } else {
+      onChange([...values, id]);
+    }
+  };
+
+  const showError = () => {
+    setErrorMessage("Room searches cannot be combined with other property types.");
+    setTimeout(() => setErrorMessage(null), 3000);
+  };
+
+  const isDisabled = (id) => {
+    if (id === 'Room') return hasNonRoomSelection;
+    return isRoomSelected;
+  };
 
   const styles = {
     container: {
@@ -41,43 +74,66 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
       gap: '12px',
     },
 
-    option: (isSelected) => ({
+    option: (isSelected, disabled) => ({
       width: '100%',
-      background: isSelected 
-        ? 'linear-gradient(145deg, #2E3F32, #3A4F3E)'
-        : 'rgba(46, 63, 50, 0.03)',
+      background: disabled 
+        ? 'rgba(0, 0, 0, 0.03)' 
+        : isSelected 
+          ? 'linear-gradient(145deg, #2E3F32, #3A4F3E)'
+          : 'rgba(46, 63, 50, 0.03)',
       backdropFilter: isSelected ? 'none' : 'blur(20px)',
       WebkitBackdropFilter: isSelected ? 'none' : 'blur(20px)',
       border: '1px solid',
-      borderColor: isSelected 
-        ? 'rgba(255, 255, 255, 0.1)'
-        : 'rgba(46, 63, 50, 0.08)',
+      borderColor: disabled
+        ? 'rgba(0, 0, 0, 0.06)'
+        : isSelected 
+          ? 'rgba(255, 255, 255, 0.1)'
+          : 'rgba(46, 63, 50, 0.08)',
       borderRadius: '16px',
       padding: '16px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       gap: '12px',
-      cursor: 'pointer',
+      cursor: disabled ? 'default' : 'pointer',
       transition: 'all 0.2s ease',
-      transform: isSelected ? 'scale(1.02)' : 'scale(1)',
-      boxShadow: isSelected 
+      transform: isSelected && !disabled ? 'scale(1.02)' : 'scale(1)',
+      boxShadow: isSelected && !disabled
         ? '0 4px 20px rgba(46, 63, 50, 0.15)'
         : '0 2px 8px rgba(46, 63, 50, 0.05)',
+      opacity: disabled ? 0.5 : 1,
     }),
 
-    optionIcon: (isSelected) => ({
+    optionIcon: (isSelected, disabled) => ({
       fontSize: '32px',
-      color: isSelected ? 'white' : '#2E3F32',
+      color: disabled 
+        ? '#999' 
+        : isSelected 
+          ? 'white' 
+          : '#2E3F32',
       transition: 'all 0.2s ease',
     }),
 
-    optionLabel: (isSelected) => ({
+    optionLabel: (isSelected, disabled) => ({
       fontSize: '16px',
       fontWeight: '600',
-      color: isSelected ? 'white' : '#2E3F32',
+      color: disabled 
+        ? '#999' 
+        : isSelected 
+          ? 'white' 
+          : '#2E3F32',
       transition: 'all 0.2s ease',
     }),
+
+    errorMessage: {
+      color: '#ff3b30',
+      fontSize: '14px',
+      textAlign: 'center',
+      margin: '12px 0 0 0',
+      opacity: errorMessage ? 1 : 0,
+      transform: `translateY(${errorMessage ? '0' : '-10px'})`,
+      transition: 'all 0.3s ease',
+    },
 
     nextButton: {
       position: 'absolute',
@@ -106,24 +162,28 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
       </div>
 
       <div style={styles.optionsStack}>
-        {options.map(({ id, icon: Icon, label }) => (
-          <button
-            key={id}
-            style={styles.option(values.includes(id))}
-            onClick={() => {
-              if (values.includes(id)) {
-                onChange(values.filter(v => v !== id));
-              } else {
-                onChange([...values, id]);
-              }
-            }}
-          >
-            <Icon style={styles.optionIcon(values.includes(id))} />
-            <span style={styles.optionLabel(values.includes(id))}>
-              {label}
-            </span>
-          </button>
-        ))}
+        {options.map(({ id, icon: Icon, label }) => {
+          const isDisabledOption = isDisabled(id);
+          const isSelected = values.includes(id);
+          
+          return (
+            <button
+              key={id}
+              style={styles.option(isSelected, isDisabledOption)}
+              onClick={() => handleOptionClick(id)}
+              disabled={isDisabledOption}
+            >
+              <Icon style={styles.optionIcon(isSelected, isDisabledOption)} />
+              <span style={styles.optionLabel(isSelected, isDisabledOption)}>
+                {label}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div style={styles.errorMessage}>
+        {errorMessage}
       </div>
 
       <button 
