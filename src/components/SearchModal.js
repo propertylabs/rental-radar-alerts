@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import PostcodesStep from './steps/PostcodesStep.js';
 import PropertyTypeStep from './steps/PropertyTypeStep.js';
+import PriceBedroomsStep from './steps/PriceBedroomsStep';
 
 const SearchModal = ({ isOpen, onClose }) => {
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    name: '',
-    postcodes: [],
-    price: { min: null, max: null },
-    bedrooms: { min: null, max: null },
+  const [searchCriteria, setSearchCriteria] = useState({
     propertyTypes: [],
-    mustHaves: []
+    minBedrooms: 1,
+    maxBedrooms: 5,
+    minPrice: 0,
+    maxPrice: 3000,
+    postcodes: []
   });
 
   const styles = {
@@ -120,19 +121,54 @@ const SearchModal = ({ isOpen, onClose }) => {
     switch(step) {
       case 1:
         return <PostcodesStep 
-          values={formData.postcodes}
-          onChange={(postcodes) => setFormData({...formData, postcodes})}
+          values={searchCriteria.postcodes}
+          onChange={(postcodes) => setSearchCriteria({...searchCriteria, postcodes})}
           onNext={() => setStep(2)}
         />;
       case 2:
         return <PropertyTypeStep 
-          values={formData.propertyTypes}
-          onChange={(types) => setFormData({...formData, propertyTypes: types})}
+          values={searchCriteria.propertyTypes}
+          onChange={(types) => setSearchCriteria({...searchCriteria, propertyTypes: types})}
           onNext={() => setStep(3)}
-          onBack={() => setStep(1)}
+        />;
+      case 3:
+        return <PriceBedroomsStep 
+          values={{
+            minBedrooms: searchCriteria.minBedrooms,
+            maxBedrooms: searchCriteria.maxBedrooms,
+            minPrice: searchCriteria.minPrice,
+            maxPrice: searchCriteria.maxPrice
+          }}
+          onChange={(values) => setSearchCriteria({
+            ...searchCriteria,
+            minBedrooms: values.minBedrooms,
+            maxBedrooms: values.maxBedrooms,
+            minPrice: values.minPrice,
+            maxPrice: values.maxPrice
+          })}
+          onNext={handleSaveSearch}
         />;
       default:
         return null;
+    }
+  };
+
+  const handleSaveSearch = async () => {
+    try {
+      const searchData = {
+        userId: whopUserId,
+        propertyTypes: searchCriteria.propertyTypes,
+        minBedrooms: searchCriteria.minBedrooms,
+        maxBedrooms: searchCriteria.maxBedrooms,
+        minPrice: searchCriteria.minPrice,
+        maxPrice: searchCriteria.maxPrice,
+        postcodes: searchCriteria.postcodes,
+        notifications: true // default value
+      };
+
+      // ... rest of the save logic
+    } catch (error) {
+      console.error('Error saving search:', error);
     }
   };
 
