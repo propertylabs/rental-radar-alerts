@@ -11,14 +11,13 @@ const SearchNameDisplay = ({ name }) => (
 );
 
 const Searches = () => {
-  const [isStandalone, setIsStandalone] = useState(false);
+  const [isStandalone] = useState(() => 
+    window.matchMedia('(display-mode: standalone)').matches || 
+    window.navigator.standalone || 
+    true  // Default to true to ensure we're always below safe area
+  );
   const [searches, setSearches] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    setIsStandalone(standalone);
-  }, []);
 
   // Fetch user's saved searches
   const fetchUserSearches = async () => {
@@ -451,6 +450,14 @@ const styles = {
     fontSize: '14px',
     color: 'rgba(46, 63, 50, 0.4)',
     transition: 'color 0.2s ease',
+  },
+
+  skeletonAddButton: {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    background: 'rgba(46, 63, 50, 0.08)',
+    animation: 'pulse 1.5s ease-in-out infinite',
   },
 };
 
