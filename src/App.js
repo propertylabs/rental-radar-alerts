@@ -9,7 +9,7 @@ import Settings from './components/Settings.js';
 import Navigation from './components/Navigation.js';
 import NotSub from './components/NotSub.js';
 import ModalBackdrop from './components/ModalBackdrop.js';
-import SearchModal from './components/SearchModal';
+import SearchModal from './components/SearchModal.js';
 
 const DashboardLayout = ({ children }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
