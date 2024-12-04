@@ -130,7 +130,7 @@ const Searches = () => {
                 <div style={styles.cardStatus}>
                   <SearchNameDisplay name={search.name} />
                   <button style={styles.moreButton}>
-                    <RiMoreFill />
+                    <RiMoreFill style={{ fontSize: '24px' }} />
                   </button>
                 </div>
 
@@ -261,11 +261,16 @@ const styles = {
     border: 'none',
     padding: '8px',
     cursor: 'pointer',
-    color: 'rgba(46, 63, 50, 0.4)',
+    color: 'rgba(46, 63, 50, 0.6)',
     borderRadius: '50%',
     transition: 'all 0.2s ease',
+    width: '40px',
+    height: '40px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     ':hover': {
-      background: 'rgba(46, 63, 50, 0.06)',
+      background: 'rgba(46, 63, 50, 0.08)',
       color: ACCENT,
     },
   },
