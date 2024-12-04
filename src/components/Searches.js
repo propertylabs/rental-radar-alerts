@@ -624,8 +624,9 @@ const styles = {
     padding: '8px',
     zIndex: 100,
     minWidth: '200px',
-    willChange: 'transform, opacity',
-    animation: 'menuAppear 0.25s cubic-bezier(0.2, 0.85, 0.4, 1.2)',
+    opacity: 0,
+    transform: 'scale(0.95) translateY(-8px)',
+    animation: 'menuAppear 0.2s ease forwards',
   },
 
   menuItem: {
@@ -714,13 +715,13 @@ const styles = {
   },
 
   '@keyframes menuAppear': {
-    'from': {
-      transform: 'scale(0.95)',
+    '0%': {
       opacity: 0,
+      transform: 'scale(0.95) translateY(-8px)',
     },
-    'to': {
-      transform: 'scale(1)',
+    '100%': {
       opacity: 1,
+      transform: 'scale(1) translateY(0)',
     },
   },
 };
