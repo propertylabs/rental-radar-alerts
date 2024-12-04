@@ -624,6 +624,9 @@ const styles = {
     padding: '8px',
     zIndex: 100,
     minWidth: '200px',
+    transform: 'scale(0.96)',
+    opacity: 0,
+    animation: 'menuAppear 0.2s cubic-bezier(0.2, 0.85, 0.4, 1.2) forwards',
   },
 
   menuItem: {
@@ -708,6 +711,17 @@ const styles = {
     color: 'white',
     ':hover': {
       background: '#ff2222',
+    },
+  },
+
+  '@keyframes menuAppear': {
+    '0%': {
+      transform: 'scale(0.96)',
+      opacity: 0,
+    },
+    '100%': {
+      transform: 'scale(1)',
+      opacity: 1,
     },
   },
 };
