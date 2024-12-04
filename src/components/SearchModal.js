@@ -3,7 +3,7 @@ import PostcodesStep from './steps/PostcodesStep.js';
 import PropertyTypeStep from './steps/PropertyTypeStep.js';
 import PriceBedroomsStep from './steps/PriceBedroomsStep.js';
 
-const SearchModal = ({ isOpen, onClose }) => {
+const SearchModal = ({ isOpen, onClose, whopUserId }) => {
   const [step, setStep] = useState(1);
   const [searchCriteria, setSearchCriteria] = useState({
     propertyTypes: [],
@@ -146,29 +146,10 @@ const SearchModal = ({ isOpen, onClose }) => {
             minPrice: values.minPrice,
             maxPrice: values.maxPrice
           })}
-          onNext={handleSaveSearch}
+          onNext={() => onClose()}
         />;
       default:
         return null;
-    }
-  };
-
-  const handleSaveSearch = async () => {
-    try {
-      const searchData = {
-        userId: whopUserId,
-        propertyTypes: searchCriteria.propertyTypes,
-        minBedrooms: searchCriteria.minBedrooms,
-        maxBedrooms: searchCriteria.maxBedrooms,
-        minPrice: searchCriteria.minPrice,
-        maxPrice: searchCriteria.maxPrice,
-        postcodes: searchCriteria.postcodes,
-        notifications: true // default value
-      };
-
-      // ... rest of the save logic
-    } catch (error) {
-      console.error('Error saving search:', error);
     }
   };
 

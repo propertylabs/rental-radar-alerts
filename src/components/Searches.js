@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { RiAddLine, RiMapPinLine, RiPriceTag3Line, RiHome4Line, RiMoreFill, RiSearchLine, RiEditBoxLine, RiDeleteBinLine, RiNotificationLine, RiNotificationOffLine } from 'react-icons/ri';
+import SearchModal from './SearchModal.js';
 
 const ACCENT = '#2E3F32'; // Deep forest green
 
@@ -25,6 +26,7 @@ const Searches = ({ onOpenSearchModal }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [modalState, setModalState] = useState(false);
+  const [whopUserId, setWhopUserId] = useState(null);
 
   const menuStyles = `
     @keyframes scaleIn {
@@ -117,6 +119,8 @@ const Searches = ({ onOpenSearchModal }) => {
 
   // Fetch searches when component mounts
   useEffect(() => {
+    const userId = localStorage.getItem('whop_user_id');
+    setWhopUserId(userId);
     fetchUserSearches();
   }, []);
 
@@ -321,107 +325,114 @@ const Searches = ({ onOpenSearchModal }) => {
   });
 
   return (
-    <div style={styles.pageContainer}>
-      <div style={{
-        ...styles.contentWrapper,
-        paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px',
-        maxHeight: searches.length === 0 ? '100%' : 'auto',
-        minHeight: searches.length === 0 ? '100%' : 'auto',
-      }}>
-        <div style={styles.header}>
-          <h1 style={styles.title}>Saved Searches</h1>
-          <button 
-            style={styles.addButton}
-            onClick={onOpenSearchModal}
-          >
-            <RiAddLine style={styles.addButtonIcon} />
-          </button>
-        </div>
+    <>
+      <SearchModal 
+        isOpen={isModalOpen} 
+        onClose={handleCloseModal}
+        whopUserId={whopUserId}
+      />
+      <div style={styles.pageContainer}>
+        <div style={{
+          ...styles.contentWrapper,
+          paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px',
+          maxHeight: searches.length === 0 ? '100%' : 'auto',
+          minHeight: searches.length === 0 ? '100%' : 'auto',
+        }}>
+          <div style={styles.header}>
+            <h1 style={styles.title}>Saved Searches</h1>
+            <button 
+              style={styles.addButton}
+              onClick={onOpenSearchModal}
+            >
+              <RiAddLine style={styles.addButtonIcon} />
+            </button>
+          </div>
 
-        <div style={styles.searchList}>
-          {searches.length === 0 ? (
-            <div style={styles.emptyState}>
-              <RiSearchLine style={styles.emptyStateIcon} />
-              <p style={styles.emptyStateText}>No saved searches yet</p>
-              <p style={styles.emptyStateSubtext}>Create your first search to get started</p>
-            </div>
-          ) : (
-            searches.map(search => (
-              <div 
-                key={search.id} 
-                style={styles.searchCard}
-                className={search.isDeleting ? 'card-delete-animation' : ''}
-              >
-                <div style={styles.cardStatus}>
-                  <SearchNameDisplay name={search.name} />
-                  <button 
-                    style={styles.moreButton}
-                    onClick={(e) => handleMoreClick(search.id, e)}
-                  >
-                    <RiMoreFill style={{ fontSize: '24px' }} />
-                  </button>
-                </div>
-
-                <div style={styles.mainContent}>
-                  <div style={styles.locationSection}>
-                    <RiMapPinLine style={styles.locationIcon} />
-                    <h2 style={styles.locationText}>{search.location}</h2>
-                  </div>
-
-                  <div style={styles.criteriaSection}>
-                    <div style={styles.pill}>
-                      <RiPriceTag3Line style={styles.pillIcon} />
-                      <span>{search.price}</span>
-                    </div>
-                    <div style={styles.pill}>
-                      <RiHome4Line style={styles.pillIcon} />
-                      <span>{search.type}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div style={styles.lastUpdated}>
-                  Updated {search.lastAlert}
-                </div>
-
-                {activeMenu === search.id && (
-                  <div 
-                    className="menu-animation"
-                    style={styles.menu}
-                  >
-                    <button 
-                      style={{
-                        ...styles.menuItem,
-                        color: '#ff3b30', // iOS red
-                      }} 
-                      onClick={(e) => handleDeleteClick(search.id, e)}
-                    >
-                      <RiDeleteBinLine style={{ fontSize: '20px', color: '#ff3b30' }} />
-                      <span>Delete</span>
-                    </button>
-                    <button style={styles.menuItem}>
-                      <RiEditBoxLine style={{ fontSize: '20px', color: ACCENT }} />
-                      <span>Edit</span>
-                    </button>
-                    <button 
-                      style={getNotificationButtonStyle(search.id)}
-                      onClick={(e) => handleToggleNotifications(search.id, search.active ? 'enabled' : 'disabled', e)}
-                    >
-                      {search.active ? (
-                        <RiNotificationLine style={{ fontSize: '20px', color: ACCENT }} />
-                      ) : (
-                        <RiNotificationOffLine style={{ fontSize: '20px', color: ACCENT }} />
-                      )}
-                      <span>Notifications {search.active ? 'On' : 'Off'}</span>
-                    </button>
-                  </div>
-                )}
+          <div style={styles.searchList}>
+            {searches.length === 0 ? (
+              <div style={styles.emptyState}>
+                <RiSearchLine style={styles.emptyStateIcon} />
+                <p style={styles.emptyStateText}>No saved searches yet</p>
+                <p style={styles.emptyStateSubtext}>Create your first search to get started</p>
               </div>
-            ))
-          )}
+            ) : (
+              searches.map(search => (
+                <div 
+                  key={search.id} 
+                  style={styles.searchCard}
+                  className={search.isDeleting ? 'card-delete-animation' : ''}
+                >
+                  <div style={styles.cardStatus}>
+                    <SearchNameDisplay name={search.name} />
+                    <button 
+                      style={styles.moreButton}
+                      onClick={(e) => handleMoreClick(search.id, e)}
+                    >
+                      <RiMoreFill style={{ fontSize: '24px' }} />
+                    </button>
+                  </div>
+
+                  <div style={styles.mainContent}>
+                    <div style={styles.locationSection}>
+                      <RiMapPinLine style={styles.locationIcon} />
+                      <h2 style={styles.locationText}>{search.location}</h2>
+                    </div>
+
+                    <div style={styles.criteriaSection}>
+                      <div style={styles.pill}>
+                        <RiPriceTag3Line style={styles.pillIcon} />
+                        <span>{search.price}</span>
+                      </div>
+                      <div style={styles.pill}>
+                        <RiHome4Line style={styles.pillIcon} />
+                        <span>{search.type}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={styles.lastUpdated}>
+                    Updated {search.lastAlert}
+                  </div>
+
+                  {activeMenu === search.id && (
+                    <div 
+                      className="menu-animation"
+                      style={styles.menu}
+                    >
+                      <button 
+                        style={{
+                          ...styles.menuItem,
+                          color: '#ff3b30', // iOS red
+                        }} 
+                        onClick={(e) => handleDeleteClick(search.id, e)}
+                      >
+                        <RiDeleteBinLine style={{ fontSize: '20px', color: '#ff3b30' }} />
+                        <span>Delete</span>
+                      </button>
+                      <button style={styles.menuItem}>
+                        <RiEditBoxLine style={{ fontSize: '20px', color: ACCENT }} />
+                        <span>Edit</span>
+                      </button>
+                      <button 
+                        style={getNotificationButtonStyle(search.id)}
+                        onClick={(e) => handleToggleNotifications(search.id, search.active ? 'enabled' : 'disabled', e)}
+                      >
+                        {search.active ? (
+                          <RiNotificationLine style={{ fontSize: '20px', color: ACCENT }} />
+                        ) : (
+                          <RiNotificationOffLine style={{ fontSize: '20px', color: ACCENT }} />
+                        )}
+                        <span>Notifications {search.active ? 'On' : 'Off'}</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
