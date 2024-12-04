@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { RiAddLine, RiMapPinLine, RiPriceTag3Line, RiHome4Line, RiMoreFill, RiSearchLine, RiEditBoxLine } from 'react-icons/ri';
 
+const ACCENT = '#2E3F32'; // Deep forest green
+
 const SearchNameDisplay = ({ name }) => (
   <div style={styles.nameContainer}>
     <span style={styles.searchName}>{name.toUpperCase()}</span>
@@ -172,7 +174,7 @@ const styles = {
     bottom: 0,
     overflow: 'auto',
     WebkitOverflowScrolling: 'touch',
-    background: '#fff',
+    background: 'linear-gradient(to bottom, #f8f9fa, #f0f2f1)',
     '-webkit-transform': 'translateZ(0)',
   },
 
@@ -192,25 +194,28 @@ const styles = {
   },
 
   title: {
-    fontSize: '28px',
+    fontSize: '32px',
     fontWeight: '700',
-    color: '#000',
+    color: ACCENT,
     margin: 0,
+    letterSpacing: '-0.5px',
   },
 
   addButton: {
     width: '40px',
     height: '40px',
     borderRadius: '50%',
-    background: '#000',
+    background: ACCENT,
     border: 'none',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
-    transition: 'transform 0.2s ease',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 2px 8px rgba(46, 63, 50, 0.15)',
     ':hover': {
       transform: 'scale(1.05)',
+      boxShadow: '0 4px 12px rgba(46, 63, 50, 0.25)',
     },
   },
 
@@ -223,22 +228,19 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
-    position: 'relative',
-    zIndex: 1,
   },
 
   searchCard: {
-    background: 'rgba(255, 255, 255, 0.8)',
-    backdropFilter: 'blur(20px)',
-    WebkitBackdropFilter: 'blur(20px)',
+    background: '#fff',
     borderRadius: '20px',
-    padding: '20px',
-    border: '1px solid rgba(0, 0, 0, 0.06)',
-    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+    padding: '24px',
+    border: '1px solid rgba(46, 63, 50, 0.08)',
+    boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
+    transition: 'all 0.2s ease',
     cursor: 'pointer',
     ':hover': {
       transform: 'translateY(-2px)',
-      boxShadow: '0 8px 24px rgba(0, 0, 0, 0.04)',
+      boxShadow: '0 8px 24px rgba(46, 63, 50, 0.12)',
     },
   },
 
@@ -260,10 +262,12 @@ const styles = {
     border: 'none',
     padding: '8px',
     cursor: 'pointer',
-    color: '#666',
+    color: 'rgba(46, 63, 50, 0.4)',
     borderRadius: '50%',
+    transition: 'all 0.2s ease',
     ':hover': {
-      background: 'rgba(0, 0, 0, 0.05)',
+      background: 'rgba(46, 63, 50, 0.06)',
+      color: ACCENT,
     },
   },
 
@@ -277,17 +281,18 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
+    marginTop: '16px',
   },
 
   locationIcon: {
     fontSize: '20px',
-    color: '#000',
+    color: ACCENT,
   },
 
   locationText: {
     fontSize: '18px',
     fontWeight: '600',
-    color: '#000',
+    color: ACCENT,
     margin: 0,
   },
 
@@ -295,17 +300,19 @@ const styles = {
     display: 'flex',
     gap: '8px',
     flexWrap: 'wrap',
+    marginTop: '12px',
   },
 
   pill: {
     display: 'flex',
     alignItems: 'center',
-    gap: '4px',
-    padding: '6px 12px',
-    background: 'rgba(0, 0, 0, 0.05)',
+    gap: '6px',
+    padding: '8px 12px',
+    background: 'rgba(46, 63, 50, 0.04)',
     borderRadius: '20px',
     fontSize: '14px',
-    color: '#666',
+    color: ACCENT,
+    fontWeight: '500',
   },
 
   pillIcon: {
@@ -313,8 +320,8 @@ const styles = {
   },
 
   lastUpdated: {
-    fontSize: '12px',
-    color: '#666',
+    fontSize: '13px',
+    color: 'rgba(46, 63, 50, 0.6)',
     marginTop: '16px',
   },
 
@@ -349,28 +356,16 @@ const styles = {
     textAlign: 'center',
   },
 
-  // Skeleton styles
-  skeletonAddButton: {
-    width: '40px',
-    height: '40px',
-    borderRadius: '50%',
-    background: 'rgba(0, 0, 0, 0.06)',
-    animation: 'pulse 1.5s ease-in-out infinite',
-  },
-
+  // Skeleton styles with matching theme
   skeletonCard: {
-    background: 'rgba(255, 255, 255, 0.8)',
-    backdropFilter: 'blur(20px)',
-    WebkitBackdropFilter: 'blur(20px)',
+    background: '#fff',
     borderRadius: '20px',
-    padding: '20px',
-    height: '140px', // Match height of actual cards
-    border: '1px solid rgba(0, 0, 0, 0.06)',
-    overflow: 'hidden',
+    padding: '24px',
+    border: '1px solid rgba(46, 63, 50, 0.08)',
+    boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
   },
 
   skeletonContent: {
-    height: '100%',
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
@@ -386,7 +381,7 @@ const styles = {
     width: '80px',
     height: '28px',
     borderRadius: '14px',
-    background: 'rgba(0, 0, 0, 0.06)',
+    background: 'rgba(46, 63, 50, 0.08)',
     animation: 'pulse 1.5s ease-in-out infinite',
   },
 
@@ -394,7 +389,7 @@ const styles = {
     width: '24px',
     height: '24px',
     borderRadius: '50%',
-    background: 'rgba(0, 0, 0, 0.06)',
+    background: 'rgba(46, 63, 50, 0.08)',
     animation: 'pulse 1.5s ease-in-out infinite',
   },
 
@@ -402,7 +397,7 @@ const styles = {
     width: '70%',
     height: '24px',
     borderRadius: '12px',
-    background: 'rgba(0, 0, 0, 0.06)',
+    background: 'rgba(46, 63, 50, 0.08)',
     animation: 'pulse 1.5s ease-in-out infinite',
   },
 
@@ -415,20 +410,14 @@ const styles = {
     width: '100px',
     height: '32px',
     borderRadius: '16px',
-    background: 'rgba(0, 0, 0, 0.06)',
+    background: 'rgba(46, 63, 50, 0.08)',
     animation: 'pulse 1.5s ease-in-out infinite',
   },
 
   '@keyframes pulse': {
-    '0%': {
-      opacity: 0.6,
-    },
-    '50%': {
-      opacity: 0.4,
-    },
-    '100%': {
-      opacity: 0.6,
-    },
+    '0%': { opacity: 0.6 },
+    '50%': { opacity: 0.4 },
+    '100%': { opacity: 0.6 },
   },
 
   nameContainer: {
@@ -436,14 +425,14 @@ const styles = {
     alignItems: 'center',
     gap: '8px',
     padding: '6px 12px',
-    background: 'rgba(0, 0, 0, 0.03)',
+    background: 'rgba(46, 63, 50, 0.04)',
     borderRadius: '8px',
-    border: '1px solid rgba(0, 0, 0, 0.06)',
+    border: '1px solid rgba(46, 63, 50, 0.08)',
     transition: 'all 0.2s ease',
     cursor: 'pointer',
     ':hover': {
-      background: 'rgba(0, 0, 0, 0.05)',
-      borderColor: 'rgba(0, 0, 0, 0.1)',
+      background: 'rgba(46, 63, 50, 0.06)',
+      borderColor: 'rgba(46, 63, 50, 0.12)',
     },
   },
 
@@ -451,14 +440,13 @@ const styles = {
     fontFamily: 'SF Mono, Menlo, monospace',
     fontSize: '15px',
     fontWeight: '500',
-    color: '#000',
+    color: ACCENT,
     letterSpacing: '-0.3px',
-    textTransform: 'uppercase',
   },
 
   editIcon: {
     fontSize: '14px',
-    color: 'rgba(0, 0, 0, 0.4)',
+    color: 'rgba(46, 63, 50, 0.4)',
     transition: 'color 0.2s ease',
   },
 };
