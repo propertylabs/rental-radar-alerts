@@ -40,10 +40,10 @@ const Searches = () => {
       if (response.ok) {
         const result = await response.json();
         if (Array.isArray(result)) {
-          // Updated transformation to use search_name from PostgreSQL
+          // Updated transformation to match the API response structure
           const formattedSearches = result.map(search => ({
             id: search.id,
-            name: search.search_name,
+            name: search.searchName,
             location: search.postcodes.join(', '),
             price: search.criteria.minPrice && search.criteria.maxPrice 
               ? `£${search.criteria.minPrice}-${search.criteria.maxPrice}`
