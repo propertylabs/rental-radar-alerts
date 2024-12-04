@@ -23,7 +23,6 @@ const Searches = () => {
   const [searchToDelete, setSearchToDelete] = useState(null);
   const [cooldownButtons, setCooldownButtons] = useState(new Set());
 
-  // Move menuStyles inside the component
   const menuStyles = `
     @keyframes scaleIn {
       from {
@@ -41,6 +40,16 @@ const Searches = () => {
       transform-origin: top right;
     }
   `;
+
+  useEffect(() => {
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = menuStyles;
+    document.head.appendChild(styleSheet);
+
+    return () => {
+      document.head.removeChild(styleSheet);
+    };
+  }, [menuStyles]);
 
   // Fetch user's saved searches
   const fetchUserSearches = async () => {
@@ -243,16 +252,6 @@ const Searches = () => {
     opacity: cooldownButtons.has(searchId) ? 0.5 : 1, // Visual feedback for cooldown
     cursor: cooldownButtons.has(searchId) ? 'default' : 'pointer',
   });
-
-  useEffect(() => {
-    const styleSheet = document.createElement("style");
-    styleSheet.innerText = menuStyles;
-    document.head.appendChild(styleSheet);
-
-    return () => {
-      document.head.removeChild(styleSheet);
-    };
-  }, [menuStyles]);
 
   return (
     <div style={styles.pageContainer}>
