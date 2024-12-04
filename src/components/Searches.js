@@ -91,8 +91,9 @@ const Searches = () => {
   }, [activeMenu]);
 
   const handleMoreClick = (searchId, event) => {
+    event.preventDefault();
     event.stopPropagation();
-    setActiveMenu(activeMenu === searchId ? null : searchId);
+    setActiveMenu(searchId === activeMenu ? null : searchId);
   };
 
   const handleDeleteClick = async (searchId, event) => {
@@ -409,7 +410,7 @@ const styles = {
     background: 'none',
     border: 'none',
     padding: '8px',
-    cursor: 'default',
+    cursor: 'pointer',
     color: 'rgba(46, 63, 50, 0.6)',
     borderRadius: '50%',
     transition: 'all 0.2s ease',
@@ -419,9 +420,8 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     WebkitTapHighlightColor: 'transparent',
-    '-webkit-touch-callout': 'none',
-    ':active': {
-      background: 'rgba(46, 63, 50, 0.12)',
+    ':hover': {
+      background: 'rgba(46, 63, 50, 0.08)',
       color: ACCENT,
     },
   },
@@ -648,9 +648,8 @@ const styles = {
     fontWeight: '500',
     fontSize: '16px',
     color: '#000',
-    ':active': {
+    ':hover': {
       background: 'rgba(46, 63, 50, 0.06)',
-      transform: 'scale(0.98)',
     },
   },
 
