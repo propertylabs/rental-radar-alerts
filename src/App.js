@@ -8,7 +8,7 @@ import Alerts from './components/Alerts.js';
 import Settings from './components/Settings.js';
 import Navigation from './components/Navigation.js';
 import NotSub from './components/NotSub.js';
-import ModalBackdrop from './components/ModalBackdrop';
+import ModalBackdrop from './components/ModalBackdrop.js';
 
 const DashboardLayout = ({ children }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
