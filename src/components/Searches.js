@@ -76,7 +76,7 @@ const Searches = () => {
   // Add this useEffect near the other useEffects
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (activeMenu && !event.target.closest('[data-menu]')) {
+      if (activeMenu) {
         setActiveMenu(null);
       }
     };
@@ -88,9 +88,8 @@ const Searches = () => {
   }, [activeMenu]);
 
   const handleMoreClick = (searchId, event) => {
-    event.preventDefault();
     event.stopPropagation();
-    setActiveMenu(searchId === activeMenu ? null : searchId);
+    setActiveMenu(activeMenu === searchId ? null : searchId);
   };
 
   const handleDeleteClick = async (searchId, event) => {
@@ -222,7 +221,6 @@ const Searches = () => {
                   <button 
                     style={styles.moreButton}
                     onClick={(e) => handleMoreClick(search.id, e)}
-                    type="button"
                   >
                     <RiMoreFill style={{ fontSize: '24px' }} />
                   </button>
@@ -617,17 +615,12 @@ const styles = {
     position: 'absolute',
     right: '16px',
     top: '50px',
-    background: 'rgba(255, 255, 255, 0.9)',
-    backdropFilter: 'blur(12px)',
-    WebkitBackdropFilter: 'blur(12px)',
+    background: 'white',
     borderRadius: '12px',
-    boxShadow: '0 4px 24px rgba(0, 0, 0, 0.12)',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
     padding: '8px',
     zIndex: 100,
     minWidth: '200px',
-    transform: 'scale(0.98)',
-    opacity: 0,
-    animation: 'menuAppear 0.2s ease forwards',
   },
 
   menuItem: {
@@ -639,15 +632,10 @@ const styles = {
     border: 'none',
     background: 'none',
     borderRadius: '8px',
-    cursor: 'default',
-    WebkitTapHighlightColor: 'transparent',
-    '-webkit-touch-callout': 'none',
-    userSelect: 'none',
-    textDecoration: 'none',
-    color: 'inherit',
-    fontWeight: '600',
-    ':active': {
-      background: 'rgba(46, 63, 50, 0.08)',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    ':hover': {
+      background: 'rgba(46, 63, 50, 0.04)',
     },
   },
 
