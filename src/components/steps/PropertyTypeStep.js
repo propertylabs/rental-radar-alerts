@@ -3,11 +3,27 @@ import { RiHome4Line, RiBuilding2Line, RiDoorLine } from 'react-icons/ri';
 
 const PropertyTypeStep = ({ values, onChange, onNext }) => {
   const [errorMessage, setErrorMessage] = useState(null);
+  const [pressedId, setPressedId] = useState(null);
 
   const options = [
-    { id: 'House', icon: RiHome4Line, label: 'House' },
-    { id: 'Flat', icon: RiBuilding2Line, label: 'Flat' },
-    { id: 'Room', icon: RiDoorLine, label: 'Room' }
+    { 
+      id: 'House', 
+      icon: RiHome4Line, 
+      label: 'House',
+      description: 'Detached, semi-detached, or terraced houses'
+    },
+    { 
+      id: 'Flat', 
+      icon: RiBuilding2Line, 
+      label: 'Flat',
+      description: 'Apartments and maisonettes'
+    },
+    { 
+      id: 'Room', 
+      icon: RiDoorLine, 
+      label: 'Room',
+      description: 'Single rooms in shared properties'
+    }
   ];
 
   const isRoomSelected = values.includes('Room');
@@ -46,8 +62,8 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: '24px',
-      padding: '0 16px',
+      gap: '32px',
+      padding: '0 24px',
     },
 
     header: {
@@ -55,32 +71,34 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
     },
 
     subtitle: {
-      fontSize: '20px',
-      fontWeight: '600',
+      fontSize: '28px',
+      fontWeight: '700',
       color: '#2E3F32',
-      margin: '0 0 8px 0',
+      margin: '0 0 12px 0',
+      letterSpacing: '-0.5px',
     },
 
     description: {
-      fontSize: '15px',
+      fontSize: '17px',
       color: '#666',
       margin: 0,
       lineHeight: 1.4,
+      letterSpacing: '-0.2px',
     },
 
     optionsStack: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '12px',
+      gap: '16px',
     },
 
-    option: (isSelected, disabled) => ({
+    option: (isSelected, disabled, isPressed) => ({
       width: '100%',
       background: disabled 
         ? 'rgba(0, 0, 0, 0.03)' 
         : isSelected 
           ? 'linear-gradient(145deg, #2E3F32, #3A4F3E)'
-          : 'rgba(46, 63, 50, 0.03)',
+          : 'rgba(46, 63, 50, 0.02)',
       backdropFilter: isSelected ? 'none' : 'blur(20px)',
       WebkitBackdropFilter: isSelected ? 'none' : 'blur(20px)',
       border: '1px solid',
@@ -90,22 +108,28 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
           ? 'rgba(255, 255, 255, 0.1)'
           : 'rgba(46, 63, 50, 0.08)',
       borderRadius: '16px',
-      padding: '16px',
+      padding: '20px',
       display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: '12px',
+      flexDirection: 'column',
+      gap: '8px',
       cursor: disabled ? 'default' : 'pointer',
-      transition: 'all 0.2s ease',
-      transform: isSelected && !disabled ? 'scale(1.02)' : 'scale(1)',
+      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+      transform: `scale(${isPressed ? 0.98 : isSelected && !disabled ? 1.02 : 1})`,
       boxShadow: isSelected && !disabled
         ? '0 4px 20px rgba(46, 63, 50, 0.15)'
         : '0 2px 8px rgba(46, 63, 50, 0.05)',
       opacity: disabled ? 0.5 : 1,
+      WebkitTapHighlightColor: 'transparent',
     }),
 
+    optionTop: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px',
+    },
+
     optionIcon: (isSelected, disabled) => ({
-      fontSize: '32px',
+      fontSize: '24px',
       color: disabled 
         ? '#999' 
         : isSelected 
@@ -115,7 +139,7 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
     }),
 
     optionLabel: (isSelected, disabled) => ({
-      fontSize: '16px',
+      fontSize: '17px',
       fontWeight: '600',
       color: disabled 
         ? '#999' 
@@ -123,24 +147,36 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
           ? 'white' 
           : '#2E3F32',
       transition: 'all 0.2s ease',
+      letterSpacing: '-0.2px',
+    }),
+
+    optionDescription: (isSelected, disabled) => ({
+      fontSize: '14px',
+      color: disabled 
+        ? '#999' 
+        : isSelected 
+          ? 'rgba(255, 255, 255, 0.8)' 
+          : '#666',
+      transition: 'all 0.2s ease',
+      letterSpacing: '-0.1px',
     }),
 
     errorMessage: {
       position: 'relative',
       background: 'rgba(255, 59, 48, 0.08)',
-      borderRadius: '12px',
-      padding: '12px 16px',
+      borderRadius: '14px',
+      padding: '14px 18px',
       margin: '4px 0',
       opacity: errorMessage ? 1 : 0,
       transform: `translateY(${errorMessage ? '0' : '-10px'})`,
-      transition: 'all 0.3s ease',
+      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
       pointerEvents: 'none',
     },
 
     errorText: {
       color: '#ff3b30',
-      fontSize: '14px',
-      lineHeight: '1.4',
+      fontSize: '15px',
+      lineHeight: 1.4,
       textAlign: 'center',
       margin: 0,
       fontWeight: '500',
@@ -148,27 +184,29 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
       alignItems: 'center',
       justifyContent: 'center',
       gap: '8px',
-    },
-
-    errorIcon: {
-      fontSize: '16px',
-      flexShrink: 0,
+      letterSpacing: '-0.2px',
     },
 
     nextButton: {
       position: 'absolute',
-      bottom: 'max(env(safe-area-inset-bottom), 16px)',
-      left: '16px',
-      right: '16px',
-      background: values.length > 0 ? '#2E3F32' : 'rgba(46, 63, 50, 0.1)',
+      bottom: 'max(env(safe-area-inset-bottom), 24px)',
+      left: '24px',
+      right: '24px',
+      background: values.length > 0 
+        ? 'linear-gradient(145deg, #2E3F32, #3A4F3E)'
+        : 'rgba(46, 63, 50, 0.1)',
       border: 'none',
-      borderRadius: '14px',
-      padding: '16px',
+      borderRadius: '16px',
+      padding: '18px',
       color: values.length > 0 ? 'white' : '#666',
       fontSize: '17px',
       fontWeight: '600',
-      transition: 'all 0.2s ease',
+      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
       cursor: values.length > 0 ? 'pointer' : 'default',
+      letterSpacing: '-0.2px',
+      boxShadow: values.length > 0 
+        ? '0 4px 12px rgba(46, 63, 50, 0.2)'
+        : 'none',
     },
   };
 
@@ -182,19 +220,30 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
       </div>
 
       <div style={styles.optionsStack}>
-        {options.map(({ id, icon: Icon, label }) => {
+        {options.map(({ id, icon: Icon, label, description }) => {
           const isDisabledOption = isDisabled(id);
           const isSelected = values.includes(id);
+          const isPressed = pressedId === id;
           
           return (
             <button
               key={id}
-              style={styles.option(isSelected, isDisabledOption)}
+              style={styles.option(isSelected, isDisabledOption, isPressed)}
               onClick={() => handleOptionClick(id)}
+              onMouseDown={() => setPressedId(id)}
+              onMouseUp={() => setPressedId(null)}
+              onMouseLeave={() => setPressedId(null)}
+              onTouchStart={() => setPressedId(id)}
+              onTouchEnd={() => setPressedId(null)}
             >
-              <Icon style={styles.optionIcon(isSelected, isDisabledOption)} />
-              <span style={styles.optionLabel(isSelected, isDisabledOption)}>
-                {label}
+              <div style={styles.optionTop}>
+                <Icon style={styles.optionIcon(isSelected, isDisabledOption)} />
+                <span style={styles.optionLabel(isSelected, isDisabledOption)}>
+                  {label}
+                </span>
+              </div>
+              <span style={styles.optionDescription(isSelected, isDisabledOption)}>
+                {description}
               </span>
             </button>
           );
