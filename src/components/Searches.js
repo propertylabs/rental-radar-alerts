@@ -144,7 +144,7 @@ const Searches = ({ setModalState, setModalContent }) => {
     setSearchToDelete(searchId);
     document.body.style.overflow = 'hidden';
     
-    // Set the modal content
+    // Set the modal content with proper handlers
     setModalContent(
       <div style={styles.modal}>
         <h3 style={styles.modalTitle}>Delete Search?</h3>
@@ -152,13 +152,16 @@ const Searches = ({ setModalState, setModalContent }) => {
         <div style={styles.modalButtons}>
           <button 
             style={{...styles.modalButton, ...styles.cancelButton}}
-            onClick={handleCloseModal}
+            onClick={() => {
+              handleCloseModal();
+              document.body.style.overflow = '';
+            }}
           >
             Cancel
           </button>
           <button 
             style={{...styles.modalButton, ...styles.deleteButton}}
-            onClick={handleConfirmDelete}
+            onClick={() => handleConfirmDelete()}
           >
             Delete
           </button>
