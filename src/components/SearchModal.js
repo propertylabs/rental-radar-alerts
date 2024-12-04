@@ -47,7 +47,7 @@ const SearchModal = ({ isOpen, onClose }) => {
     },
 
     header: {
-      padding: '0 24px',
+      padding: '0px',
       marginBottom: '24px',
     },
 
@@ -108,10 +108,11 @@ const SearchModal = ({ isOpen, onClose }) => {
       justifyContent: 'center',
       cursor: 'pointer',
       color: '#666',
-      fontSize: '20px',
+      fontSize: '18px',
       transition: 'background-color 0.2s ease',
-      padding: '0 0 2px 0',
-      lineHeight: 0,
+      padding: '0 0 1px 0',
+      lineHeight: '18px',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     },
   };
 
