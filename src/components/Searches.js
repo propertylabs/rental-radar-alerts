@@ -139,6 +139,7 @@ const Searches = ({ setModalState, setModalContent }) => {
   };
 
   const handleDeleteClick = (searchId, event) => {
+    console.log('1. Delete clicked for searchId:', searchId);
     event.stopPropagation();
     setActiveMenu(null);
     setSearchToDelete(searchId);
@@ -153,6 +154,7 @@ const Searches = ({ setModalState, setModalContent }) => {
           <button 
             style={{...styles.modalButton, ...styles.cancelButton}}
             onClick={() => {
+              console.log('Cancel clicked');
               handleCloseModal();
               document.body.style.overflow = '';
             }}
@@ -161,7 +163,10 @@ const Searches = ({ setModalState, setModalContent }) => {
           </button>
           <button 
             style={{...styles.modalButton, ...styles.deleteButton}}
-            onClick={() => handleConfirmDelete()}
+            onClick={() => {
+              console.log('2. Confirm delete clicked');
+              handleConfirmDelete();
+            }}
           >
             Delete
           </button>
@@ -172,7 +177,11 @@ const Searches = ({ setModalState, setModalContent }) => {
   };
 
   const handleConfirmDelete = async () => {
-    if (!searchToDelete) return;
+    console.log('3. handleConfirmDelete called with searchToDelete:', searchToDelete);
+    if (!searchToDelete) {
+      console.log('No searchToDelete ID found');
+      return;
+    }
     
     // Close modal immediately
     setModalState(false);
@@ -180,20 +189,10 @@ const Searches = ({ setModalState, setModalContent }) => {
     
     // Store the search for potential restore
     const searchToRestore = searches.find(s => s.id === searchToDelete);
-    
-    // Optimistically update UI
-    setSearches(prev => prev.map(search => 
-      search.id === searchToDelete 
-        ? { ...search, isDeleting: true }
-        : search
-    ));
-
-    // Remove after animation
-    setTimeout(() => {
-      setSearches(prev => prev.filter(search => search.id !== searchToDelete));
-    }, 300); // Match animation duration
+    console.log('4. Found search to restore:', searchToRestore);
     
     try {
+      console.log('5. Making delete API call');
       const response = await fetch('/api/delete-search', {
         method: 'DELETE',
         headers: {
@@ -204,18 +203,15 @@ const Searches = ({ setModalState, setModalContent }) => {
         })
       });
 
+      console.log('6. API response:', response.status);
       if (!response.ok) {
-        // Restore the search if delete fails
+        console.error('Delete failed:', await response.json());
         setSearches(prev => [...prev, searchToRestore]);
-        console.error('Failed to delete search');
       }
     } catch (error) {
-      // Restore the search if request fails
+      console.error('7. API error:', error);
       setSearches(prev => [...prev, searchToRestore]);
-      console.error('Error deleting search:', error);
     }
-    
-    setSearchToDelete(null);
   };
 
   
