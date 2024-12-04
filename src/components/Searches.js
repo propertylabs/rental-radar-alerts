@@ -150,6 +150,7 @@ const Searches = () => {
     setSearchToDelete(null);
   };
 
+  
   const handleToggleNotifications = async (searchId, currentStatus, event) => {
     event.stopPropagation();
     
