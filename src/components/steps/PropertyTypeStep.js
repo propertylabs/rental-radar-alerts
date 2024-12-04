@@ -177,6 +177,8 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
       alignItems: 'center',
       justifyContent: 'center',
       gap: '8px',
+      position: 'relative',
+      zIndex: 10000,
     },
 
     errorText: {
