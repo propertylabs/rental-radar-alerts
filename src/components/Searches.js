@@ -36,9 +36,24 @@ const Searches = ({ setModalState, setModalContent }) => {
       }
     }
 
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+    }
+
     .menu-animation {
       animation: scaleIn 0.2s ease-out forwards;
       transform-origin: top right;
+    }
+
+    .card-delete-animation {
+      animation: fadeOut 0.3s ease-out forwards;
     }
   `;
 
@@ -156,23 +171,47 @@ const Searches = ({ setModalState, setModalContent }) => {
   const handleConfirmDelete = async () => {
     if (!searchToDelete) return;
     
+    // Close modal immediately
+    handleCloseModal();
+    
+    // Store the search for potential restore
+    const searchToRestore = searches.find(s => s.id === searchToDelete);
+    
+    // Optimistically update UI
+    setSearches(searches.map(search => 
+      search.id === searchToDelete 
+        ? { ...search, isDeleting: true } // Add flag for animation
+        : search
+    ));
+
+    // Remove after animation
+    setTimeout(() => {
+      setSearches(searches.filter(search => search.id !== searchToDelete));
+    }, 300); // Match animation duration
+    
     try {
-      const response = await fetch(`/api/delete-search?searchId=${searchToDelete}`, {
+      const response = await fetch('/api/delete-search', {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          searchId: searchToDelete
+        })
       });
 
-      if (response.ok) {
-        setSearches(searches.filter(search => search.id !== searchToDelete));
-      } else {
+      if (!response.ok) {
+        // Restore the search if delete fails
+        setSearches(prev => [...prev, searchToRestore]);
         console.error('Failed to delete search');
       }
     } catch (error) {
+      // Restore the search if request fails
+      setSearches(prev => [...prev, searchToRestore]);
       console.error('Error deleting search:', error);
     }
     
-    setShowDeleteConfirm(false);
     setSearchToDelete(null);
-    handleCloseModal();
   };
 
   
@@ -308,7 +347,11 @@ const Searches = ({ setModalState, setModalContent }) => {
             </div>
           ) : (
             searches.map(search => (
-              <div key={search.id} style={styles.searchCard}>
+              <div 
+                key={search.id} 
+                style={styles.searchCard}
+                className={search.isDeleting ? 'card-delete-animation' : ''}
+              >
                 <div style={styles.cardStatus}>
                   <SearchNameDisplay name={search.name} />
                   <button 
@@ -453,12 +496,14 @@ const styles = {
     padding: '16px',
     border: '1px solid rgba(46, 63, 50, 0.08)',
     boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
-    transition: 'all 0.2s ease',
+    transition: 'all 0.3s ease',
     cursor: 'default',
     WebkitTapHighlightColor: 'transparent',
     '-webkit-touch-callout': 'none',
     userSelect: 'none',
     position: 'relative',
+    transform: 'translateY(0)',
+    opacity: 1,
   },
 
   cardStatus: {
