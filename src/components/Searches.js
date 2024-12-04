@@ -367,7 +367,7 @@ const styles = {
     padding: '16px',
     border: '1px solid rgba(46, 63, 50, 0.08)',
     boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
-    height: '196px',
+    height: '172px',
   },
 
   skeletonContent: {
