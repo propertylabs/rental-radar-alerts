@@ -169,15 +169,20 @@ const styles = {
     right: 0,
     bottom: 0,
     overflowY: 'auto',
-    WebkitOverflowScrolling: 'touch', // For smooth scrolling on iOS
+    WebkitOverflowScrolling: 'touch',
     background: '#fff',
+    zIndex: 1,
+    touchAction: 'pan-y',
+    WebkitTapHighlightColor: 'transparent',
   },
 
   container: {
     padding: '16px',
-    paddingBottom: '80px', // Space for navigation bar
+    paddingBottom: '80px',
     maxWidth: '800px',
     margin: '0 auto',
+    position: 'relative',
+    zIndex: 1,
   },
 
   header: {
@@ -219,6 +224,8 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
+    position: 'relative',
+    zIndex: 1,
   },
 
   searchCard: {
