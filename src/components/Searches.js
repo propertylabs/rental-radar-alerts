@@ -179,6 +179,7 @@ const styles = {
 
   contentWrapper: {
     padding: '16px',
+    paddingBottom: '32px',
     maxWidth: '800px',
     margin: '0 auto',
     minHeight: '100%',
