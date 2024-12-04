@@ -47,12 +47,33 @@ const SearchModal = ({ isOpen, onClose }) => {
     },
 
     header: {
+      padding: '0 24px',
+      marginBottom: '24px',
+    },
+
+    headerContent: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      height: '32px',
+    },
+
+    headerLeft: {
+      flex: 1,
+      display: 'flex',
+      justifyContent: 'flex-start',
+    },
+
+    headerCenter: {
+      flex: 2,
       display: 'flex',
       justifyContent: 'center',
-      alignItems: 'center',
-      marginBottom: '24px',
-      position: 'relative',
-      padding: '0 24px',
+    },
+
+    headerRight: {
+      flex: 1,
+      display: 'flex',
+      justifyContent: 'flex-end',
     },
 
     title: {
@@ -63,12 +84,9 @@ const SearchModal = ({ isOpen, onClose }) => {
     },
 
     backButton: {
-      position: 'absolute',
-      left: 24,
-      top: 0,
       background: 'none',
       border: 'none',
-      padding: '0 16px',
+      padding: '0',
       height: '32px',
       color: '#007AFF',
       fontSize: '17px',
@@ -80,9 +98,6 @@ const SearchModal = ({ isOpen, onClose }) => {
     },
 
     closeButton: {
-      position: 'absolute',
-      right: 24,
-      top: 0,
       width: '32px',
       height: '32px',
       borderRadius: '50%',
@@ -127,13 +142,21 @@ const SearchModal = ({ isOpen, onClose }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div style={styles.header}>
-          {step > 1 && (
-            <button style={styles.backButton} onClick={() => setStep(prev => prev - 1)}>
-              ← Back
-            </button>
-          )}
-          <h2 style={styles.title}>New Search</h2>
-          <button style={styles.closeButton} onClick={onClose}>×</button>
+          <div style={styles.headerContent}>
+            <div style={styles.headerLeft}>
+              {step > 1 && (
+                <button style={styles.backButton} onClick={() => setStep(prev => prev - 1)}>
+                  ← Back
+                </button>
+              )}
+            </div>
+            <div style={styles.headerCenter}>
+              <h2 style={styles.title}>New Search</h2>
+            </div>
+            <div style={styles.headerRight}>
+              <button style={styles.closeButton} onClick={onClose}>×</button>
+            </div>
+          </div>
         </div>
         {renderStep()}
       </div>
