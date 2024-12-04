@@ -125,15 +125,17 @@ const Searches = () => {
     setActiveMenu(null);
     
     const newStatus = currentStatus === 'enabled' ? 'disabled' : 'enabled';
+    const whopUserId = localStorage.getItem('whop_user_id');
     
     try {
-      const response = await fetch(`/api/update-search-notifications`, {
-        method: 'POST',
+      const response = await fetch(`/api/update-notification`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          searchId,
+          userId: whopUserId,
+          searchId: searchId,
           notifications: newStatus
         })
       });
@@ -144,6 +146,8 @@ const Searches = () => {
             ? {...search, active: newStatus === 'enabled'}
             : search
         ));
+      } else {
+        console.error('Failed to update notifications:', await response.json());
       }
     } catch (error) {
       console.error('Error updating notifications:', error);
@@ -369,11 +373,10 @@ const styles = {
     border: '1px solid rgba(46, 63, 50, 0.08)',
     boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
     transition: 'all 0.2s ease',
-    cursor: 'pointer',
-    ':hover': {
-      transform: 'translateY(-2px)',
-      boxShadow: '0 8px 24px rgba(46, 63, 50, 0.12)',
-    },
+    cursor: 'default',
+    WebkitTapHighlightColor: 'transparent',
+    '-webkit-touch-callout': 'none',
+    userSelect: 'none',
     position: 'relative',
   },
 
@@ -394,7 +397,7 @@ const styles = {
     background: 'none',
     border: 'none',
     padding: '8px',
-    cursor: 'pointer',
+    cursor: 'default',
     color: 'rgba(46, 63, 50, 0.6)',
     borderRadius: '50%',
     transition: 'all 0.2s ease',
@@ -403,8 +406,10 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    ':hover': {
-      background: 'rgba(46, 63, 50, 0.08)',
+    WebkitTapHighlightColor: 'transparent',
+    '-webkit-touch-callout': 'none',
+    ':active': {
+      background: 'rgba(46, 63, 50, 0.12)',
       color: ACCENT,
     },
   },
@@ -620,10 +625,12 @@ const styles = {
     border: 'none',
     background: 'none',
     borderRadius: '8px',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-    ':hover': {
-      background: 'rgba(46, 63, 50, 0.04)',
+    cursor: 'default',
+    WebkitTapHighlightColor: 'transparent',
+    '-webkit-touch-callout': 'none',
+    userSelect: 'none',
+    ':active': {
+      background: 'rgba(46, 63, 50, 0.08)',
     },
   },
 
@@ -638,7 +645,9 @@ const styles = {
     left: 0,
     right: 0,
     bottom: 0,
-    background: 'rgba(0, 0, 0, 0.5)',
+    background: 'rgba(0, 0, 0, 0.3)',
+    backdropFilter: 'blur(4px)',
+    WebkitBackdropFilter: 'blur(4px)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
