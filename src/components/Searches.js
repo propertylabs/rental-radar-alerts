@@ -21,6 +21,7 @@ const Searches = () => {
   const [activeMenu, setActiveMenu] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [searchToDelete, setSearchToDelete] = useState(null);
+  const [cooldownButtons, setCooldownButtons] = useState(new Set());
 
   // Fetch user's saved searches
   const fetchUserSearches = async () => {
@@ -124,8 +125,32 @@ const Searches = () => {
   const handleToggleNotifications = async (searchId, currentStatus, event) => {
     event.stopPropagation();
     
+    // If button is in cooldown, ignore the click
+    if (cooldownButtons.has(searchId)) {
+      return;
+    }
+
     const newStatus = currentStatus === 'enabled' ? 'disabled' : 'enabled';
     const whopUserId = localStorage.getItem('whop_user_id');
+    
+    // Optimistically update UI
+    setSearches(searches.map(search => 
+      search.id === searchId 
+        ? {...search, active: newStatus === 'enabled'}
+        : search
+    ));
+
+    // Add button to cooldown
+    setCooldownButtons(prev => new Set(prev).add(searchId));
+    
+    // Remove from cooldown after 2 seconds
+    setTimeout(() => {
+      setCooldownButtons(prev => {
+        const next = new Set(prev);
+        next.delete(searchId);
+        return next;
+      });
+    }, 2000);
     
     try {
       const response = await fetch(`/api/update-notification`, {
@@ -140,22 +165,22 @@ const Searches = () => {
         })
       });
 
-      if (response.ok) {
-        const button = event.currentTarget;
-        button.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-          button.style.transform = 'scale(1)';
-        }, 100);
-
+      if (!response.ok) {
+        // If API call fails, revert the UI change
         setSearches(searches.map(search => 
           search.id === searchId 
-            ? {...search, active: newStatus === 'enabled'}
+            ? {...search, active: currentStatus === 'enabled'}
             : search
         ));
-      } else {
         console.error('Failed to update notifications:', await response.json());
       }
     } catch (error) {
+      // If API call errors, revert the UI change
+      setSearches(searches.map(search => 
+        search.id === searchId 
+          ? {...search, active: currentStatus === 'enabled'}
+          : search
+      ));
       console.error('Error updating notifications:', error);
     }
   };
@@ -193,6 +218,12 @@ const Searches = () => {
       </div>
     );
   }
+
+  const getNotificationButtonStyle = (searchId) => ({
+    ...styles.menuItem,
+    opacity: cooldownButtons.has(searchId) ? 0.5 : 1, // Visual feedback for cooldown
+    cursor: cooldownButtons.has(searchId) ? 'default' : 'pointer',
+  });
 
   return (
     <div style={styles.pageContainer}>
@@ -266,7 +297,7 @@ const Searches = () => {
                       <span>Edit</span>
                     </button>
                     <button 
-                      style={styles.menuItem}
+                      style={getNotificationButtonStyle(search.id)}
                       onClick={(e) => handleToggleNotifications(search.id, search.active ? 'enabled' : 'disabled', e)}
                     >
                       {search.active ? (
