@@ -171,7 +171,6 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
               key={id}
               style={styles.option(isSelected, isDisabledOption)}
               onClick={() => handleOptionClick(id)}
-              disabled={isDisabledOption}
             >
               <Icon style={styles.optionIcon(isSelected, isDisabledOption)} />
               <span style={styles.optionLabel(isSelected, isDisabledOption)}>
