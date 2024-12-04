@@ -73,10 +73,13 @@ const Searches = () => {
     fetchUserSearches();
   }, []);
 
-  // Add this useEffect near the other useEffects
+  // Update the useEffect for click outside handling
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (activeMenu) {
+      // Only close if clicking outside menu and button
+      if (activeMenu && 
+          !event.target.closest('[data-menu]') && 
+          !event.target.closest('[data-more-button]')) {
         setActiveMenu(null);
       }
     };
@@ -221,6 +224,7 @@ const Searches = () => {
                   <button 
                     style={styles.moreButton}
                     onClick={(e) => handleMoreClick(search.id, e)}
+                    data-more-button
                   >
                     <RiMoreFill style={{ fontSize: '24px' }} />
                   </button>
