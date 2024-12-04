@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PostcodesStep from './steps/PostcodesStep.js';
 import PropertyTypeStep from './steps/PropertyTypeStep.js';
-import PriceBedroomsStep from './steps/PriceBedroomsStep';
+import PriceBedroomsStep from './steps/PriceBedroomsStep.js';
 
 const SearchModal = ({ isOpen, onClose }) => {
   const [step, setStep] = useState(1);
