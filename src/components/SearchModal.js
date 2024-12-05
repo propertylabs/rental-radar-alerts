@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import PostcodesStep from './steps/PostcodesStep.js';
 import PropertyTypeStep from './steps/PropertyTypeStep.js';
 import PriceBedroomsStep from './steps/PriceBedroomsStep.js';
+import CityStep from './steps/CityStep.js';
 
 const SearchModal = ({ isOpen, onClose, whopUserId }) => {
   const [step, setStep] = useState(1);
   const [searchCriteria, setSearchCriteria] = useState({
+    city: null,
+    postcodes: [],
     propertyTypes: [],
     minBedrooms: 1,
     maxBedrooms: 5,
     minPrice: 0,
-    maxPrice: 3000,
-    postcodes: []
+    maxPrice: 3000
   });
 
   const styles = {
@@ -120,24 +122,32 @@ const SearchModal = ({ isOpen, onClose, whopUserId }) => {
   const renderStep = () => {
     switch(step) {
       case 1:
-        return <PostcodesStep 
-          values={searchCriteria.postcodes}
-          onChange={(postcodes) => setSearchCriteria({...searchCriteria, postcodes})}
+        return <CityStep 
+          value={searchCriteria.city}
+          onChange={(city) => setSearchCriteria({...searchCriteria, city})}
           onNext={() => setStep(2)}
         />;
       case 2:
-        return <PropertyTypeStep 
-          values={searchCriteria.propertyTypes}
-          onChange={(types) => setSearchCriteria({...searchCriteria, propertyTypes: types})}
+        return <PostcodesStep 
+          values={searchCriteria.postcodes}
+          city={searchCriteria.city}
+          onChange={(postcodes) => setSearchCriteria({...searchCriteria, postcodes})}
           onNext={() => setStep(3)}
         />;
       case 3:
+        return <PropertyTypeStep 
+          values={searchCriteria.propertyTypes}
+          onChange={(types) => setSearchCriteria({...searchCriteria, propertyTypes: types})}
+          onNext={() => setStep(4)}
+        />;
+      case 4:
         return <PriceBedroomsStep 
           values={{
             minBedrooms: searchCriteria.minBedrooms,
             maxBedrooms: searchCriteria.maxBedrooms,
             minPrice: searchCriteria.minPrice,
-            maxPrice: searchCriteria.maxPrice
+            maxPrice: searchCriteria.maxPrice,
+            propertyTypes: searchCriteria.propertyTypes
           }}
           onChange={(values) => setSearchCriteria({
             ...searchCriteria,
@@ -157,12 +167,13 @@ const SearchModal = ({ isOpen, onClose, whopUserId }) => {
     onClose();
     setStep(1);
     setSearchCriteria({
+      city: null,
+      postcodes: [],
       propertyTypes: [],
       minBedrooms: 1,
       maxBedrooms: 5,
       minPrice: 0,
-      maxPrice: 3000,
-      postcodes: []
+      maxPrice: 3000
     });
   };
 
