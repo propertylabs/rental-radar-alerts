@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import { 
-  RiBuilding4Line, // London
-  RiBuilding2Line, // Manchester
-  RiBuildings2Line, // NYC
-  RiBuildings4Line  // LA
+  RiBuilding4Fill,    // Changed from RiBuilding4Line
+  RiBuilding2Fill,    // Changed from RiBuilding2Line
+  RiBuilding3Fill,    // Changed from RiBuildings2Line
+  RiBuildingFill      // Changed from RiBuildings4Line
 } from 'react-icons/ri';
 
 const CityStep = ({ value, onChange, onNext }) => {
   const [pressedId, setPressedId] = useState(null);
 
   const cities = [
-    { id: 'london', name: 'London', icon: RiBuilding4Line },
-    { id: 'manchester', name: 'Manchester', icon: RiBuilding2Line },
-    { id: 'nyc', name: 'New York', icon: RiBuildings2Line, disabled: true },
-    { id: 'la', name: 'Los Angeles', icon: RiBuildings4Line, disabled: true }
+    { id: 'london', name: 'London', icon: RiBuilding4Fill },
+    { id: 'manchester', name: 'Manchester', icon: RiBuilding2Fill },
+    { id: 'nyc', name: 'New York', icon: RiBuilding3Fill, disabled: true },
+    { id: 'la', name: 'Los Angeles', icon: RiBuildingFill, disabled: true }
   ];
 
   const styles = {
