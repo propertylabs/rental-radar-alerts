@@ -68,6 +68,7 @@ const LocationStep = ({ values, onChange, onNext }) => {
       flexDirection: 'column',
       gap: '24px',
       padding: '0',
+      height: '100%',
     },
 
     header: {
@@ -146,6 +147,17 @@ const LocationStep = ({ values, onChange, onNext }) => {
       color: '#2E3F32',
     },
 
+    '@keyframes slideIn': {
+      from: {
+        opacity: 0,
+        transform: 'translateY(-8px)',
+      },
+      to: {
+        opacity: 1,
+        transform: 'translateY(0)',
+      }
+    },
+
     dropdown: {
       position: 'absolute',
       top: 'calc(100% + 4px)',
@@ -158,6 +170,8 @@ const LocationStep = ({ values, onChange, onNext }) => {
       maxHeight: '240px',
       overflowY: 'auto',
       zIndex: 10,
+      animation: 'slideIn 0.2s ease-out',
+      transformOrigin: 'top',
     },
 
     dropdownItem: {
@@ -180,35 +194,41 @@ const LocationStep = ({ values, onChange, onNext }) => {
 
     tagsSection: {
       margin: '0 8px',
+      flex: 1,
       background: 'rgba(46, 63, 50, 0.02)',
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
       border: '1px solid rgba(46, 63, 50, 0.08)',
       borderRadius: '16px',
-      minHeight: '80px',
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'center',
+      minHeight: 0,
     },
 
     tagsContainer: {
       display: 'flex',
       flexWrap: 'wrap',
-      gap: '8px',
+      gap: '10px',
       padding: '16px',
+      overflowY: 'auto',
+      flex: 1,
     },
 
     tag: {
       display: 'inline-flex',
       alignItems: 'center',
-      gap: '6px',
-      padding: '8px 12px',
+      gap: '8px',
+      padding: '10px 14px',
       background: 'white',
       border: '1px solid rgba(46, 63, 50, 0.08)',
-      borderRadius: '12px',
-      fontSize: '15px',
+      borderRadius: '14px',
+      fontSize: '17px',
       color: '#2E3F32',
-      fontWeight: '500',
+      fontWeight: '600',
+      letterSpacing: '-0.5px',
+      fontFamily: 'SF Mono, Menlo, monospace',
+      boxShadow: '0 2px 6px rgba(46, 63, 50, 0.06)',
+      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
     },
 
     removeTag: {
@@ -216,21 +236,38 @@ const LocationStep = ({ values, onChange, onNext }) => {
       alignItems: 'center',
       justifyContent: 'center',
       cursor: 'pointer',
-      padding: '2px',
-      marginLeft: '2px',
+      width: '20px',
+      height: '20px',
       borderRadius: '50%',
       color: '#666',
       transition: 'all 0.2s ease',
       ':hover': {
         background: 'rgba(46, 63, 50, 0.06)',
+        color: '#ff3b30',
       },
     },
 
     emptyState: {
+      flex: 1,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
       textAlign: 'center',
       color: '#666',
       fontSize: '15px',
       padding: '0 16px',
+      fontStyle: 'italic',
+    },
+
+    '@keyframes tagAppear': {
+      from: {
+        opacity: 0,
+        transform: 'scale(0.8)',
+      },
+      to: {
+        opacity: 1,
+        transform: 'scale(1)',
+      }
     },
   };
 
@@ -351,13 +388,25 @@ const LocationStep = ({ values, onChange, onNext }) => {
         {values.length > 0 ? (
           <div style={styles.tagsContainer}>
             {values.map(postcode => (
-              <div key={postcode} style={styles.tag}>
-                {postcode}
+              <div 
+                key={postcode} 
+                style={{
+                  ...styles.tag,
+                  animation: 'tagAppear 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                }}
+              >
+                <span style={{ userSelect: 'none' }}>{postcode}</span>
                 <div 
                   style={styles.removeTag}
-                  onClick={() => onChange(values.filter(p => p !== postcode))}
+                  onClick={(e) => {
+                    e.currentTarget.parentElement.style.transform = 'scale(0.8)';
+                    e.currentTarget.parentElement.style.opacity = '0';
+                    setTimeout(() => {
+                      onChange(values.filter(p => p !== postcode));
+                    }, 150);
+                  }}
                 >
-                  <RiCloseLine size={18} />
+                  <RiCloseLine size={16} />
                 </div>
               </div>
             ))}
