@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import PostcodesStep from './steps/PostcodesStep.js';
+import CityStep from './steps/CityStep.js';
+import LocationStep from './steps/LocationStep.js';
 import PropertyTypeStep from './steps/PropertyTypeStep.js';
 import PriceBedroomsStep from './steps/PriceBedroomsStep.js';
-import LocationStep from './steps/LocationStep.js';
 
 const SearchModal = ({ isOpen, onClose, whopUserId }) => {
   const [step, setStep] = useState(1);
   const [searchCriteria, setSearchCriteria] = useState({
+    city: null,
     locations: [],
     propertyTypes: [],
     minBedrooms: 1,
@@ -122,18 +123,25 @@ const SearchModal = ({ isOpen, onClose, whopUserId }) => {
   const renderStep = () => {
     switch(step) {
       case 1:
-        return <LocationStep 
-          values={searchCriteria.locations}
-          onChange={(locations) => setSearchCriteria({...searchCriteria, locations})}
+        return <CityStep 
+          value={searchCriteria.city}
+          onChange={(city) => setSearchCriteria({...searchCriteria, city})}
           onNext={() => setStep(2)}
         />;
       case 2:
-        return <PropertyTypeStep 
-          values={searchCriteria.propertyTypes}
-          onChange={(types) => setSearchCriteria({...searchCriteria, propertyTypes: types})}
+        return <LocationStep 
+          values={searchCriteria.locations}
+          city={searchCriteria.city}
+          onChange={(locations) => setSearchCriteria({...searchCriteria, locations})}
           onNext={() => setStep(3)}
         />;
       case 3:
+        return <PropertyTypeStep 
+          values={searchCriteria.propertyTypes}
+          onChange={(types) => setSearchCriteria({...searchCriteria, propertyTypes: types})}
+          onNext={() => setStep(4)}
+        />;
+      case 4:
         return <PriceBedroomsStep 
           values={{
             minBedrooms: searchCriteria.minBedrooms,
@@ -160,6 +168,7 @@ const SearchModal = ({ isOpen, onClose, whopUserId }) => {
     onClose();
     setStep(1);
     setSearchCriteria({
+      city: null,
       locations: [],
       propertyTypes: [],
       minBedrooms: 1,
