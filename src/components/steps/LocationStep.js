@@ -15,6 +15,40 @@ const LocationStep = ({ values, onChange, onNext }) => {
     'M44', 'M45', 'M46', 'M50', 'M90'
   ];
 
+  const MANCHESTER_AREAS = {
+    // City Areas
+    'northern quarter': ['M1', 'M4'],
+    'ancoats': ['M4', 'M11'],
+    'city centre': ['M1', 'M2', 'M3', 'M4'],
+    'deansgate': ['M3'],
+    'castlefield': ['M3', 'M15'],
+    'green quarter': ['M4'],
+    'spinningfields': ['M3'],
+    'piccadilly': ['M1'],
+    
+    // Popular Areas
+    'chorlton': ['M21'],
+    'didsbury': ['M20'],
+    'west didsbury': ['M20'],
+    'east didsbury': ['M19', 'M20'],
+    'fallowfield': ['M14'],
+    'rusholme': ['M14'],
+    'withington': ['M20'],
+    'levenshulme': ['M19'],
+    'salford quays': ['M50'],
+    'media city': ['M50'],
+    
+    // Landmarks
+    'manchester arena': ['M3'],
+    'manchester piccadilly': ['M1'],
+    'manchester victoria': ['M3'],
+    'old trafford': ['M16'],
+    'etihad stadium': ['M11'],
+    'university of manchester': ['M13'],
+    'manchester metropolitan': ['M15'],
+    'trafford centre': ['M17'],
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && 
@@ -200,9 +234,47 @@ const LocationStep = ({ values, onChange, onNext }) => {
     },
   };
 
-  const filteredPostcodes = MANCHESTER_POSTCODES.filter(postcode => 
-    postcode.toLowerCase().startsWith(searchTerm.trim().toLowerCase())
-  );
+  const getSearchResults = (term) => {
+    const trimmedTerm = term.trim().toLowerCase();
+    
+    if (!trimmedTerm) return [];
+
+    const results = [];
+
+    // Direct postcode matches (exclude already selected postcodes)
+    const postcodeMatches = MANCHESTER_POSTCODES.filter(postcode => 
+      postcode.toLowerCase().startsWith(trimmedTerm) && !values.includes(postcode)
+    );
+    postcodeMatches.forEach(postcode => {
+      results.push({
+        type: 'postcode',
+        display: postcode,
+        postcodes: [postcode]
+      });
+    });
+
+    // Area/landmark matches
+    Object.entries(MANCHESTER_AREAS).forEach(([area, postcodes]) => {
+      if (area.includes(trimmedTerm)) {
+        // Only include areas that have at least one unselected postcode
+        const availablePostcodes = postcodes.filter(p => !values.includes(p));
+        if (availablePostcodes.length > 0) {
+          results.push({
+            type: 'area',
+            display: area.charAt(0).toUpperCase() + area.slice(1),
+            postcodes: availablePostcodes,
+            totalPostcodes: postcodes.length,
+            // Add this to show "X of Y postcodes" if some are already selected
+            selectedCount: postcodes.length - availablePostcodes.length
+          });
+        }
+      }
+    });
+
+    return results;
+  };
+
+  const filteredResults = getSearchResults(searchTerm);
 
   return (
     <div style={styles.wrapper}>
@@ -225,25 +297,46 @@ const LocationStep = ({ values, onChange, onNext }) => {
           />
           {showDropdown && searchTerm && (
             <div style={styles.dropdown} ref={dropdownRef}>
-              {filteredPostcodes.length > 0 ? (
-                filteredPostcodes.map(postcode => (
+              {filteredResults.length > 0 ? (
+                filteredResults.map((result, index) => (
                   <div
-                    key={postcode}
-                    style={styles.dropdownItem}
+                    key={`${result.type}-${index}`}
+                    style={{
+                      ...styles.dropdownItem,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
                     onClick={() => {
-                      if (!values.includes(postcode)) {
-                        onChange([...values, postcode.trim()]);
+                      const newPostcodes = result.postcodes.filter(
+                        postcode => !values.includes(postcode)
+                      );
+                      if (newPostcodes.length > 0) {
+                        onChange([...values, ...newPostcodes]);
                       }
                       setSearchTerm('');
                       setShowDropdown(false);
                     }}
                   >
-                    {postcode}
+                    <span>{result.display}</span>
+                    {result.type === 'area' && (
+                      <span style={{
+                        fontSize: '13px',
+                        color: '#666',
+                        marginLeft: '8px',
+                      }}>
+                        {result.selectedCount > 0 ? (
+                          `${result.postcodes.length} of ${result.totalPostcodes} postcodes`
+                        ) : (
+                          result.postcodes.join(', ')
+                        )}
+                      </span>
+                    )}
                   </div>
                 ))
               ) : (
                 <div style={styles.noResults}>
-                  No matching postcodes found
+                  No matching areas or postcodes found
                 </div>
               )}
             </div>
