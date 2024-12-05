@@ -1,9 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { RiMapLine, RiSearchLine, RiCloseLine } from 'react-icons/ri';
 
 const LocationStep = ({ values, onChange, onNext }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+  const searchWrapperRef = useRef(null);
 
   const MANCHESTER_POSTCODES = [
     'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9',
@@ -12,6 +14,19 @@ const LocationStep = ({ values, onChange, onNext }) => {
     'M30', 'M31', 'M32', 'M33', 'M34', 'M35', 'M38', 'M40', 'M41', 'M43',
     'M44', 'M45', 'M46', 'M50', 'M90'
   ];
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && 
+          !dropdownRef.current.contains(event.target) && 
+          !searchWrapperRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const styles = {
     wrapper: {
@@ -101,7 +116,7 @@ const LocationStep = ({ values, onChange, onNext }) => {
       position: 'absolute',
       top: 'calc(100% + 4px)',
       left: 0,
-      right: 0,
+      width: 'calc(100% + 70px)',
       background: 'white',
       borderRadius: '16px',
       boxShadow: '0 4px 20px rgba(46, 63, 50, 0.1)',
@@ -131,7 +146,7 @@ const LocationStep = ({ values, onChange, onNext }) => {
   };
 
   const filteredPostcodes = MANCHESTER_POSTCODES.filter(postcode => 
-    postcode.toLowerCase().startsWith(searchTerm.toLowerCase())
+    postcode.toLowerCase().startsWith(searchTerm.trim().toLowerCase())
   );
 
   return (
@@ -142,7 +157,7 @@ const LocationStep = ({ values, onChange, onNext }) => {
       </div>
 
       <div style={styles.inputRow}>
-        <div style={styles.searchWrapper}>
+        <div style={styles.searchWrapper} ref={searchWrapperRef}>
           <RiSearchLine size={20} style={styles.searchIcon} />
           <input
             style={styles.input}
@@ -154,7 +169,7 @@ const LocationStep = ({ values, onChange, onNext }) => {
             }}
           />
           {showDropdown && searchTerm && (
-            <div style={styles.dropdown}>
+            <div style={styles.dropdown} ref={dropdownRef}>
               {filteredPostcodes.length > 0 ? (
                 filteredPostcodes.map(postcode => (
                   <div
@@ -162,7 +177,7 @@ const LocationStep = ({ values, onChange, onNext }) => {
                     style={styles.dropdownItem}
                     onClick={() => {
                       if (!values.includes(postcode)) {
-                        onChange([...values, postcode]);
+                        onChange([...values, postcode.trim()]);
                       }
                       setSearchTerm('');
                       setShowDropdown(false);
