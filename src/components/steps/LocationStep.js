@@ -35,12 +35,12 @@ const LocationStep = ({ values, onChange, onNext }) => {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: '32px',
+      gap: '24px',
       padding: '0px',
     },
 
     header: {
-      marginBottom: '4px',
+      marginBottom: '0px',
     },
 
     subtitle: {
@@ -62,7 +62,7 @@ const LocationStep = ({ values, onChange, onNext }) => {
     searchSection: {
       display: 'flex',
       gap: '12px',
-      padding: '8px',
+      padding: '0 8px',
     },
 
     searchContainer: {
@@ -133,11 +133,21 @@ const LocationStep = ({ values, onChange, onNext }) => {
         : 'none',
     },
 
+    tagSection: {
+      margin: '0 8px',
+      background: 'rgba(46, 63, 50, 0.02)',
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      border: '1px solid rgba(46, 63, 50, 0.08)',
+      borderRadius: '16px',
+      overflow: 'hidden',
+    },
+
     tagContainer: {
       display: 'flex',
       flexWrap: 'wrap',
       gap: '8px',
-      padding: '16px 8px',
+      padding: '16px',
       minHeight: '48px',
     },
 
@@ -145,9 +155,9 @@ const LocationStep = ({ values, onChange, onNext }) => {
       display: 'flex',
       alignItems: 'center',
       gap: '6px',
-      padding: '6px 12px',
+      padding: '8px 12px',
       background: 'rgba(46, 63, 50, 0.06)',
-      borderRadius: '8px',
+      borderRadius: '10px',
       fontSize: '15px',
       color: '#2E3F32',
       fontWeight: '500',
@@ -160,29 +170,34 @@ const LocationStep = ({ values, onChange, onNext }) => {
       justifyContent: 'center',
       cursor: 'pointer',
       padding: '2px',
+      marginLeft: '2px',
       borderRadius: '50%',
       transition: 'all 0.2s ease',
+      ':hover': {
+        background: 'rgba(46, 63, 50, 0.1)',
+      },
     },
 
     dropdown: {
       position: 'absolute',
-      top: '100%',
+      top: 'calc(100% + 8px)',
       left: '0',
       right: '0',
-      maxHeight: '200px',
+      maxHeight: '240px',
       overflowY: 'auto',
       background: 'white',
       borderRadius: '16px',
       boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
       border: '1px solid rgba(46, 63, 50, 0.08)',
-      marginTop: '8px',
       zIndex: 1000,
     },
 
     dropdownItem: {
-      padding: '12px 16px',
+      padding: '14px 16px',
       cursor: 'pointer',
       transition: 'all 0.2s ease',
+      fontSize: '15px',
+      color: '#2E3F32',
       ':hover': {
         background: 'rgba(46, 63, 50, 0.04)',
       },
@@ -229,18 +244,20 @@ const LocationStep = ({ values, onChange, onNext }) => {
         </button>
       </div>
 
-      <div style={styles.tagContainer}>
-        {values.map(postcode => (
-          <div key={postcode} style={styles.tag}>
-            {postcode}
-            <div 
-              style={styles.removeTag}
-              onClick={() => handleRemovePostcode(postcode)}
-            >
-              <RiCloseLine style={{ fontSize: '18px' }} />
+      <div style={styles.tagSection}>
+        <div style={styles.tagContainer}>
+          {values.map(postcode => (
+            <div key={postcode} style={styles.tag}>
+              {postcode}
+              <div 
+                style={styles.removeTag}
+                onClick={() => handleRemovePostcode(postcode)}
+              >
+                <RiCloseLine style={{ fontSize: '16px' }} />
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       <button 
