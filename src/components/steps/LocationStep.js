@@ -41,14 +41,15 @@ const LocationStep = ({ values, onChange, onNext }) => {
     },
 
     inputRow: {
-      display: 'grid',
-      gridTemplateColumns: '1fr 58px',
+      display: 'flex',
+      alignItems: 'center',
       gap: '12px',
       margin: '0 8px',
     },
 
     searchWrapper: {
       position: 'relative',
+      width: 'calc(100% - 70px)',
       height: '58px',
     },
 
@@ -64,9 +65,10 @@ const LocationStep = ({ values, onChange, onNext }) => {
 
     input: {
       position: 'absolute',
-      inset: 0,
+      top: 0,
+      left: 0,
       width: '100%',
-      height: '100%',
+      height: '58px',
       background: 'rgba(46, 63, 50, 0.02)',
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
@@ -76,11 +78,13 @@ const LocationStep = ({ values, onChange, onNext }) => {
       fontSize: '17px',
       color: '#2E3F32',
       outline: 'none',
+      boxSizing: 'border-box',
     },
 
     mapButton: {
       width: '58px',
       height: '58px',
+      flexShrink: 0,
       background: 'rgba(46, 63, 50, 0.02)',
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
