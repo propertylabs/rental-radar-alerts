@@ -220,11 +220,11 @@ const LocationStep = ({ values, onChange, onNext }) => {
       alignItems: 'center',
       justifyContent: 'space-between',
       height: '36px',
-      padding: '0 10px',
+      padding: '0 12px',
       background: 'white',
       border: '1px solid rgba(46, 63, 50, 0.08)',
       borderRadius: '10px',
-      fontSize: '14px',
+      fontSize: '17px',
       color: '#2E3F32',
       fontWeight: '600',
       letterSpacing: '-0.5px',
@@ -237,12 +237,13 @@ const LocationStep = ({ values, onChange, onNext }) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      width: '18px',
-      height: '18px',
+      width: '24px',
+      height: '24px',
       borderRadius: '50%',
       color: '#666',
-      marginLeft: '6px',
+      marginLeft: '8px',
       flexShrink: 0,
+      cursor: 'pointer',
       ':hover': {
         background: 'rgba(46, 63, 50, 0.06)',
         color: '#ff3b30',
@@ -408,7 +409,7 @@ const LocationStep = ({ values, onChange, onNext }) => {
                     }, 150);
                   }}
                 >
-                  <RiCloseLine size={16} />
+                  <RiCloseLine size={20} />
                 </div>
               </div>
             ))}
