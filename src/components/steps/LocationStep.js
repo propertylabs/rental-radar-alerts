@@ -142,7 +142,62 @@ const LocationStep = ({ values, onChange, onNext }) => {
       fontSize: '15px',
       color: '#666',
       textAlign: 'center',
-    }
+    },
+
+    tagsSection: {
+      margin: '0 8px',
+      background: 'rgba(46, 63, 50, 0.02)',
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      border: '1px solid rgba(46, 63, 50, 0.08)',
+      borderRadius: '16px',
+      minHeight: '80px',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+    },
+
+    tagsContainer: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: '8px',
+      padding: '16px',
+    },
+
+    tag: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '6px',
+      padding: '8px 12px',
+      background: 'white',
+      border: '1px solid rgba(46, 63, 50, 0.08)',
+      borderRadius: '12px',
+      fontSize: '15px',
+      color: '#2E3F32',
+      fontWeight: '500',
+    },
+
+    removeTag: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      cursor: 'pointer',
+      padding: '2px',
+      marginLeft: '2px',
+      borderRadius: '50%',
+      color: '#666',
+      transition: 'all 0.2s ease',
+      ':hover': {
+        background: 'rgba(46, 63, 50, 0.06)',
+      },
+    },
+
+    emptyState: {
+      textAlign: 'center',
+      color: '#666',
+      fontSize: '15px',
+      padding: '0 16px',
+    },
   };
 
   const filteredPostcodes = MANCHESTER_POSTCODES.filter(postcode => 
@@ -197,6 +252,28 @@ const LocationStep = ({ values, onChange, onNext }) => {
         <button style={styles.mapButton}>
           <RiMapLine size={24} />
         </button>
+      </div>
+
+      <div style={styles.tagsSection}>
+        {values.length > 0 ? (
+          <div style={styles.tagsContainer}>
+            {values.map(postcode => (
+              <div key={postcode} style={styles.tag}>
+                {postcode}
+                <div 
+                  style={styles.removeTag}
+                  onClick={() => onChange(values.filter(p => p !== postcode))}
+                >
+                  <RiCloseLine size={18} />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={styles.emptyState}>
+            The postcodes you select will appear here
+          </div>
+        )}
       </div>
 
       {/* ... rest of the component for dropdown and tags */}
