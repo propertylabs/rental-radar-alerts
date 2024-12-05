@@ -220,24 +220,24 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
       borderRadius: '24px',
-      padding: '24px',
+      padding: '16px',
       border: '1px solid rgba(46, 63, 50, 0.08)',
     },
 
     sectionHeader: {
       display: 'flex',
       alignItems: 'center',
-      gap: '12px',
-      marginBottom: '20px',
+      gap: '8px',
+      marginBottom: '12px',
     },
 
     sectionIcon: {
-      fontSize: '24px',
+      fontSize: '20px',
       color: '#2E3F32',
     },
 
     sectionTitle: {
-      fontSize: '20px',
+      fontSize: '17px',
       fontWeight: '600',
       color: '#2E3F32',
       margin: 0,
@@ -247,7 +247,7 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
     rangeContainer: {
       position: 'relative',
       height: '40px',
-      margin: '20px 0',
+      margin: '12px 0',
     },
 
     rangeTrack: {
@@ -290,7 +290,7 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
     valueDisplay: {
       display: 'flex',
       justifyContent: 'space-between',
-      marginTop: '12px',
+      marginTop: '8px',
     },
 
     valueContainer: {
@@ -306,15 +306,15 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
     },
 
     valueLabel: {
-      fontSize: '13px',
+      fontSize: '12px',
       color: '#999',
-      marginBottom: '4px',
+      marginBottom: '2px',
       fontWeight: '500',
       letterSpacing: '-0.2px',
     },
 
     value: {
-      fontSize: '15px',
+      fontSize: '14px',
       fontWeight: '600',
       color: '#2E3F32',
       letterSpacing: '-0.2px',
