@@ -60,25 +60,29 @@ const LocationStep = ({ values, onChange, onNext }) => {
     },
 
     searchSection: {
-      display: 'flex',
-      gap: '12px',
-      padding: '0 8px',
-      alignItems: 'center',
-    },
-
-    searchContainer: {
-      position: 'relative',
-      width: 'calc(100% - 68px)',
-    },
-
-    searchBar: {
-      width: '100%',
-      height: '56px',
+      margin: '0 8px',
+      padding: '0',
       background: 'rgba(46, 63, 50, 0.02)',
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
       border: '1px solid rgba(46, 63, 50, 0.08)',
       borderRadius: '16px',
+      display: 'flex',
+      gap: '8px',
+      padding: '8px',
+    },
+
+    searchContainer: {
+      position: 'relative',
+      flex: 1,
+    },
+
+    searchBar: {
+      width: '100%',
+      height: '58px',
+      background: 'white',
+      border: '1px solid rgba(46, 63, 50, 0.08)',
+      borderRadius: '12px',
       padding: '0 16px',
       paddingLeft: '44px',
       fontSize: '17px',
@@ -103,14 +107,12 @@ const LocationStep = ({ values, onChange, onNext }) => {
     },
 
     mapButton: {
-      width: '56px',
-      height: '56px',
+      width: '58px',
+      height: '58px',
       flexShrink: 0,
-      background: 'rgba(46, 63, 50, 0.02)',
-      backdropFilter: 'blur(20px)',
-      WebkitBackdropFilter: 'blur(20px)',
+      background: 'white',
       border: '1px solid rgba(46, 63, 50, 0.08)',
-      borderRadius: '16px',
+      borderRadius: '12px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
