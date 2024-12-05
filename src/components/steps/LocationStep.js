@@ -97,8 +97,42 @@ const LocationStep = ({ values, onChange, onNext }) => {
       color: '#2E3F32',
     },
 
-    // ... rest of the styles for dropdown and tags remain similar
+    dropdown: {
+      position: 'absolute',
+      top: 'calc(100% + 4px)',
+      left: 0,
+      right: 0,
+      background: 'white',
+      borderRadius: '16px',
+      boxShadow: '0 4px 20px rgba(46, 63, 50, 0.1)',
+      border: '1px solid rgba(46, 63, 50, 0.08)',
+      maxHeight: '240px',
+      overflowY: 'auto',
+      zIndex: 10,
+    },
+
+    dropdownItem: {
+      padding: '14px 16px',
+      fontSize: '17px',
+      color: '#2E3F32',
+      cursor: 'pointer',
+      transition: 'background-color 0.2s ease',
+      ':hover': {
+        background: 'rgba(46, 63, 50, 0.04)',
+      },
+    },
+
+    noResults: {
+      padding: '14px 16px',
+      fontSize: '15px',
+      color: '#666',
+      textAlign: 'center',
+    }
   };
+
+  const filteredPostcodes = MANCHESTER_POSTCODES.filter(postcode => 
+    postcode.toLowerCase().startsWith(searchTerm.toLowerCase())
+  );
 
   return (
     <div style={styles.wrapper}>
@@ -119,6 +153,31 @@ const LocationStep = ({ values, onChange, onNext }) => {
               setShowDropdown(true);
             }}
           />
+          {showDropdown && searchTerm && (
+            <div style={styles.dropdown}>
+              {filteredPostcodes.length > 0 ? (
+                filteredPostcodes.map(postcode => (
+                  <div
+                    key={postcode}
+                    style={styles.dropdownItem}
+                    onClick={() => {
+                      if (!values.includes(postcode)) {
+                        onChange([...values, postcode]);
+                      }
+                      setSearchTerm('');
+                      setShowDropdown(false);
+                    }}
+                  >
+                    {postcode}
+                  </div>
+                ))
+              ) : (
+                <div style={styles.noResults}>
+                  No matching postcodes found
+                </div>
+              )}
+            </div>
+          )}
         </div>
         <button style={styles.mapButton}>
           <RiMapLine size={24} />
