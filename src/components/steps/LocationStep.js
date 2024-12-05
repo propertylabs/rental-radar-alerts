@@ -67,9 +67,8 @@ const LocationStep = ({ values, onChange, onNext }) => {
     },
 
     searchContainer: {
-      flex: 1,
       position: 'relative',
-      maxWidth: 'calc(100% - 68px)',
+      width: 'calc(100% - 68px)',
     },
 
     searchBar: {
@@ -80,22 +79,27 @@ const LocationStep = ({ values, onChange, onNext }) => {
       WebkitBackdropFilter: 'blur(20px)',
       border: '1px solid rgba(46, 63, 50, 0.08)',
       borderRadius: '16px',
-      padding: '0 16px 0 48px',
+      padding: '0 16px',
+      paddingLeft: '44px',
       fontSize: '17px',
       color: '#2E3F32',
       transition: 'all 0.2s ease',
       outline: 'none',
     },
 
-    searchIcon: {
+    searchIconWrapper: {
       position: 'absolute',
-      left: '16px',
+      left: '14px',
       top: '50%',
       transform: 'translateY(-50%)',
-      color: '#2E3F32',
-      fontSize: '20px',
-      opacity: 0.3,
+      width: '20px',
+      height: '20px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
       pointerEvents: 'none',
+      color: '#2E3F32',
+      opacity: 0.4,
     },
 
     mapButton: {
@@ -219,7 +223,9 @@ const LocationStep = ({ values, onChange, onNext }) => {
 
       <div style={styles.searchSection}>
         <div style={styles.searchContainer}>
-          <RiSearchLine style={styles.searchIcon} />
+          <div style={styles.searchIconWrapper}>
+            <RiSearchLine size={20} />
+          </div>
           <input
             style={styles.searchBar}
             placeholder="Try 'M1' or 'M20'"
