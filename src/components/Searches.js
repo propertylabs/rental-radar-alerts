@@ -72,10 +72,24 @@ const Searches = ({ onOpenSearchModal }) => {
     };
   }, [menuStyles]);
 
-  // Fetch user's saved searches
+  // Modify fetchUserSearches to handle loading state
   const fetchUserSearches = async (newId = null) => {
+    setIsLoading(true); // Set loading at start
+    
     try {
-      const response = await fetch(`/api/get-user-searches?userId=${whopUserId}`);
+      const whopUserId = localStorage.getItem('whop_user_id');
+      if (!whopUserId) {
+        console.error('No user ID found');
+        setIsLoading(false);
+        return;
+      }
+
+      const response = await fetch(`/api/get-user-searches?userId=${whopUserId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       
       if (response.ok) {
         const result = await response.json();
@@ -98,13 +112,16 @@ const Searches = ({ onOpenSearchModal }) => {
           setSearches(formattedSearches);
           if (newId) {
             setNewSearchId(newId);
-            // Clear newSearchId after animation
             setTimeout(() => setNewSearchId(null), 1000);
           }
         }
+      } else {
+        console.error('Failed to fetch searches:', response.status);
       }
     } catch (error) {
       console.error('Error fetching searches:', error);
+    } finally {
+      setIsLoading(false); // Always set loading to false when done
     }
   };
 
