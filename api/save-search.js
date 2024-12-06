@@ -23,6 +23,11 @@ export default async function handler(req, res) {
     notifications
   } = req.body;
 
+  if (!user_id) {
+    console.error('Missing user_id in request:', req.body);
+    return res.status(400).json({ error: 'user_id is required' });
+  }
+
   try {
     const result = await pool.query(
       `INSERT INTO searches (

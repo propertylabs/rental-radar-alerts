@@ -24,35 +24,31 @@ const SearchModal = ({ isOpen, onClose, whopUserId }) => {
   const handleSaveSearch = async () => {
     try {
       console.log('Starting save search process...');
-      console.log('Search criteria being sent:', {
-        user_id: whopUserId,
-        search_name: searchCriteria.name,
-        postcodes: searchCriteria.locations,
-        min_price: searchCriteria.minPrice,
-        max_price: searchCriteria.maxPrice,
-        min_bedrooms: searchCriteria.minBedrooms,
-        max_bedrooms: searchCriteria.maxBedrooms,
-        property_types: searchCriteria.propertyTypes,
-        must_haves: searchCriteria.mustHaves,
-        notifications: searchCriteria.notifications
-      });
+      
+      const token = localStorage.getItem('whop_access_token');
+      if (!token) {
+        throw new Error('No authorization token available');
+      }
 
       const response = await fetch('/api/save-search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          user_id: whopUserId,
-          search_name: searchCriteria.name,
-          postcodes: searchCriteria.locations,
-          min_price: searchCriteria.minPrice,
-          max_price: searchCriteria.maxPrice,
-          min_bedrooms: searchCriteria.minBedrooms,
-          max_bedrooms: searchCriteria.maxBedrooms,
-          property_types: searchCriteria.propertyTypes,
-          must_haves: searchCriteria.mustHaves,
-          notifications: searchCriteria.notifications
+          search: {
+            name: searchCriteria.name,
+            city: searchCriteria.city,
+            locations: searchCriteria.locations,
+            propertyTypes: searchCriteria.propertyTypes,
+            minBedrooms: searchCriteria.minBedrooms,
+            maxBedrooms: searchCriteria.maxBedrooms,
+            minPrice: searchCriteria.minPrice,
+            maxPrice: searchCriteria.maxPrice,
+            mustHaves: searchCriteria.mustHaves,
+            notifications: searchCriteria.notifications
+          }
         }),
       });
 
@@ -61,17 +57,13 @@ const SearchModal = ({ isOpen, onClose, whopUserId }) => {
       console.log('API Response data:', data);
 
       if (!response.ok) {
-        console.error('Save failed with status:', response.status);
-        console.error('Error details:', data);
-        throw new Error('Failed to save search');
+        throw new Error(data.error || 'Failed to save search');
       }
 
       console.log('Search saved successfully!');
       onClose();
     } catch (error) {
-      console.error('Error in handleSaveSearch:', error);
-      console.error('Error stack:', error.stack);
-      // You might want to show an error message to the user here
+      console.error('Error saving search:', error);
     }
   };
 
