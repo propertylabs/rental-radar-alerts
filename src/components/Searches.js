@@ -611,11 +611,10 @@ const styles = {
   },
 
   searchList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '24px',
     position: 'relative',
-    width: '100%',
-    // Set a minimum height based on number of searches
-    minHeight: (props) => `${props.searchCount * (172 + 16)}px`,
-    marginBottom: '16px', // Add bottom margin to container
   },
 
   searchSlot: {
