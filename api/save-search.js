@@ -10,25 +10,33 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { 
-    user_id,
-    search_name,
-    postcodes,
-    min_price,
-    max_price,
-    min_bedrooms,
-    max_bedrooms,
-    property_types,
-    must_haves,
-    notifications
-  } = req.body;
+  // Get the authorization token from headers
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ error: 'No authorization token provided' });
+  }
 
-  if (!user_id) {
-    console.error('Missing user_id in request:', req.body);
-    return res.status(400).json({ error: 'user_id is required' });
+  const { search } = req.body;
+  if (!search) {
+    return res.status(400).json({ error: 'Missing search data' });
   }
 
   try {
+    // Fetch the Whop user ID using the token
+    const whopResponse = await fetch('https://api.whop.com/v5/me', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!whopResponse.ok) {
+      throw new Error('Failed to verify user with Whop');
+    }
+
+    const whopData = await whopResponse.json();
+    const whopUserId = whopData.id;
+
+    // Now insert the search with the verified whopUserId
     const result = await pool.query(
       `INSERT INTO searches (
         user_id,
@@ -45,16 +53,16 @@ export default async function handler(req, res) {
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW())
       RETURNING id`,
       [
-        user_id,
-        search_name,
-        postcodes,
-        min_price,
-        max_price,
-        min_bedrooms,
-        max_bedrooms,
-        property_types,
-        must_haves,
-        notifications
+        whopUserId,
+        search.name,
+        search.locations,
+        search.minPrice,
+        search.maxPrice,
+        search.minBedrooms,
+        search.maxBedrooms,
+        search.propertyTypes,
+        search.mustHaves,
+        search.notifications
       ]
     );
 
