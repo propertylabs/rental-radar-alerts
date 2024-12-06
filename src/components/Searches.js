@@ -394,18 +394,16 @@ const Searches = ({ onOpenSearchModal }) => {
     }
 
     return (
-      <div style={{ ...styles.searchList, minHeight: `${searches.length * (172 + 16)}px` }}>
-        {searches.map((search, index) => (
-          <div
+      <div style={styles.searchList}>
+        {searches.map((search) => (
+          <div 
             key={search.id}
-            style={{
-              ...styles.searchSlot,
-              transform: `translateY(${index * (172 + 16)}px)`, // 172px height + 16px gap
-            }}
+            style={styles.searchCard}
+            className={search.id === newSearchId ? 'slide-in-new' : ''}
           >
             <div 
               style={styles.searchCard}
-              className={search.id === newSearchId ? 'slide-in-new' : 'slide-down'}
+              className={search.id === newSearchId ? 'slide-in-new' : ''}
             >
               <div style={styles.cardStatus}>
                 <SearchNameDisplay name={search.name} />
@@ -615,16 +613,16 @@ const styles = {
     flexDirection: 'column',
     gap: '24px',
     position: 'relative',
-    minHeight: '196px',
   },
 
-  searchSlot: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
+  searchCard: {
+    background: '#fff',
+    borderRadius: '20px',
+    padding: '16px',
+    border: '1px solid rgba(46, 63, 50, 0.08)',
+    boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
     height: '172px',
-    marginBottom: '24px',
-    transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+    width: '100%',
   },
 
   '@keyframes slideInFromTop': {
