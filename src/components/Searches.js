@@ -111,9 +111,12 @@ const Searches = ({ onOpenSearchModal }) => {
               : 'Any price',
             type: search.criteria.propertyTypes[0] || 'Any type',
             lastAlert: search.last_alert || 'No alerts yet',
-            active: search.notifications
-          }));
-          console.log('G. Setting searches:', formattedSearches);
+            active: search.notifications,
+            createdAt: search.created_at || Date.now(),
+            isNew: false
+          }))
+          .sort((a, b) => b.createdAt - a.createdAt);
+          
           setSearches(formattedSearches);
         }
       } else {
@@ -399,7 +402,7 @@ const Searches = ({ onOpenSearchModal }) => {
               searches.map(search => (
                 <div 
                   key={search.id} 
-                  style={styles.searchCard}
+                  style={search.isNew ? styles.newSearchCard : styles.searchCard}
                   className={search.isDeleting ? 'card-delete-animation' : ''}
                 >
                   <div style={styles.cardStatus}>
@@ -586,6 +589,7 @@ const styles = {
     position: 'relative',
     transform: 'translateY(0)',
     opacity: 1,
+    animation: 'slideDown 0.3s ease forwards',
   },
 
   cardStatus: {
@@ -964,6 +968,38 @@ const styles = {
   deleteButton: {
     background: '#ff3b30',
     color: 'white',
+  },
+
+  '@keyframes slideDown': {
+    from: {
+      transform: 'translateY(-20px)',
+      opacity: 0
+    },
+    to: {
+      transform: 'translateY(0)',
+      opacity: 1
+    }
+  },
+
+  '@keyframes slideIn': {
+    from: {
+      transform: 'translateY(-100%)',
+      opacity: 0
+    },
+    to: {
+      transform: 'translateY(0)',
+      opacity: 1
+    }
+  },
+
+  newSearchCard: {
+    background: '#fff',
+    borderRadius: '20px',
+    padding: '16px',
+    border: '1px solid rgba(46, 63, 50, 0.08)',
+    boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
+    height: '172px',
+    animation: 'slideIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards',
   },
 };
 
