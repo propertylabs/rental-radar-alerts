@@ -59,10 +59,13 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
         throw new Error(data.error || 'Failed to save search');
       }
 
+      setIsSaved(true);
+      
       if (typeof onSearchSaved === 'function') {
         await onSearchSaved();
         
         setTimeout(() => {
+          setIsSaving(false);
           if (typeof onClose === 'function') {
             onClose();
           }
