@@ -25,30 +25,27 @@ const SearchModal = ({ isOpen, onClose, whopUserId }) => {
     try {
       console.log('Starting save search process...');
       
-      const token = localStorage.getItem('whop_access_token');
-      if (!token) {
-        throw new Error('No authorization token available');
+      const whopUserId = localStorage.getItem('whop_user_id');
+      if (!whopUserId) {
+        throw new Error('No user ID available');
       }
 
       const response = await fetch('/api/save-search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          search: {
-            name: searchCriteria.name,
-            city: searchCriteria.city,
-            locations: searchCriteria.locations,
-            propertyTypes: searchCriteria.propertyTypes,
-            minBedrooms: searchCriteria.minBedrooms,
-            maxBedrooms: searchCriteria.maxBedrooms,
-            minPrice: searchCriteria.minPrice,
-            maxPrice: searchCriteria.maxPrice,
-            mustHaves: searchCriteria.mustHaves,
-            notifications: searchCriteria.notifications
-          }
+          user_id: whopUserId,
+          search_name: searchCriteria.name,
+          postcodes: searchCriteria.locations,
+          min_price: searchCriteria.minPrice,
+          max_price: searchCriteria.maxPrice,
+          min_bedrooms: searchCriteria.minBedrooms,
+          max_bedrooms: searchCriteria.maxBedrooms,
+          property_types: searchCriteria.propertyTypes,
+          must_haves: searchCriteria.mustHaves,
+          notifications: searchCriteria.notifications
         }),
       });
 
