@@ -615,14 +615,15 @@ const styles = {
     flexDirection: 'column',
     gap: '24px',
     position: 'relative',
+    minHeight: '196px',
   },
 
   searchSlot: {
     position: 'absolute',
     left: 0,
     right: 0,
-    height: '172px', // Fixed card height
-    padding: '0 0 16px 0', // Add padding to bottom for gap
+    height: '172px',
+    marginBottom: '24px',
     transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
   },
 
@@ -652,15 +653,9 @@ const styles = {
     padding: '16px',
     border: '1px solid rgba(46, 63, 50, 0.08)',
     boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
-    transition: 'all 0.3s ease',
-    cursor: 'default',
-    WebkitTapHighlightColor: 'transparent',
-    '-webkit-touch-callout': 'none',
-    userSelect: 'none',
+    height: '172px',
+    width: '100%',
     position: 'relative',
-    transform: 'translateY(0)',
-    opacity: 1,
-    animation: 'slideDown 0.3s ease forwards',
   },
 
   cardStatus: {
@@ -791,6 +786,7 @@ const styles = {
     border: '1px solid rgba(46, 63, 50, 0.08)',
     boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
     height: '172px',
+    width: '100%',
   },
 
   skeletonContent: {
