@@ -195,6 +195,7 @@ const LocationStep = ({ values, onChange, onNext }) => {
 
     tagsSection: {
       margin: '0 8px',
+      flex: 1,
       background: 'rgba(46, 63, 50, 0.02)',
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
