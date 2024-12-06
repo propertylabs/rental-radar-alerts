@@ -320,6 +320,7 @@ const Searches = ({ onOpenSearchModal }) => {
         isOpen={isModalOpen} 
         onClose={handleCloseModal}
         whopUserId={whopUserId}
+        onSearchSaved={fetchUserSearches}
       />
       <div style={styles.pageContainer}>
         <div style={{

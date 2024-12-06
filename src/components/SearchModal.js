@@ -6,7 +6,7 @@ import PriceBedroomsStep from './steps/PriceBedroomsStep.js';
 import MustHavesStep from './steps/MustHavesStep.js';
 import FinalizeStep from './steps/FinalizeStep.js';
 
-const SearchModal = ({ isOpen, onClose, whopUserId }) => {
+const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
   const [step, setStep] = useState(1);
   const [searchCriteria, setSearchCriteria] = useState({
     city: null,
@@ -49,14 +49,14 @@ const SearchModal = ({ isOpen, onClose, whopUserId }) => {
         }),
       });
 
-      console.log('API Response status:', response.status);
       const data = await response.json();
-      console.log('API Response data:', data);
-
+      
       if (!response.ok) {
         throw new Error(data.error || 'Failed to save search');
       }
 
+      await onSearchSaved();
+      
       console.log('Search saved successfully!');
       onClose();
     } catch (error) {
