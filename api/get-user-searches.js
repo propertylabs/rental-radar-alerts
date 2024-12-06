@@ -22,9 +22,11 @@ export default async function handler(req, res) {
           property_types,
           must_haves,
           notifications,
-          last_alert
+          last_alert,
+          created_at
         FROM searches 
-        WHERE user_id = $1`,
+        WHERE user_id = $1
+        ORDER BY created_at DESC`,
         [userId]
       );
 
@@ -38,6 +40,7 @@ export default async function handler(req, res) {
         searchName: row.search_name,
         postcodes: row.postcodes,
         notifications: row.notifications,
+        created_at: row.created_at,
         criteria: {
           minPrice: row.min_price,
           maxPrice: row.max_price,
