@@ -102,7 +102,7 @@ const Searches = ({ onOpenSearchModal }) => {
 
   // Modify fetchUserSearches to handle loading state
   const fetchUserSearches = async (newId = null) => {
-    setIsLoading(true); // Set loading at start
+    setIsLoading(true);
     
     try {
       const whopUserId = localStorage.getItem('whop_user_id');
@@ -122,6 +122,12 @@ const Searches = ({ onOpenSearchModal }) => {
       if (response.ok) {
         const result = await response.json();
         if (Array.isArray(result)) {
+          console.log('Raw searches:', result.map(s => ({
+            id: s.id,
+            name: s.searchName,
+            created: s.created_at
+          })));
+
           const formattedSearches = result
             .map(search => ({
               id: search.id,
@@ -133,9 +139,15 @@ const Searches = ({ onOpenSearchModal }) => {
               type: search.criteria.propertyTypes[0] || 'Any type',
               lastAlert: search.last_alert || 'No alerts yet',
               active: search.notifications,
-              createdAt: new Date(search.created_at).getTime() || Date.now(),
+              createdAt: search.created_at,  // Using Unix timestamp directly
             }))
-            .sort((a, b) => b.createdAt - a.createdAt);
+            .sort((a, b) => b.createdAt - a.createdAt);  // Descending order (newest first)
+
+          console.log('Sorted searches:', formattedSearches.map(s => ({
+            id: s.id,
+            name: s.name,
+            created: s.createdAt
+          })));
 
           setSearches(formattedSearches);
           if (newId) {
@@ -149,7 +161,7 @@ const Searches = ({ onOpenSearchModal }) => {
     } catch (error) {
       console.error('Error fetching searches:', error);
     } finally {
-      setIsLoading(false); // Always set loading to false when done
+      setIsLoading(false);
     }
   };
 

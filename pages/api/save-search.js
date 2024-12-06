@@ -46,7 +46,7 @@ export default async function handler(req, res) {
         max_price: search.maxPrice,
         must_haves: search.mustHaves,
         notifications: search.notifications,
-        created_at: new Date().toISOString(),
+        created_at: Math.floor(Date.now() / 1000),
       }])
       .select();
 
