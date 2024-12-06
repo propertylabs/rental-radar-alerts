@@ -28,8 +28,6 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
     
     try {
       setIsSaving(true);
-      console.log('1. Starting save...');
-      
       const whopUserId = localStorage.getItem('whop_user_id');
       
       if (!whopUserId) {
@@ -56,19 +54,17 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
       });
 
       const data = await response.json();
-      console.log('2. Save response:', data);
       
       if (!response.ok) {
         throw new Error(data.error || 'Failed to save search');
       }
 
-      console.log('3. Calling onSearchSaved...');
-      await onSearchSaved();
-      console.log('4. onSearchSaved complete');
-
-      console.log('5. Calling handleCloseButton...');
-      handleCloseButton();
-      console.log('6. handleCloseButton called');
+      if (typeof onSearchSaved === 'function') {
+        await onSearchSaved();
+      }
+      if (typeof onClose === 'function') {
+        onClose();
+      }
 
     } catch (error) {
       console.error('Error saving search:', error);
