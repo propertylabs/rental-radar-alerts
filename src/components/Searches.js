@@ -613,6 +613,9 @@ const styles = {
     flexDirection: 'column',
     gap: '24px',
     position: 'relative',
+    maxWidth: '800px',
+    width: '100%',
+    margin: '0 auto',
   },
 
   searchCard: {
@@ -623,6 +626,7 @@ const styles = {
     boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
     height: '172px',
     width: '100%',
+    maxWidth: '800px',
   },
 
   '@keyframes slideInFromTop': {
@@ -643,17 +647,6 @@ const styles = {
     to: {
       transform: 'translateY(calc((var(--slot-index) + 1) * (172px + 16px)))'
     }
-  },
-
-  searchCard: {
-    background: '#fff',
-    borderRadius: '20px',
-    padding: '16px',
-    border: '1px solid rgba(46, 63, 50, 0.08)',
-    boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
-    height: '172px',
-    width: '100%',
-    position: 'relative',
   },
 
   cardStatus: {
@@ -785,6 +778,7 @@ const styles = {
     boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
     height: '172px',
     width: '100%',
+    maxWidth: '800px',
   },
 
   skeletonContent: {
