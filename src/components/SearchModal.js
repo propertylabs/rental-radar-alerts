@@ -33,6 +33,8 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
         throw new Error('No user ID available');
       }
 
+      handleCloseButton();
+
       const response = await fetch('/api/save-search', {
         method: 'POST',
         headers: {
@@ -59,7 +61,7 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
       }
 
       await onSearchSaved();
-      handleCloseButton();
+
     } catch (error) {
       console.error('Error saving search:', error);
     } finally {
