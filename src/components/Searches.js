@@ -115,18 +115,12 @@ const Searches = ({ onOpenSearchModal }) => {
           }));
           console.log('G. Setting searches:', formattedSearches);
           setSearches(formattedSearches);
-          
-          // Wait for state update to complete
-          return new Promise(resolve => {
-            setTimeout(resolve, 0);
-          });
         }
       } else {
         console.error('Failed to fetch searches:', response.status);
       }
     } catch (error) {
       console.error('Error fetching searches:', error);
-      throw error;  // Propagate error to caller
     } finally {
       console.log('H. Setting isLoading false');
       setIsLoading(false);
