@@ -377,6 +377,12 @@ const Searches = ({ onOpenSearchModal }) => {
     }
   };
 
+  const handleSearchSaved = (savedId) => {
+    console.log('onSearchSaved callback triggered with ID:', savedId);
+    refreshSearches();  // Call directly without await
+    console.log('refreshSearches initiated');
+  };
+
   // Loading state UI
   if (isLoading) {
     return (
@@ -527,11 +533,7 @@ const Searches = ({ onOpenSearchModal }) => {
           setIsModalOpen(false);
         }}
         whopUserId={whopUserId}
-        onSearchSaved={async (savedId) => {
-          console.log('onSearchSaved callback triggered with ID:', savedId);
-          await refreshSearches();  // Use the existing refresh function
-          console.log('refreshSearches completed');
-        }}
+        onSearchSaved={handleSearchSaved}
       />
       <div style={styles.pageContainer}>
         <div style={{
