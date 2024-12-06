@@ -103,7 +103,7 @@ const Searches = ({ onOpenSearchModal }) => {
               : 'Any price',
             type: search.criteria.propertyTypes[0] || 'Any type',
             lastAlert: search.last_alert || 'No alerts yet',
-            active: search.notifications === 'enabled'
+            active: search.notifications
           }));
           setSearches(formattedSearches);
         }
@@ -188,7 +188,7 @@ const Searches = ({ onOpenSearchModal }) => {
   };
 
   
-  const handleToggleNotifications = async (searchId, currentStatus, event) => {
+  const handleToggleNotifications = async (searchId, newStatus, event) => {
     event.stopPropagation();
     
     if (cooldownButtons.has(searchId)) {
@@ -201,7 +201,6 @@ const Searches = ({ onOpenSearchModal }) => {
       return;
     }
 
-    // Only set the cooldown initially
     setCooldownButtons(prev => new Set(prev).add(searchId));
     
     setTimeout(() => {
@@ -221,15 +220,14 @@ const Searches = ({ onOpenSearchModal }) => {
         body: JSON.stringify({
           searchId,
           user_id: whopUserId,
-          notifications: currentStatus
+          notifications: newStatus
         })
       });
 
       if (response.ok) {
-        // Only update the UI state after successful API call
         setSearches(searches.map(search => 
           search.id === searchId 
-            ? {...search, active: currentStatus}
+            ? {...search, active: newStatus}
             : search
         ));
       } else {
@@ -407,7 +405,7 @@ const Searches = ({ onOpenSearchModal }) => {
                       </button>
                       <button 
                         style={getNotificationButtonStyle(search.id)}
-                        onClick={(e) => handleToggleNotifications(search.id, search.active ? 'enabled' : 'disabled', e)}
+                        onClick={(e) => handleToggleNotifications(search.id, !search.active, e)}
                       >
                         {search.active ? (
                           <RiNotificationLine style={{ fontSize: '20px', color: ACCENT }} />
