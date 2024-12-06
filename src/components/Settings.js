@@ -171,8 +171,11 @@ const styles = {
     right: 0,
     bottom: 0,
     overflow: 'hidden',
-    background: '#f2f2f7', // iOS system gray background
+    background: '#f2f2f7',
     WebkitOverflowScrolling: 'touch',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+    '-webkit-font-smoothing': 'antialiased',
+    '-moz-osx-font-smoothing': 'grayscale',
   },
 
   contentWrapper: {
@@ -187,6 +190,7 @@ const styles = {
     color: ACCENT,
     margin: '0 20px 16px',
     letterSpacing: '-0.5px',
+    fontFamily: 'inherit',
   },
 
   scrollContainer: {
@@ -202,10 +206,11 @@ const styles = {
   groupTitle: {
     fontSize: '13px',
     fontWeight: '600',
-    color: '#6d6d72', // iOS gray text
+    color: '#6d6d72',
     textTransform: 'uppercase',
     marginLeft: '20px',
     marginBottom: '8px',
+    letterSpacing: '0.1em',
   },
 
   groupContent: {
@@ -248,11 +253,13 @@ const styles = {
   rowLabel: {
     fontSize: '17px',
     fontWeight: '400',
+    letterSpacing: '-0.2px',
   },
 
   rowValue: {
     fontSize: '17px',
-    color: '#8e8e93', // iOS gray
+    color: '#8e8e93',
+    letterSpacing: '-0.2px',
   },
 
   chevron: {
