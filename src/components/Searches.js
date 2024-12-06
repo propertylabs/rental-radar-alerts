@@ -228,15 +228,13 @@ const Searches = ({ onOpenSearchModal }) => {
       return;
     }
 
-    const newStatus = currentStatus === 'enabled' ? 'disabled' : 'enabled';
     const whopUserId = localStorage.getItem('whop_user_id');
-    
-    setSearches(searches.map(search => 
-      search.id === searchId 
-        ? {...search, active: newStatus === 'enabled'}
-        : search
-    ));
+    if (!whopUserId) {
+      console.error('User not authenticated');
+      return;
+    }
 
+    // Only set the cooldown initially
     setCooldownButtons(prev => new Set(prev).add(searchId));
     
     setTimeout(() => {
@@ -248,32 +246,29 @@ const Searches = ({ onOpenSearchModal }) => {
     }, 2000);
     
     try {
-      const response = await fetch(`/api/update-notification`, {
+      const response = await fetch('/api/update-notification', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: whopUserId,
-          searchId: searchId,
-          notifications: newStatus
+          searchId,
+          user_id: whopUserId,
+          notifications: !currentStatus
         })
       });
 
-      if (!response.ok) {
+      if (response.ok) {
+        // Only update the UI state after successful API call
         setSearches(searches.map(search => 
           search.id === searchId 
-            ? {...search, active: currentStatus === 'enabled'}
+            ? {...search, active: !currentStatus}
             : search
         ));
+      } else {
         console.error('Failed to update notifications:', await response.json());
       }
     } catch (error) {
-      setSearches(searches.map(search => 
-        search.id === searchId 
-          ? {...search, active: currentStatus === 'enabled'}
-          : search
-      ));
       console.error('Error updating notifications:', error);
     }
   };
@@ -282,6 +277,36 @@ const Searches = ({ onOpenSearchModal }) => {
     setShowDeleteConfirm(false);
     setSearchToDelete(null);
     document.body.style.overflow = '';
+  };
+
+  const handleDeleteSearch = async (searchId) => {
+    try {
+      const whopUserId = localStorage.getItem('whop_user_id');
+      if (!whopUserId) {
+        console.error('User not authenticated');
+        return;
+      }
+
+      const response = await fetch('/api/delete-search', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          searchId,
+          user_id: whopUserId 
+        }),
+      });
+
+      if (response.ok) {
+        setSearches(prevSearches => prevSearches.filter(search => search.id !== searchId));
+        console.log('Search deleted successfully');
+      } else {
+        console.error('Failed to delete search');
+      }
+    } catch (error) {
+      console.error('Error deleting search:', error);
+    }
   };
 
   // Loading state UI
