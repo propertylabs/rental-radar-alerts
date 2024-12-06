@@ -4,6 +4,7 @@ import LocationStep from './steps/LocationStep.js';
 import PropertyTypeStep from './steps/PropertyTypeStep.js';
 import PriceBedroomsStep from './steps/PriceBedroomsStep.js';
 import MustHavesStep from './steps/MustHavesStep.js';
+import FinalizeStep from './steps/FinalizeStep.js';
 
 const SearchModal = ({ isOpen, onClose, whopUserId }) => {
   const [step, setStep] = useState(1);
@@ -15,8 +16,64 @@ const SearchModal = ({ isOpen, onClose, whopUserId }) => {
     maxBedrooms: 5,
     minPrice: 0,
     maxPrice: 3000,
-    mustHaves: []
+    mustHaves: [],
+    name: '',
+    notifications: true,
   });
+
+  const handleSaveSearch = async () => {
+    try {
+      console.log('Starting save search process...');
+      console.log('Search criteria being sent:', {
+        user_id: whopUserId,
+        search_name: searchCriteria.name,
+        postcodes: searchCriteria.locations,
+        min_price: searchCriteria.minPrice,
+        max_price: searchCriteria.maxPrice,
+        min_bedrooms: searchCriteria.minBedrooms,
+        max_bedrooms: searchCriteria.maxBedrooms,
+        property_types: searchCriteria.propertyTypes,
+        must_haves: searchCriteria.mustHaves,
+        notifications: searchCriteria.notifications
+      });
+
+      const response = await fetch('/api/save-search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: whopUserId,
+          search_name: searchCriteria.name,
+          postcodes: searchCriteria.locations,
+          min_price: searchCriteria.minPrice,
+          max_price: searchCriteria.maxPrice,
+          min_bedrooms: searchCriteria.minBedrooms,
+          max_bedrooms: searchCriteria.maxBedrooms,
+          property_types: searchCriteria.propertyTypes,
+          must_haves: searchCriteria.mustHaves,
+          notifications: searchCriteria.notifications
+        }),
+      });
+
+      console.log('API Response status:', response.status);
+      const data = await response.json();
+      console.log('API Response data:', data);
+
+      if (!response.ok) {
+        console.error('Save failed with status:', response.status);
+        console.error('Error details:', data);
+        throw new Error('Failed to save search');
+      }
+
+      console.log('Search saved successfully!');
+      onClose();
+    } catch (error) {
+      console.error('Error in handleSaveSearch:', error);
+      console.error('Error stack:', error.stack);
+      // You might want to show an error message to the user here
+    }
+  };
 
   const styles = {
     backdrop: {
@@ -163,7 +220,20 @@ const SearchModal = ({ isOpen, onClose, whopUserId }) => {
         return <MustHavesStep 
           values={searchCriteria.mustHaves}
           onChange={(mustHaves) => setSearchCriteria({...searchCriteria, mustHaves})}
-          onNext={() => onClose()}
+          onNext={() => setStep(6)}
+        />;
+      case 6:
+        return <FinalizeStep 
+          values={{
+            name: searchCriteria.name,
+            notifications: searchCriteria.notifications
+          }}
+          onChange={(values) => setSearchCriteria({
+            ...searchCriteria,
+            name: values.name,
+            notifications: values.notifications
+          })}
+          onSave={handleSaveSearch}
         />;
       default:
         return null;
@@ -181,7 +251,9 @@ const SearchModal = ({ isOpen, onClose, whopUserId }) => {
       maxBedrooms: 5,
       minPrice: 0,
       maxPrice: 3000,
-      mustHaves: []
+      mustHaves: [],
+      name: '',
+      notifications: true,
     });
   };
 

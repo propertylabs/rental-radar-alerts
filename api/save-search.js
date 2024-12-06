@@ -11,46 +11,51 @@ export default async function handler(req, res) {
   }
 
   const { 
-    userId, 
-    propertyTypes, 
-    minBedrooms, 
-    maxBedrooms, 
-    minPrice, 
-    maxPrice, 
+    user_id,
+    search_name,
     postcodes,
-    notifications 
+    min_price,
+    max_price,
+    min_bedrooms,
+    max_bedrooms,
+    property_types,
+    must_haves,
+    notifications
   } = req.body;
 
   try {
-    // First, create the search entry
-    const searchResult = await pool.query(
-      `INSERT INTO user_searches (user_id, notifications) 
-       VALUES ($1, $2) 
-       RETURNING id`,
-      [userId, notifications]
-    );
-
-    const searchId = searchResult.rows[0].id;
-
-    // Then, create the search criteria
-    await pool.query(
-      `INSERT INTO search_criteria 
-       (search_id, property_types, min_bedrooms, max_bedrooms, min_price, max_price, postcodes) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+    const result = await pool.query(
+      `INSERT INTO searches (
+        user_id,
+        search_name,
+        postcodes,
+        min_price,
+        max_price,
+        min_bedrooms,
+        max_bedrooms,
+        property_types,
+        must_haves,
+        notifications,
+        created_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW())
+      RETURNING id`,
       [
-        searchId,
-        propertyTypes,
-        minBedrooms,
-        maxBedrooms,
-        minPrice,
-        maxPrice,
-        postcodes
+        user_id,
+        search_name,
+        postcodes,
+        min_price,
+        max_price,
+        min_bedrooms,
+        max_bedrooms,
+        property_types,
+        must_haves,
+        notifications
       ]
     );
 
     return res.status(200).json({ 
       message: 'Search saved successfully',
-      searchId 
+      searchId: result.rows[0].id 
     });
 
   } catch (error) {
