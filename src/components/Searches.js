@@ -121,33 +121,26 @@ const Searches = ({ onOpenSearchModal }) => {
       
       if (response.ok) {
         const result = await response.json();
+        console.log('Full API response:', result); // Log the full response
+
         if (Array.isArray(result)) {
-          console.log('Raw searches:', result.map(s => ({
-            id: s.id,
-            name: s.searchName,
-            created: s.created_at
-          })));
-
           const formattedSearches = result
-            .map(search => ({
-              id: search.id,
-              name: search.searchName,
-              location: search.postcodes.join(', '),
-              price: search.criteria.minPrice && search.criteria.maxPrice 
-                ? `£${search.criteria.minPrice}-${search.criteria.maxPrice}`
-                : 'Any price',
-              type: search.criteria.propertyTypes[0] || 'Any type',
-              lastAlert: search.last_alert || 'No alerts yet',
-              active: search.notifications,
-              createdAt: search.created_at,  // Using Unix timestamp directly
-            }))
-            .sort((a, b) => b.createdAt - a.createdAt);  // Descending order (newest first)
-
-          console.log('Sorted searches:', formattedSearches.map(s => ({
-            id: s.id,
-            name: s.name,
-            created: s.createdAt
-          })));
+            .map(search => {
+              console.log('Individual search:', search); // Log each search object
+              return {
+                id: search.id,
+                name: search.searchName,
+                location: search.postcodes.join(', '),
+                price: search.criteria.minPrice && search.criteria.maxPrice 
+                  ? `£${search.criteria.minPrice}-${search.criteria.maxPrice}`
+                  : 'Any price',
+                type: search.criteria.propertyTypes[0] || 'Any type',
+                lastAlert: search.last_alert || 'No alerts yet',
+                active: search.notifications,
+                createdAt: search.created_at,
+              };
+            })
+            .sort((a, b) => b.createdAt - a.createdAt);
 
           setSearches(formattedSearches);
           if (newId) {
