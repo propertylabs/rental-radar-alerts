@@ -84,15 +84,10 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
       }
 
       console.log('6. Setting timeout for refresh');
-      setTimeout(async () => {
-        console.log('7. Inside timeout, about to call onSearchSaved');
+      setTimeout(() => {
+        console.log('7. Inside timeout, calling refreshSearches directly');
         if (typeof onSearchSaved === 'function') {
-          try {
-            await onSearchSaved(data.id);
-            console.log('8. onSearchSaved completed');
-          } catch (err) {
-            console.error('Error in onSearchSaved:', err);
-          }
+          onSearchSaved(data.id);
         }
       }, 500);
 
