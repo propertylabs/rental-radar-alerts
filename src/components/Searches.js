@@ -401,75 +401,70 @@ const Searches = ({ onOpenSearchModal }) => {
             style={styles.searchCard}
             className={search.id === newSearchId ? 'slide-in-new' : ''}
           >
-            <div 
-              style={styles.searchCard}
-              className={search.id === newSearchId ? 'slide-in-new' : ''}
-            >
-              <div style={styles.cardStatus}>
-                <SearchNameDisplay name={search.name} />
+            <div style={styles.cardStatus}>
+              <SearchNameDisplay name={search.name} />
+              <button 
+                style={styles.moreButton}
+                onClick={(e) => handleMoreClick(search.id, e)}
+              >
+                <RiMoreFill style={{ fontSize: '24px' }} />
+              </button>
+            </div>
+
+            <div style={styles.mainContent}>
+              <div style={styles.locationSection}>
+                <RiMapPinLine style={styles.locationIcon} />
+                <h2 style={styles.locationText}>{search.location}</h2>
+              </div>
+
+              <div style={styles.criteriaSection}>
+                <div style={styles.pill}>
+                  <RiPriceTag3Line style={styles.pillIcon} />
+                  <span>{search.price}</span>
+                </div>
+                <div style={styles.pill}>
+                  <RiHome4Line style={styles.pillIcon} />
+                  <span>{search.type}</span>
+                </div>
+              </div>
+            </div>
+
+            <div style={styles.lastUpdated}>
+              Updated {search.lastAlert}
+            </div>
+
+            {activeMenu === search.id && (
+              <div 
+                className="menu-animation"
+                style={styles.menu}
+              >
                 <button 
-                  style={styles.moreButton}
-                  onClick={(e) => handleMoreClick(search.id, e)}
+                  style={{
+                    ...styles.menuItem,
+                    color: '#ff3b30', // iOS red
+                  }} 
+                  onClick={(e) => handleDeleteClick(search.id, e)}
                 >
-                  <RiMoreFill style={{ fontSize: '24px' }} />
+                  <RiDeleteBinLine style={{ fontSize: '20px', color: '#ff3b30' }} />
+                  <span>Delete</span>
+                </button>
+                <button style={styles.menuItem}>
+                  <RiEditBoxLine style={{ fontSize: '20px', color: ACCENT }} />
+                  <span>Edit</span>
+                </button>
+                <button 
+                  style={getNotificationButtonStyle(search.id)}
+                  onClick={(e) => handleToggleNotifications(search.id, !search.active, e)}
+                >
+                  {search.active ? (
+                    <RiNotificationLine style={{ fontSize: '20px', color: ACCENT }} />
+                  ) : (
+                    <RiNotificationOffLine style={{ fontSize: '20px', color: ACCENT }} />
+                  )}
+                  <span>Notifications {search.active ? 'On' : 'Off'}</span>
                 </button>
               </div>
-
-              <div style={styles.mainContent}>
-                <div style={styles.locationSection}>
-                  <RiMapPinLine style={styles.locationIcon} />
-                  <h2 style={styles.locationText}>{search.location}</h2>
-                </div>
-
-                <div style={styles.criteriaSection}>
-                  <div style={styles.pill}>
-                    <RiPriceTag3Line style={styles.pillIcon} />
-                    <span>{search.price}</span>
-                  </div>
-                  <div style={styles.pill}>
-                    <RiHome4Line style={styles.pillIcon} />
-                    <span>{search.type}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div style={styles.lastUpdated}>
-                Updated {search.lastAlert}
-              </div>
-
-              {activeMenu === search.id && (
-                <div 
-                  className="menu-animation"
-                  style={styles.menu}
-                >
-                  <button 
-                    style={{
-                      ...styles.menuItem,
-                      color: '#ff3b30', // iOS red
-                    }} 
-                    onClick={(e) => handleDeleteClick(search.id, e)}
-                  >
-                    <RiDeleteBinLine style={{ fontSize: '20px', color: '#ff3b30' }} />
-                    <span>Delete</span>
-                  </button>
-                  <button style={styles.menuItem}>
-                    <RiEditBoxLine style={{ fontSize: '20px', color: ACCENT }} />
-                    <span>Edit</span>
-                  </button>
-                  <button 
-                    style={getNotificationButtonStyle(search.id)}
-                    onClick={(e) => handleToggleNotifications(search.id, !search.active, e)}
-                  >
-                    {search.active ? (
-                      <RiNotificationLine style={{ fontSize: '20px', color: ACCENT }} />
-                    ) : (
-                      <RiNotificationOffLine style={{ fontSize: '20px', color: ACCENT }} />
-                    )}
-                    <span>Notifications {search.active ? 'On' : 'Off'}</span>
-                  </button>
-                </div>
-              )}
-            </div>
+            )}
           </div>
         ))}
       </div>
