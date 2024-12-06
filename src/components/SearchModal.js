@@ -24,7 +24,7 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
   });
 
   const handleSaveSearch = async () => {
-    if (isSaving || isSaved) return;
+    if (isSaving) return;
     
     try {
       setIsSaving(true);
@@ -60,10 +60,7 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
       }
 
       await onSearchSaved();
-      setIsSaving(false);
-      setIsSaved(true);
-      
-      setTimeout(handleCloseButton, 1000);
+      handleCloseButton();
 
     } catch (error) {
       console.error('Error saving search:', error);
