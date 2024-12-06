@@ -374,7 +374,12 @@ const Searches = ({ onOpenSearchModal }) => {
           minHeight: searches.length === 0 ? '100%' : 'auto',
         }}>
           <div style={styles.header}>
-            <h1 style={styles.title}>Saved Searches</h1>
+            <h1 
+              style={{...styles.title, cursor: 'pointer'}} 
+              onClick={refreshSearches}
+            >
+              Saved Searches
+            </h1>
             <button 
               style={styles.addButton}
               onClick={onOpenSearchModal}
