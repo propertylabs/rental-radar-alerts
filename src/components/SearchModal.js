@@ -78,9 +78,12 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
         onClose();
       }
 
-      if (typeof onSearchSaved === 'function') {
-        await onSearchSaved(data.id);
-      }
+      // Wait for modal close animation to complete (0.3s) plus a tiny buffer
+      setTimeout(async () => {
+        if (typeof onSearchSaved === 'function') {
+          await onSearchSaved(data.id);
+        }
+      }, 350);  // 300ms for animation + 50ms buffer
 
     } catch (error) {
       console.error('Error saving search:', error);
