@@ -365,9 +365,12 @@ const Searches = ({ onOpenSearchModal }) => {
     <>
       <SearchModal 
         isOpen={isModalOpen} 
-        onClose={handleCloseModal}
+        onClose={() => {
+          console.log('onClose called from Searches');
+          setIsModalOpen(false);  // Make sure this is being called
+        }}
         whopUserId={whopUserId}
-        onSearchSaved={refreshSearches}  // Use the simpler function here
+        onSearchSaved={fetchUserSearches}
       />
       <div style={styles.pageContainer}>
         <div style={{
