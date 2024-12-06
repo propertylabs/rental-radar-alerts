@@ -69,7 +69,7 @@ const MustHavesStep = ({ values, onChange, onNext }) => {
     },
 
     featureCard: (isSelected, isPressed) => ({
-      aspectRatio: '2.4',
+      width: '100%',
       background: isSelected 
         ? 'linear-gradient(145deg, #2E3F32, #3A4F3E)'
         : 'rgba(46, 63, 50, 0.02)',
@@ -79,12 +79,11 @@ const MustHavesStep = ({ values, onChange, onNext }) => {
       borderColor: isSelected 
         ? 'rgba(255, 255, 255, 0.1)'
         : 'rgba(46, 63, 50, 0.08)',
-      borderRadius: '24px',
-      padding: '24px',
+      borderRadius: '16px',
+      padding: '16px',
       display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: '16px',
+      flexDirection: 'column',
+      gap: '8px',
       cursor: 'pointer',
       transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
       transform: `scale(${isPressed ? 0.98 : isSelected ? 1.02 : 1})`,
@@ -94,28 +93,31 @@ const MustHavesStep = ({ values, onChange, onNext }) => {
       WebkitTapHighlightColor: 'transparent',
     }),
 
-    featureContent: {
-      flex: 1,
+    featureTop: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px',
     },
 
     featureIcon: (isSelected) => ({
-      fontSize: '32px',
+      fontSize: '24px',
       color: isSelected ? 'white' : '#2E3F32',
-      opacity: isSelected ? 1 : 0.8,
+      transition: 'all 0.2s ease',
     }),
 
     featureName: (isSelected) => ({
       fontSize: '17px',
       fontWeight: '600',
       color: isSelected ? 'white' : '#2E3F32',
-      marginBottom: '4px',
+      transition: 'all 0.2s ease',
       letterSpacing: '-0.2px',
     }),
 
     featureDescription: (isSelected) => ({
-      fontSize: '15px',
+      fontSize: '14px',
       color: isSelected ? 'rgba(255, 255, 255, 0.8)' : '#666',
-      letterSpacing: '-0.2px',
+      transition: 'all 0.2s ease',
+      letterSpacing: '-0.1px',
     }),
 
     continueButton: {
@@ -178,11 +180,11 @@ const MustHavesStep = ({ values, onChange, onNext }) => {
               onTouchStart={() => setPressedId(feature.id)}
               onTouchEnd={() => setPressedId(null)}
             >
-              <Icon style={styles.featureIcon(isSelected)} />
-              <div style={styles.featureContent}>
-                <div style={styles.featureName(isSelected)}>{feature.name}</div>
-                <div style={styles.featureDescription(isSelected)}>{feature.description}</div>
+              <div style={styles.featureTop}>
+                <Icon style={styles.featureIcon(isSelected)} />
+                <span style={styles.featureName(isSelected)}>{feature.name}</span>
               </div>
+              <span style={styles.featureDescription(isSelected)}>{feature.description}</span>
             </button>
           );
         })}
