@@ -87,10 +87,14 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
       setTimeout(async () => {
         console.log('7. Inside timeout, about to call onSearchSaved');
         if (typeof onSearchSaved === 'function') {
-          await onSearchSaved(data.id);
-          console.log('8. onSearchSaved completed');
+          try {
+            await onSearchSaved(data.id);
+            console.log('8. onSearchSaved completed');
+          } catch (err) {
+            console.error('Error in onSearchSaved:', err);
+          }
         }
-      }, 350);
+      }, 500);
 
     } catch (error) {
       console.error('Error saving search:', error);
