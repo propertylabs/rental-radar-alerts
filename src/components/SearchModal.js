@@ -27,8 +27,8 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
     
     try {
       setIsSaving(true);
-      
       const whopUserId = localStorage.getItem('whop_user_id');
+      
       if (!whopUserId) {
         throw new Error('No user ID available');
       }
@@ -58,20 +58,14 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
         throw new Error(data.error || 'Failed to save search');
       }
 
-      // First refresh the searches list
-      await fetch(`/api/get-user-searches?userId=${whopUserId}`)
-        .then(res => res.json())
-        .then(result => {
-          if (Array.isArray(result)) {
-            onSearchSaved(result); // Pass the new data directly
-          }
-        });
-
-      // Then close the modal
-      onClose();
+      // Simply call fetchUserSearches and wait for it
+      await onSearchSaved();
       
+      // Only then close the modal
+      onClose();
     } catch (error) {
       console.error('Error saving search:', error);
+    } finally {
       setIsSaving(false);
     }
   };
