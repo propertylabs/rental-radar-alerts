@@ -62,6 +62,22 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
       if (typeof onSearchSaved === 'function') {
         await onSearchSaved(data.id);
       }
+      
+      setStep(1);
+      setIsSaving(false);
+      setSearchCriteria({
+        city: null,
+        locations: [],
+        propertyTypes: [],
+        minBedrooms: 1,
+        maxBedrooms: 5,
+        minPrice: 0,
+        maxPrice: 3000,
+        mustHaves: [],
+        name: '',
+        notifications: true,
+      });
+      
       if (typeof onClose === 'function') {
         onClose();
       }
