@@ -133,7 +133,7 @@ const Searches = ({ onOpenSearchModal }) => {
               type: search.criteria.propertyTypes[0] || 'Any type',
               lastAlert: search.last_alert || 'No alerts yet',
               active: search.notifications,
-              createdAt: search.created_at || Date.now(),
+              createdAt: new Date(search.created_at).getTime() || Date.now(),
             }))
             .sort((a, b) => b.createdAt - a.createdAt);
 
