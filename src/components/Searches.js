@@ -433,7 +433,7 @@ const Searches = ({ onOpenSearchModal }) => {
             key={search.id}
             style={{
               ...styles.searchCard,
-              transform: `translateY(${index * (172 + 24)}px)`,  // 172px height + 24px gap
+              transform: `translateY(${index * (206 + 24)}px)`,  // 206px total height (172px + 32px padding + 2px border) + 24px gap
               position: 'absolute',
               top: 0,
               left: 0,
