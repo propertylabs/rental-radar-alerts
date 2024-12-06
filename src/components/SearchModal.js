@@ -3,6 +3,7 @@ import CityStep from './steps/CityStep.js';
 import LocationStep from './steps/LocationStep.js';
 import PropertyTypeStep from './steps/PropertyTypeStep.js';
 import PriceBedroomsStep from './steps/PriceBedroomsStep.js';
+import MustHavesStep from './steps/MustHavesStep.js';
 
 const SearchModal = ({ isOpen, onClose, whopUserId }) => {
   const [step, setStep] = useState(1);
@@ -14,7 +15,7 @@ const SearchModal = ({ isOpen, onClose, whopUserId }) => {
     maxBedrooms: 5,
     minPrice: 0,
     maxPrice: 3000,
-    postcodes: []
+    mustHaves: []
   });
 
   const styles = {
@@ -147,8 +148,7 @@ const SearchModal = ({ isOpen, onClose, whopUserId }) => {
             minBedrooms: searchCriteria.minBedrooms,
             maxBedrooms: searchCriteria.maxBedrooms,
             minPrice: searchCriteria.minPrice,
-            maxPrice: searchCriteria.maxPrice,
-            propertyTypes: searchCriteria.propertyTypes
+            maxPrice: searchCriteria.maxPrice
           }}
           onChange={(values) => setSearchCriteria({
             ...searchCriteria,
@@ -157,6 +157,12 @@ const SearchModal = ({ isOpen, onClose, whopUserId }) => {
             minPrice: values.minPrice,
             maxPrice: values.maxPrice
           })}
+          onNext={() => setStep(5)}
+        />;
+      case 5:
+        return <MustHavesStep 
+          values={searchCriteria.mustHaves}
+          onChange={(mustHaves) => setSearchCriteria({...searchCriteria, mustHaves})}
           onNext={() => onClose()}
         />;
       default:
@@ -175,7 +181,7 @@ const SearchModal = ({ isOpen, onClose, whopUserId }) => {
       maxBedrooms: 5,
       minPrice: 0,
       maxPrice: 3000,
-      postcodes: []
+      mustHaves: []
     });
   };
 
