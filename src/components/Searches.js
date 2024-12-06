@@ -336,7 +336,21 @@ const Searches = ({ onOpenSearchModal }) => {
         isOpen={isModalOpen} 
         onClose={handleCloseModal}
         whopUserId={whopUserId}
-        onSearchSaved={fetchUserSearches}
+        onSearchSaved={(newSearches) => {
+          // Directly set the new searches with proper formatting
+          const formattedSearches = newSearches.map(search => ({
+            id: search.id,
+            name: search.searchName,
+            location: search.postcodes.join(', '),
+            price: search.criteria.minPrice && search.criteria.maxPrice 
+              ? `£${search.criteria.minPrice}-${search.criteria.maxPrice}`
+              : 'Any price',
+            type: search.criteria.propertyTypes[0] || 'Any type',
+            lastAlert: search.last_alert || 'No alerts yet',
+            active: search.notifications
+          }));
+          setSearches(formattedSearches);
+        }}
       />
       <div style={styles.pageContainer}>
         <div style={{

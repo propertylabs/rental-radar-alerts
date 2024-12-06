@@ -23,28 +23,15 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
   });
 
   const handleSaveSearch = async () => {
-    if (isSaving) {
-      console.log('Already saving, preventing double submit');
-      return;
-    }
+    if (isSaving) return;
     
     try {
-      console.log('1. Starting save process...');
       setIsSaving(true);
       
       const whopUserId = localStorage.getItem('whop_user_id');
-      console.log('2. Got whopUserId:', whopUserId);
-
       if (!whopUserId) {
         throw new Error('No user ID available');
       }
-
-      console.log('3. Making API request with data:', {
-        user_id: whopUserId,
-        search_name: searchCriteria.name,
-        postcodes: searchCriteria.locations,
-        // ... log other fields
-      });
 
       const response = await fetch('/api/save-search', {
         method: 'POST',
@@ -65,23 +52,26 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
         }),
       });
 
-      console.log('4. Got API response:', response.status);
       const data = await response.json();
-      console.log('5. Response data:', data);
       
       if (!response.ok) {
         throw new Error(data.error || 'Failed to save search');
       }
 
-      console.log('6. Starting onSearchSaved...');
-      await onSearchSaved();
-      console.log('7. Finished onSearchSaved');
+      // First refresh the searches list
+      await fetch(`/api/get-user-searches?userId=${whopUserId}`)
+        .then(res => res.json())
+        .then(result => {
+          if (Array.isArray(result)) {
+            onSearchSaved(result); // Pass the new data directly
+          }
+        });
+
+      // Then close the modal
+      onClose();
       
-      console.log('8. Calling handleCloseButton...');
-      handleCloseButton();
-      console.log('9. Modal should be closed');
     } catch (error) {
-      console.error('Error in save flow:', error);
+      console.error('Error saving search:', error);
       setIsSaving(false);
     }
   };
