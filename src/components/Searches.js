@@ -88,6 +88,25 @@ const Searches = ({ onOpenSearchModal }) => {
     .slide-down {
       animation: slide-down 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
+
+    @keyframes deleteCard {
+      0% {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+
+    .card-deleting {
+      animation: deleteCard 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    .card-moving {
+      transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
   `;
 
   useEffect(() => {
@@ -196,10 +215,19 @@ const Searches = ({ onOpenSearchModal }) => {
     if (!searchToDelete) return;
 
     try {
-      const whopUserId = localStorage.getItem('whop_user_id');
-      if (!whopUserId) {
-        console.error('User not authenticated');
-        return;
+      // First animate the card out
+      const cardToDelete = searches.find(s => s.id === searchToDelete);
+      if (cardToDelete) {
+        setSearches(prevSearches => 
+          prevSearches.map(search => 
+            search.id === searchToDelete 
+              ? { ...search, isDeleting: true }
+              : search
+          )
+        );
+
+        // Wait for deletion animation
+        await new Promise(resolve => setTimeout(resolve, 300));
       }
 
       const response = await fetch('/api/delete-search', {
@@ -400,11 +428,22 @@ const Searches = ({ onOpenSearchModal }) => {
 
     return (
       <div style={styles.searchList}>
-        {searches.map((search) => (
+        {searches.map((search, index) => (
           <div 
             key={search.id}
-            style={styles.searchCard}
-            className={search.id === newSearchId ? 'slide-in-new' : ''}
+            style={{
+              ...styles.searchCard,
+              transform: `translateY(${index * (172 + 24)}px)`,  // 172px height + 24px gap
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+            }}
+            className={`
+              card-moving
+              ${search.isDeleting ? 'card-deleting' : ''}
+              ${search.id === newSearchId ? 'slide-in-new' : ''}
+            `}
           >
             <div style={styles.cardStatus}>
               <SearchNameDisplay name={search.name} />
@@ -630,6 +669,8 @@ const styles = {
     border: '1px solid rgba(46, 63, 50, 0.08)',
     boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
     height: '172px',
+    transform: 'translateY(0)',  // Base position for animations
+    willChange: 'transform',  // Optimize for animations
   },
 
   '@keyframes slideInFromTop': {
