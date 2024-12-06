@@ -377,11 +377,15 @@ const Searches = ({ onOpenSearchModal }) => {
     }
   };
 
-  const handleSearchSaved = (savedId) => {
-    console.log('onSearchSaved callback triggered with ID:', savedId);
-    refreshSearches();  // Call directly without await
-    console.log('refreshSearches initiated');
-  };
+  // Add event listener for refresh
+  useEffect(() => {
+    const handleRefresh = () => {
+      refreshSearches();
+    };
+    
+    window.addEventListener('refreshSearches', handleRefresh);
+    return () => window.removeEventListener('refreshSearches', handleRefresh);
+  }, []);
 
   // Loading state UI
   if (isLoading) {
@@ -533,7 +537,6 @@ const Searches = ({ onOpenSearchModal }) => {
           setIsModalOpen(false);
         }}
         whopUserId={whopUserId}
-        onSearchSaved={handleSearchSaved}
       />
       <div style={styles.pageContainer}>
         <div style={{
