@@ -525,10 +525,7 @@ const Searches = ({ onOpenSearchModal }) => {
         }}
         whopUserId={whopUserId}
         onSearchSaved={async (savedId) => {
-          await fetchUserSearches(savedId);
-          setIsModalOpen(false);  // Close the modal
-          setModalContent(null);  // Reset modal content
-          setModalState(false);   // Reset modal state
+          refreshSearches();  // Use the existing refresh function
         }}
       />
       <div style={styles.pageContainer}>

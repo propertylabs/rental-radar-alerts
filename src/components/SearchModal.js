@@ -59,10 +59,6 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
         throw new Error(data.error || 'Failed to save search');
       }
 
-      if (typeof onSearchSaved === 'function') {
-        await onSearchSaved(data.id);
-      }
-      
       setStep(1);
       setIsSaving(false);
       setSearchCriteria({
@@ -80,6 +76,10 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
       
       if (typeof onClose === 'function') {
         onClose();
+      }
+
+      if (typeof onSearchSaved === 'function') {
+        await onSearchSaved(data.id);
       }
 
     } catch (error) {
