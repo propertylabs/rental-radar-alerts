@@ -23,16 +23,28 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
   });
 
   const handleSaveSearch = async () => {
-    if (isSaving) return;
+    if (isSaving) {
+      console.log('Already saving, preventing double submit');
+      return;
+    }
     
     try {
+      console.log('1. Starting save process...');
       setIsSaving(true);
-      console.log('Starting save search process...');
       
       const whopUserId = localStorage.getItem('whop_user_id');
+      console.log('2. Got whopUserId:', whopUserId);
+
       if (!whopUserId) {
         throw new Error('No user ID available');
       }
+
+      console.log('3. Making API request with data:', {
+        user_id: whopUserId,
+        search_name: searchCriteria.name,
+        postcodes: searchCriteria.locations,
+        // ... log other fields
+      });
 
       const response = await fetch('/api/save-search', {
         method: 'POST',
@@ -53,18 +65,23 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
         }),
       });
 
+      console.log('4. Got API response:', response.status);
       const data = await response.json();
+      console.log('5. Response data:', data);
       
       if (!response.ok) {
         throw new Error(data.error || 'Failed to save search');
       }
 
+      console.log('6. Starting onSearchSaved...');
       await onSearchSaved();
+      console.log('7. Finished onSearchSaved');
       
-      console.log('Search saved successfully!');
+      console.log('8. Calling handleCloseButton...');
       handleCloseButton();
+      console.log('9. Modal should be closed');
     } catch (error) {
-      console.error('Error saving search:', error);
+      console.error('Error in save flow:', error);
       setIsSaving(false);
     }
   };

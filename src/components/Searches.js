@@ -73,8 +73,11 @@ const Searches = ({ onOpenSearchModal }) => {
 
   // Fetch user's saved searches
   const fetchUserSearches = async () => {
+    console.log('A. Starting fetchUserSearches');
     setIsLoading(true);
+    
     const whopUserId = localStorage.getItem('whop_user_id');
+    console.log('B. Got whopUserId:', whopUserId);
 
     if (!whopUserId) {
       console.error('User ID not found');
@@ -83,6 +86,7 @@ const Searches = ({ onOpenSearchModal }) => {
     }
 
     try {
+      console.log('C. Making API request');
       const response = await fetch(`/api/get-user-searches?userId=${whopUserId}`, {
         method: 'GET',
         headers: {
@@ -90,10 +94,14 @@ const Searches = ({ onOpenSearchModal }) => {
         },
       });
 
+      console.log('D. Got API response:', response.status);
+      
       if (response.ok) {
         const result = await response.json();
+        console.log('E. Got result:', result);
+        
         if (Array.isArray(result)) {
-          // Updated transformation to match the API response structure
+          console.log('F. Formatting searches');
           const formattedSearches = result.map(search => ({
             id: search.id,
             name: search.searchName,
@@ -105,6 +113,7 @@ const Searches = ({ onOpenSearchModal }) => {
             lastAlert: search.last_alert || 'No alerts yet',
             active: search.notifications
           }));
+          console.log('G. Setting searches:', formattedSearches);
           setSearches(formattedSearches);
         }
       } else {
@@ -113,6 +122,7 @@ const Searches = ({ onOpenSearchModal }) => {
     } catch (error) {
       console.error('Error fetching searches:', error);
     } finally {
+      console.log('H. Setting isLoading false');
       setIsLoading(false);
     }
   };
