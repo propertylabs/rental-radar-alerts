@@ -60,7 +60,7 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
       }
 
       if (typeof onSearchSaved === 'function') {
-        await onSearchSaved();
+        await onSearchSaved(data.id);
       }
       if (typeof onClose === 'function') {
         onClose();

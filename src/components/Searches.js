@@ -27,6 +27,7 @@ const Searches = ({ onOpenSearchModal }) => {
   const [modalContent, setModalContent] = useState(null);
   const [modalState, setModalState] = useState(false);
   const [whopUserId, setWhopUserId] = useState(null);
+  const [newSearchId, setNewSearchId] = useState(null);
 
   const menuStyles = `
     @keyframes scaleIn {
@@ -72,61 +73,38 @@ const Searches = ({ onOpenSearchModal }) => {
   }, [menuStyles]);
 
   // Fetch user's saved searches
-  const fetchUserSearches = async () => {
-    console.log('A. Starting fetchUserSearches');
-    setIsLoading(true);
-    
-    const whopUserId = localStorage.getItem('whop_user_id');
-    console.log('B. Got whopUserId:', whopUserId);
-
-    if (!whopUserId) {
-      console.error('User ID not found');
-      setIsLoading(false);
-      return;
-    }
-
+  const fetchUserSearches = async (newId = null) => {
     try {
-      console.log('C. Making API request');
-      const response = await fetch(`/api/get-user-searches?userId=${whopUserId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      console.log('D. Got API response:', response.status);
+      const response = await fetch(`/api/get-user-searches?userId=${whopUserId}`);
       
       if (response.ok) {
         const result = await response.json();
-        console.log('E. Got result:', result);
-        
         if (Array.isArray(result)) {
-          console.log('F. Formatting searches');
-          const formattedSearches = result.map(search => ({
-            id: search.id,
-            name: search.searchName,
-            location: search.postcodes.join(', '),
-            price: search.criteria.minPrice && search.criteria.maxPrice 
-              ? `£${search.criteria.minPrice}-${search.criteria.maxPrice}`
-              : 'Any price',
-            type: search.criteria.propertyTypes[0] || 'Any type',
-            lastAlert: search.last_alert || 'No alerts yet',
-            active: search.notifications,
-            createdAt: search.created_at || Date.now(),
-            isNew: false
-          }))
-          .sort((a, b) => b.createdAt - a.createdAt);
-          
+          const formattedSearches = result
+            .map(search => ({
+              id: search.id,
+              name: search.searchName,
+              location: search.postcodes.join(', '),
+              price: search.criteria.minPrice && search.criteria.maxPrice 
+                ? `£${search.criteria.minPrice}-${search.criteria.maxPrice}`
+                : 'Any price',
+              type: search.criteria.propertyTypes[0] || 'Any type',
+              lastAlert: search.last_alert || 'No alerts yet',
+              active: search.notifications,
+              createdAt: search.created_at || Date.now(),
+            }))
+            .sort((a, b) => b.createdAt - a.createdAt);
+
           setSearches(formattedSearches);
+          if (newId) {
+            setNewSearchId(newId);
+            // Clear newSearchId after animation
+            setTimeout(() => setNewSearchId(null), 1000);
+          }
         }
-      } else {
-        console.error('Failed to fetch searches:', response.status);
       }
     } catch (error) {
       console.error('Error fetching searches:', error);
-    } finally {
-      console.log('H. Setting isLoading false');
-      setIsLoading(false);
     }
   };
 
@@ -358,16 +336,113 @@ const Searches = ({ onOpenSearchModal }) => {
     cursor: cooldownButtons.has(searchId) ? 'default' : 'pointer',
   });
 
+  // Modify the search list rendering
+  const renderSearchList = () => {
+    if (searches.length === 0) {
+      return (
+        <div style={styles.emptyState}>
+          <RiSearchLine style={styles.emptyStateIcon} />
+          <p style={styles.emptyStateText}>No saved searches yet</p>
+          <p style={styles.emptyStateSubtext}>Create your first search to get started</p>
+        </div>
+      );
+    }
+
+    return searches.map((search, index) => (
+      <div
+        key={search.id}
+        style={{
+          ...styles.searchSlot,
+          transform: `translateY(${index * (172 + 16)}px)`, // 172px height + 16px gap
+          animation: search.id === newSearchId 
+            ? 'slideInFromTop 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards'
+            : newSearchId 
+              ? 'moveDown 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards'
+              : 'none',
+          '--slot-index': index,
+        }}
+      >
+        <div style={styles.searchCard}>
+          <div style={styles.cardStatus}>
+            <SearchNameDisplay name={search.name} />
+            <button 
+              style={styles.moreButton}
+              onClick={(e) => handleMoreClick(search.id, e)}
+            >
+              <RiMoreFill style={{ fontSize: '24px' }} />
+            </button>
+          </div>
+
+          <div style={styles.mainContent}>
+            <div style={styles.locationSection}>
+              <RiMapPinLine style={styles.locationIcon} />
+              <h2 style={styles.locationText}>{search.location}</h2>
+            </div>
+
+            <div style={styles.criteriaSection}>
+              <div style={styles.pill}>
+                <RiPriceTag3Line style={styles.pillIcon} />
+                <span>{search.price}</span>
+              </div>
+              <div style={styles.pill}>
+                <RiHome4Line style={styles.pillIcon} />
+                <span>{search.type}</span>
+              </div>
+            </div>
+          </div>
+
+          <div style={styles.lastUpdated}>
+            Updated {search.lastAlert}
+          </div>
+
+          {activeMenu === search.id && (
+            <div 
+              className="menu-animation"
+              style={styles.menu}
+            >
+              <button 
+                style={{
+                  ...styles.menuItem,
+                  color: '#ff3b30', // iOS red
+                }} 
+                onClick={(e) => handleDeleteClick(search.id, e)}
+              >
+                <RiDeleteBinLine style={{ fontSize: '20px', color: '#ff3b30' }} />
+                <span>Delete</span>
+              </button>
+              <button style={styles.menuItem}>
+                <RiEditBoxLine style={{ fontSize: '20px', color: ACCENT }} />
+                <span>Edit</span>
+              </button>
+              <button 
+                style={getNotificationButtonStyle(search.id)}
+                onClick={(e) => handleToggleNotifications(search.id, !search.active, e)}
+              >
+                {search.active ? (
+                  <RiNotificationLine style={{ fontSize: '20px', color: ACCENT }} />
+                ) : (
+                  <RiNotificationOffLine style={{ fontSize: '20px', color: ACCENT }} />
+                )}
+                <span>Notifications {search.active ? 'On' : 'Off'}</span>
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    ));
+  };
+
   return (
     <>
       <SearchModal 
         isOpen={isModalOpen} 
         onClose={() => {
-          console.log('onClose called from Searches');
-          setIsModalOpen(false);  // This should close the modal
+          setIsModalOpen(false);
         }}
         whopUserId={whopUserId}
-        onSearchSaved={fetchUserSearches}  // This is our onSearchSaved function
+        onSearchSaved={async (savedId) => {
+          await fetchUserSearches(savedId);  // Pass the new search ID
+        }}
       />
       <div style={styles.pageContainer}>
         <div style={{
@@ -392,86 +467,7 @@ const Searches = ({ onOpenSearchModal }) => {
           </div>
 
           <div style={styles.searchList}>
-            {searches.length === 0 ? (
-              <div style={styles.emptyState}>
-                <RiSearchLine style={styles.emptyStateIcon} />
-                <p style={styles.emptyStateText}>No saved searches yet</p>
-                <p style={styles.emptyStateSubtext}>Create your first search to get started</p>
-              </div>
-            ) : (
-              searches.map(search => (
-                <div 
-                  key={search.id} 
-                  style={search.isNew ? styles.newSearchCard : styles.searchCard}
-                  className={search.isDeleting ? 'card-delete-animation' : ''}
-                >
-                  <div style={styles.cardStatus}>
-                    <SearchNameDisplay name={search.name} />
-                    <button 
-                      style={styles.moreButton}
-                      onClick={(e) => handleMoreClick(search.id, e)}
-                    >
-                      <RiMoreFill style={{ fontSize: '24px' }} />
-                    </button>
-                  </div>
-
-                  <div style={styles.mainContent}>
-                    <div style={styles.locationSection}>
-                      <RiMapPinLine style={styles.locationIcon} />
-                      <h2 style={styles.locationText}>{search.location}</h2>
-                    </div>
-
-                    <div style={styles.criteriaSection}>
-                      <div style={styles.pill}>
-                        <RiPriceTag3Line style={styles.pillIcon} />
-                        <span>{search.price}</span>
-                      </div>
-                      <div style={styles.pill}>
-                        <RiHome4Line style={styles.pillIcon} />
-                        <span>{search.type}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={styles.lastUpdated}>
-                    Updated {search.lastAlert}
-                  </div>
-
-                  {activeMenu === search.id && (
-                    <div 
-                      className="menu-animation"
-                      style={styles.menu}
-                    >
-                      <button 
-                        style={{
-                          ...styles.menuItem,
-                          color: '#ff3b30', // iOS red
-                        }} 
-                        onClick={(e) => handleDeleteClick(search.id, e)}
-                      >
-                        <RiDeleteBinLine style={{ fontSize: '20px', color: '#ff3b30' }} />
-                        <span>Delete</span>
-                      </button>
-                      <button style={styles.menuItem}>
-                        <RiEditBoxLine style={{ fontSize: '20px', color: ACCENT }} />
-                        <span>Edit</span>
-                      </button>
-                      <button 
-                        style={getNotificationButtonStyle(search.id)}
-                        onClick={(e) => handleToggleNotifications(search.id, !search.active, e)}
-                      >
-                        {search.active ? (
-                          <RiNotificationLine style={{ fontSize: '20px', color: ACCENT }} />
-                        ) : (
-                          <RiNotificationOffLine style={{ fontSize: '20px', color: ACCENT }} />
-                        )}
-                        <span>Notifications {search.active ? 'On' : 'Off'}</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ))
-            )}
+            {renderSearchList()}
           </div>
         </div>
       </div>
@@ -572,7 +568,35 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
-    transition: 'all 0.3s ease',
+    position: 'relative',
+  },
+
+  searchSlot: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    height: '172px',
+    transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+
+  '@keyframes slideInFromTop': {
+    from: {
+      transform: 'translateY(-100%)',
+      opacity: 0
+    },
+    to: {
+      transform: 'translateY(0)',
+      opacity: 1
+    }
+  },
+
+  '@keyframes moveDown': {
+    from: {
+      transform: 'translateY(calc(var(--slot-index) * (172px + 16px)))'
+    },
+    to: {
+      transform: 'translateY(calc((var(--slot-index) + 1) * (172px + 16px)))'
+    }
   },
 
   searchCard: {
