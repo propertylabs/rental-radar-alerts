@@ -60,6 +60,34 @@ const Searches = ({ onOpenSearchModal }) => {
     .card-delete-animation {
       animation: fadeOut 0.3s ease-out forwards;
     }
+
+    @keyframes slide-in-new {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slide-down {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(16px);
+      }
+    }
+
+    .slide-in-new {
+      animation: slide-in-new 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    .slide-down {
+      animation: slide-down 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
   `;
 
   useEffect(() => {
@@ -365,88 +393,89 @@ const Searches = ({ onOpenSearchModal }) => {
       );
     }
 
-    return searches.map((search, index) => (
-      <div
-        key={search.id}
-        style={{
-          ...styles.searchSlot,
-          transform: `translateY(${index * (172 + 16)}px)`, // 172px height + 16px gap
-          animation: search.id === newSearchId 
-            ? 'slideInFromTop 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards'
-            : newSearchId 
-              ? 'moveDown 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards'
-              : 'none',
-          '--slot-index': index,
-        }}
-      >
-        <div style={styles.searchCard}>
-          <div style={styles.cardStatus}>
-            <SearchNameDisplay name={search.name} />
-            <button 
-              style={styles.moreButton}
-              onClick={(e) => handleMoreClick(search.id, e)}
-            >
-              <RiMoreFill style={{ fontSize: '24px' }} />
-            </button>
-          </div>
-
-          <div style={styles.mainContent}>
-            <div style={styles.locationSection}>
-              <RiMapPinLine style={styles.locationIcon} />
-              <h2 style={styles.locationText}>{search.location}</h2>
-            </div>
-
-            <div style={styles.criteriaSection}>
-              <div style={styles.pill}>
-                <RiPriceTag3Line style={styles.pillIcon} />
-                <span>{search.price}</span>
-              </div>
-              <div style={styles.pill}>
-                <RiHome4Line style={styles.pillIcon} />
-                <span>{search.type}</span>
-              </div>
-            </div>
-          </div>
-
-          <div style={styles.lastUpdated}>
-            Updated {search.lastAlert}
-          </div>
-
-          {activeMenu === search.id && (
+    return (
+      <div style={{ ...styles.searchList, minHeight: `${searches.length * (172 + 16)}px` }}>
+        {searches.map((search, index) => (
+          <div
+            key={search.id}
+            style={{
+              ...styles.searchSlot,
+              transform: `translateY(${index * (172 + 16)}px)`, // 172px height + 16px gap
+            }}
+          >
             <div 
-              className="menu-animation"
-              style={styles.menu}
+              style={styles.searchCard}
+              className={search.id === newSearchId ? 'slide-in-new' : 'slide-down'}
             >
-              <button 
-                style={{
-                  ...styles.menuItem,
-                  color: '#ff3b30', // iOS red
-                }} 
-                onClick={(e) => handleDeleteClick(search.id, e)}
-              >
-                <RiDeleteBinLine style={{ fontSize: '20px', color: '#ff3b30' }} />
-                <span>Delete</span>
-              </button>
-              <button style={styles.menuItem}>
-                <RiEditBoxLine style={{ fontSize: '20px', color: ACCENT }} />
-                <span>Edit</span>
-              </button>
-              <button 
-                style={getNotificationButtonStyle(search.id)}
-                onClick={(e) => handleToggleNotifications(search.id, !search.active, e)}
-              >
-                {search.active ? (
-                  <RiNotificationLine style={{ fontSize: '20px', color: ACCENT }} />
-                ) : (
-                  <RiNotificationOffLine style={{ fontSize: '20px', color: ACCENT }} />
-                )}
-                <span>Notifications {search.active ? 'On' : 'Off'}</span>
-              </button>
+              <div style={styles.cardStatus}>
+                <SearchNameDisplay name={search.name} />
+                <button 
+                  style={styles.moreButton}
+                  onClick={(e) => handleMoreClick(search.id, e)}
+                >
+                  <RiMoreFill style={{ fontSize: '24px' }} />
+                </button>
+              </div>
+
+              <div style={styles.mainContent}>
+                <div style={styles.locationSection}>
+                  <RiMapPinLine style={styles.locationIcon} />
+                  <h2 style={styles.locationText}>{search.location}</h2>
+                </div>
+
+                <div style={styles.criteriaSection}>
+                  <div style={styles.pill}>
+                    <RiPriceTag3Line style={styles.pillIcon} />
+                    <span>{search.price}</span>
+                  </div>
+                  <div style={styles.pill}>
+                    <RiHome4Line style={styles.pillIcon} />
+                    <span>{search.type}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.lastUpdated}>
+                Updated {search.lastAlert}
+              </div>
+
+              {activeMenu === search.id && (
+                <div 
+                  className="menu-animation"
+                  style={styles.menu}
+                >
+                  <button 
+                    style={{
+                      ...styles.menuItem,
+                      color: '#ff3b30', // iOS red
+                    }} 
+                    onClick={(e) => handleDeleteClick(search.id, e)}
+                  >
+                    <RiDeleteBinLine style={{ fontSize: '20px', color: '#ff3b30' }} />
+                    <span>Delete</span>
+                  </button>
+                  <button style={styles.menuItem}>
+                    <RiEditBoxLine style={{ fontSize: '20px', color: ACCENT }} />
+                    <span>Edit</span>
+                  </button>
+                  <button 
+                    style={getNotificationButtonStyle(search.id)}
+                    onClick={(e) => handleToggleNotifications(search.id, !search.active, e)}
+                  >
+                    {search.active ? (
+                      <RiNotificationLine style={{ fontSize: '20px', color: ACCENT }} />
+                    ) : (
+                      <RiNotificationOffLine style={{ fontSize: '20px', color: ACCENT }} />
+                    )}
+                    <span>Notifications {search.active ? 'On' : 'Off'}</span>
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </div>
+        ))}
       </div>
-    ));
+    );
   };
 
   return (
@@ -582,17 +611,19 @@ const styles = {
   },
 
   searchList: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '16px',
     position: 'relative',
+    width: '100%',
+    // Set a minimum height based on number of searches
+    minHeight: (props) => `${props.searchCount * (172 + 16)}px`,
+    marginBottom: '16px', // Add bottom margin to container
   },
 
   searchSlot: {
     position: 'absolute',
     left: 0,
     right: 0,
-    height: '172px',
+    height: '172px', // Fixed card height
+    padding: '0 0 16px 0', // Add padding to bottom for gap
     transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
   },
 
