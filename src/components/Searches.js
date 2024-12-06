@@ -528,7 +528,9 @@ const Searches = ({ onOpenSearchModal }) => {
         }}
         whopUserId={whopUserId}
         onSearchSaved={async (savedId) => {
-          refreshSearches();  // Use the existing refresh function
+          console.log('onSearchSaved callback triggered with ID:', savedId);
+          await refreshSearches();  // Use the existing refresh function
+          console.log('refreshSearches completed');
         }}
       />
       <div style={styles.pageContainer}>
