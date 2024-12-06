@@ -58,6 +58,8 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
         throw new Error(data.error || 'Failed to save search');
       }
 
+      await onSearchSaved();
+      
       handleCloseButton();
 
     } catch (error) {
