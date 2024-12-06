@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { RiBellLine, RiBellFill } from 'react-icons/ri';
 
-const FinalizeStep = ({ values, onChange, onSave }) => {
-  const [isSaving, setIsSaving] = useState(false);
-
+const FinalizeStep = ({ values, onChange, onSave, isSaving }) => {
   const styles = {
     container: {
       flex: 1,
@@ -130,13 +128,7 @@ const FinalizeStep = ({ values, onChange, onSave }) => {
 
   const handleSave = async () => {
     if (!values.name || isSaving) return;
-    
-    setIsSaving(true);
-    try {
-      await onSave();
-    } finally {
-      setIsSaving(false);
-    }
+    await onSave();
   };
 
   return (

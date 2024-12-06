@@ -8,6 +8,7 @@ import FinalizeStep from './steps/FinalizeStep.js';
 
 const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
   const [step, setStep] = useState(1);
+  const [isSaving, setIsSaving] = useState(false);
   const [searchCriteria, setSearchCriteria] = useState({
     city: null,
     locations: [],
@@ -22,7 +23,10 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
   });
 
   const handleSaveSearch = async () => {
+    if (isSaving) return;
+    
     try {
+      setIsSaving(true);
       console.log('Starting save search process...');
       
       const whopUserId = localStorage.getItem('whop_user_id');
@@ -58,9 +62,10 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
       await onSearchSaved();
       
       console.log('Search saved successfully!');
-      onClose();
+      handleCloseButton();
     } catch (error) {
       console.error('Error saving search:', error);
+      setIsSaving(false);
     }
   };
 
@@ -223,6 +228,7 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
             notifications: values.notifications
           })}
           onSave={handleSaveSearch}
+          isSaving={isSaving}
         />;
       default:
         return null;
@@ -232,6 +238,7 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
   const handleCloseButton = () => {
     onClose();
     setStep(1);
+    setIsSaving(false);
     setSearchCriteria({
       city: null,
       locations: [],
