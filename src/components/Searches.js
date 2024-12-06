@@ -144,79 +144,46 @@ const Searches = ({ onOpenSearchModal }) => {
     setActiveMenu(activeMenu === searchId ? null : searchId);
   };
 
-  const handleDeleteClick = (searchId, event) => {
-    event.stopPropagation();
-    setActiveMenu(null);
+  const handleDeleteClick = (searchId) => {
     setSearchToDelete(searchId);
-    document.body.style.overflow = 'hidden';
-    
-    // Create modal content for delete confirmation
-    const modalContent = (
-      <div style={styles.modal}>
-        <h3 style={styles.modalTitle}>Delete Search?</h3>
-        <p style={styles.modalText}>Are you sure you want to delete this search?</p>
-        <div style={styles.modalButtons}>
-          <button 
-            style={{...styles.modalButton, ...styles.cancelButton}}
-            onClick={() => {
-              handleCloseModal();
-              document.body.style.overflow = '';
-            }}
-          >
-            Cancel
-          </button>
-          <button 
-            style={{...styles.modalButton, ...styles.deleteButton}}
-            onClick={() => handleConfirmDelete(searchId)}
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    );
-    
-    setModalContent(modalContent);
-    setModalState(true);
+    setShowDeleteConfirm(true);
+    setActiveMenu(null); // Close the menu
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
   };
 
-  const handleConfirmDelete = async (searchId) => {
-    if (!searchId) {
-      console.log('No searchId provided');
-      return;
-    }
-    
-    setShowDeleteConfirm(false);
-    document.body.style.overflow = '';
-    
-    const searchToRestore = searches.find(s => s.id === searchId);
-    
-    setSearches(prev => prev.map(search => 
-      search.id === searchId 
-        ? { ...search, isDeleting: true }
-        : search
-    ));
+  const handleConfirmDelete = async () => {
+    if (!searchToDelete) return;
 
-    setTimeout(() => {
-      setSearches(prev => prev.filter(search => search.id !== searchId));
-    }, 300);
-    
     try {
+      const whopUserId = localStorage.getItem('whop_user_id');
+      if (!whopUserId) {
+        console.error('User not authenticated');
+        return;
+      }
+
       const response = await fetch('/api/delete-search', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          searchId: searchId
-        })
+        body: JSON.stringify({ 
+          searchId: searchToDelete,
+          user_id: whopUserId 
+        }),
       });
 
-      if (!response.ok) {
-        setSearches(prev => [...prev, searchToRestore]);
+      if (response.ok) {
+        setSearches(prevSearches => prevSearches.filter(search => search.id !== searchToDelete));
+        console.log('Search deleted successfully');
+      } else {
+        console.error('Failed to delete search');
       }
     } catch (error) {
-      setSearches(prev => [...prev, searchToRestore]);
-      console.error('API error:', error);
+      console.error('Error deleting search:', error);
+    } finally {
+      setShowDeleteConfirm(false);
+      setSearchToDelete(null);
+      document.body.style.overflow = '';
     }
   };
 
@@ -254,7 +221,7 @@ const Searches = ({ onOpenSearchModal }) => {
         body: JSON.stringify({
           searchId,
           user_id: whopUserId,
-          notifications: !currentStatus
+          notifications: currentStatus
         })
       });
 
@@ -262,7 +229,7 @@ const Searches = ({ onOpenSearchModal }) => {
         // Only update the UI state after successful API call
         setSearches(searches.map(search => 
           search.id === searchId 
-            ? {...search, active: !currentStatus}
+            ? {...search, active: currentStatus}
             : search
         ));
       } else {
@@ -457,6 +424,36 @@ const Searches = ({ onOpenSearchModal }) => {
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div style={styles.modalBackdrop}>
+          <div style={styles.confirmModal}>
+            <h3 style={styles.confirmTitle}>Delete Search?</h3>
+            <p style={styles.confirmText}>
+              Are you sure you want to delete this search? This action cannot be undone.
+            </p>
+            <div style={styles.confirmButtons}>
+              <button 
+                style={{...styles.confirmButton, ...styles.cancelButton}}
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                  setSearchToDelete(null);
+                  document.body.style.overflow = '';
+                }}
+              >
+                Cancel
+              </button>
+              <button 
+                style={{...styles.confirmButton, ...styles.deleteButton}}
+                onClick={handleConfirmDelete}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
@@ -856,6 +853,69 @@ const styles = {
     ':hover': {
       background: '#ff2222',
     },
+  },
+
+  modalBackdrop: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0, 0, 0, 0.4)',
+    backdropFilter: 'blur(8px)',
+    WebkitBackdropFilter: 'blur(8px)',
+    zIndex: 100000,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '16px',
+  },
+
+  confirmModal: {
+    background: 'white',
+    borderRadius: '16px',
+    padding: '24px',
+    width: '100%',
+    maxWidth: '320px',
+  },
+
+  confirmTitle: {
+    fontSize: '20px',
+    fontWeight: '600',
+    marginBottom: '12px',
+    color: '#2E3F32',
+  },
+
+  confirmText: {
+    fontSize: '15px',
+    color: '#666',
+    marginBottom: '24px',
+    lineHeight: 1.4,
+  },
+
+  confirmButtons: {
+    display: 'flex',
+    gap: '12px',
+  },
+
+  confirmButton: {
+    flex: 1,
+    padding: '12px',
+    borderRadius: '12px',
+    border: 'none',
+    fontSize: '15px',
+    fontWeight: '600',
+    cursor: 'pointer',
+  },
+
+  cancelButton: {
+    background: 'rgba(46, 63, 50, 0.1)',
+    color: '#2E3F32',
+  },
+
+  deleteButton: {
+    background: '#ff3b30',
+    color: 'white',
   },
 };
 
