@@ -345,6 +345,7 @@ const Searches = ({ onOpenSearchModal }) => {
 
   // Add this new function for a simpler refresh
   const refreshSearches = async () => {
+    console.log('Starting refreshSearches');
     const whopUserId = localStorage.getItem('whop_user_id');
     if (!whopUserId) return;
 
@@ -356,6 +357,7 @@ const Searches = ({ onOpenSearchModal }) => {
     });
 
     if (response.ok) {
+      console.log('Refresh response received');
       const result = await response.json();
       if (Array.isArray(result)) {
         const formattedSearches = result.map(search => ({
@@ -369,6 +371,7 @@ const Searches = ({ onOpenSearchModal }) => {
           lastAlert: search.last_alert || 'No alerts yet',
           active: search.notifications
         }));
+        console.log('Setting new searches:', formattedSearches);
         setSearches(formattedSearches);
       }
     }

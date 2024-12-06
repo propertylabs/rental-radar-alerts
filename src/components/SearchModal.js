@@ -27,6 +27,7 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
     if (isSaving) return;
     
     try {
+      console.log('1. Starting save process');
       setIsSaving(true);
       const whopUserId = localStorage.getItem('whop_user_id');
       
@@ -34,6 +35,7 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
         throw new Error('No user ID available');
       }
 
+      console.log('2. Making API request');
       const response = await fetch('/api/save-search', {
         method: 'POST',
         headers: {
@@ -54,11 +56,13 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
       });
 
       const data = await response.json();
+      console.log('3. API response:', data);
       
       if (!response.ok) {
         throw new Error(data.error || 'Failed to save search');
       }
 
+      console.log('4. Resetting modal state');
       setStep(1);
       setIsSaving(false);
       setSearchCriteria({
@@ -74,16 +78,19 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
         notifications: true,
       });
       
+      console.log('5. Calling onClose');
       if (typeof onClose === 'function') {
         onClose();
       }
 
-      // Wait for modal close animation to complete (0.3s) plus a tiny buffer
+      console.log('6. Setting timeout for refresh');
       setTimeout(async () => {
+        console.log('7. Inside timeout, about to call onSearchSaved');
         if (typeof onSearchSaved === 'function') {
           await onSearchSaved(data.id);
+          console.log('8. onSearchSaved completed');
         }
-      }, 350);  // 300ms for animation + 50ms buffer
+      }, 350);
 
     } catch (error) {
       console.error('Error saving search:', error);
