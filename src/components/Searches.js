@@ -510,9 +510,17 @@ const Searches = ({ onOpenSearchModal }) => {
             </button>
           </div>
 
-          <div style={styles.searchList}>
-            {renderSearchList()}
-          </div>
+          {searches.length === 0 ? (
+            <div style={styles.emptyState}>
+              <RiSearchLine style={styles.emptyStateIcon} />
+              <p style={styles.emptyStateText}>No saved searches yet</p>
+              <p style={styles.emptyStateSubtext}>Create your first search to get started</p>
+            </div>
+          ) : (
+            <div style={styles.searchList}>
+              {renderSearchList()}
+            </div>
+          )}
         </div>
       </div>
 
@@ -613,9 +621,6 @@ const styles = {
     flexDirection: 'column',
     gap: '24px',
     position: 'relative',
-    maxWidth: '800px',
-    width: '100%',
-    margin: '0 auto',
   },
 
   searchCard: {
@@ -626,7 +631,6 @@ const styles = {
     boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
     height: '172px',
     width: '100%',
-    maxWidth: '800px',
   },
 
   '@keyframes slideInFromTop': {
@@ -778,7 +782,6 @@ const styles = {
     boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
     height: '172px',
     width: '100%',
-    maxWidth: '800px',
   },
 
   skeletonContent: {
