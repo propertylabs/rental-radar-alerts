@@ -60,11 +60,10 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
       }
 
       await onSearchSaved();
+      setIsSaving(false);
       setIsSaved(true);
       
-      setTimeout(() => {
-        handleCloseButton();
-      }, 500);
+      setTimeout(handleCloseButton, 1000);
 
     } catch (error) {
       console.error('Error saving search:', error);
