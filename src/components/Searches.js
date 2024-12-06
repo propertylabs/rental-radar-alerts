@@ -63,7 +63,7 @@ const Searches = ({ onOpenSearchModal }) => {
 
     @keyframes slide-in-new {
       from {
-        transform: translateY(-100%);
+        transform: translateY(${-206}px);
         opacity: 0;
       }
       to {
@@ -164,7 +164,7 @@ const Searches = ({ onOpenSearchModal }) => {
           setSearches(formattedSearches);
           if (newId) {
             setNewSearchId(newId);
-            setTimeout(() => setNewSearchId(null), 1000);
+            setTimeout(() => setNewSearchId(null), 400);
           }
         }
       } else {
@@ -433,11 +433,12 @@ const Searches = ({ onOpenSearchModal }) => {
             key={search.id}
             style={{
               ...styles.searchCard,
-              transform: `translateY(${index * (206 + 24)}px)`,  // 206px total height (172px + 32px padding + 2px border) + 24px gap
+              transform: `translateY(${index * (206 + 24)}px)`,
               position: 'absolute',
               top: 0,
               left: 0,
               right: 0,
+              opacity: search.id === newSearchId ? 0 : 1,
             }}
             className={`
               card-moving
