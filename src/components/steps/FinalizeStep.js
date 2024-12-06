@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RiBellLine, RiBellFillLine } from 'react-icons/ri';
+import { RiBellLine, RiBellFill } from 'react-icons/ri';
 
 const FinalizeStep = ({ values, onChange, onSave }) => {
   const [isSaving, setIsSaving] = useState(false);
@@ -170,7 +170,7 @@ const FinalizeStep = ({ values, onChange, onSave }) => {
             </div>
           </div>
           {values.notifications ? (
-            <RiBellFillLine style={styles.toggleIcon(true)} />
+            <RiBellFill style={styles.toggleIcon(true)} />
           ) : (
             <RiBellLine style={styles.toggleIcon(false)} />
           )}
