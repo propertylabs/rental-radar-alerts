@@ -9,6 +9,7 @@ import FinalizeStep from './steps/FinalizeStep.js';
 const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
   const [step, setStep] = useState(1);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const [searchCriteria, setSearchCriteria] = useState({
     city: null,
     locations: [],
@@ -23,7 +24,7 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
   });
 
   const handleSaveSearch = async () => {
-    if (isSaving) return;
+    if (isSaving || isSaved) return;
     
     try {
       setIsSaving(true);
@@ -59,8 +60,11 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
       }
 
       await onSearchSaved();
+      setIsSaved(true);
       
-      handleCloseButton();
+      setTimeout(() => {
+        handleCloseButton();
+      }, 500);
 
     } catch (error) {
       console.error('Error saving search:', error);
@@ -228,6 +232,7 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
           })}
           onSave={handleSaveSearch}
           isSaving={isSaving}
+          isSaved={isSaved}
         />;
       default:
         return null;
@@ -238,6 +243,7 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
     onClose();
     setStep(1);
     setIsSaving(false);
+    setIsSaved(false);
     setSearchCriteria({
       city: null,
       locations: [],

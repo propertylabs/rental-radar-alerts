@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { RiBellLine, RiBellFill } from 'react-icons/ri';
 
-const FinalizeStep = ({ values, onChange, onSave, isSaving }) => {
+const FinalizeStep = ({ values, onChange, onSave, isSaving, isSaved }) => {
   const styles = {
     container: {
       flex: 1,
@@ -127,8 +127,14 @@ const FinalizeStep = ({ values, onChange, onSave, isSaving }) => {
   };
 
   const handleSave = async () => {
-    if (!values.name || isSaving) return;
+    if (!values.name || isSaving || isSaved) return;
     await onSave();
+  };
+
+  const getButtonText = () => {
+    if (isSaved) return 'Saved';
+    if (isSaving) return 'Saving...';
+    return 'Save Search';
   };
 
   return (
@@ -170,11 +176,19 @@ const FinalizeStep = ({ values, onChange, onSave, isSaving }) => {
       </div>
 
       <button 
-        style={styles.saveButton}
+        style={{
+          ...styles.saveButton,
+          background: isSaved 
+            ? '#34C759'
+            : values.name
+              ? 'linear-gradient(145deg, #2E3F32, #3A4F3E)'
+              : 'rgba(46, 63, 50, 0.1)',
+          cursor: isSaved ? 'default' : values.name ? 'pointer' : 'default',
+        }}
         onClick={handleSave}
-        disabled={!values.name || isSaving}
+        disabled={!values.name || isSaving || isSaved}
       >
-        {isSaving ? 'Saving...' : 'Save Search'}
+        {getButtonText()}
       </button>
     </div>
   );

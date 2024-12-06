@@ -290,6 +290,37 @@ const Searches = ({ onOpenSearchModal }) => {
     }
   };
 
+  // Add this new function for a simpler refresh
+  const refreshSearches = async () => {
+    const whopUserId = localStorage.getItem('whop_user_id');
+    if (!whopUserId) return;
+
+    const response = await fetch(`/api/get-user-searches?userId=${whopUserId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      if (Array.isArray(result)) {
+        const formattedSearches = result.map(search => ({
+          id: search.id,
+          name: search.searchName,
+          location: search.postcodes.join(', '),
+          price: search.criteria.minPrice && search.criteria.maxPrice 
+            ? `£${search.criteria.minPrice}-${search.criteria.maxPrice}`
+            : 'Any price',
+          type: search.criteria.propertyTypes[0] || 'Any type',
+          lastAlert: search.last_alert || 'No alerts yet',
+          active: search.notifications
+        }));
+        setSearches(formattedSearches);
+      }
+    }
+  };
+
   // Loading state UI
   if (isLoading) {
     return (
@@ -336,7 +367,7 @@ const Searches = ({ onOpenSearchModal }) => {
         isOpen={isModalOpen} 
         onClose={handleCloseModal}
         whopUserId={whopUserId}
-        onSearchSaved={fetchUserSearches}
+        onSearchSaved={refreshSearches}  // Use the simpler function here
       />
       <div style={styles.pageContainer}>
         <div style={{
