@@ -152,10 +152,7 @@ const SearchModal = ({ isOpen, onClose }) => {
               });
           }
         }}
-        onNext={() => {
-          console.log('Moving to next step from:', step);
-          setStep(prev => prev + 1);
-        }}
+        onNext={() => setStep(prev => prev + 1)}
         onSave={step === steps.length - 1 ? handleSaveSearch : undefined}
         isSaving={isSaving}
         isSaved={isSaved}
