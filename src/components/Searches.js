@@ -49,6 +49,12 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
     
     try {
       const whopUserId = localStorage.getItem('whop_user_id');
+      console.log('Attempting to update name:', {
+        userId: whopUserId,
+        searchId,
+        searchName: editedName.trim()
+      });
+
       const response = await fetch('/api/update-search-name', {
         method: 'PUT',
         headers: {
@@ -61,14 +67,19 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
         })
       });
 
+      const data = await response.json();
+      console.log('API Response:', data);
+
       if (response.ok) {
         onNameUpdate(searchId, editedName.trim());
         setIsEditing(false);
       } else {
-        console.error('Failed to update name');
+        console.error('Failed to update name:', data.error);
+        alert('Failed to update name. Please try again.');
       }
     } catch (error) {
       console.error('Error updating name:', error);
+      alert('Error updating name. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -80,7 +91,7 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
         <input
           ref={inputRef}
           style={styles.nameInput}
-          value={editedName}
+          value={editedName.toUpperCase()}
           onChange={(e) => setEditedName(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') handleSave();
@@ -88,6 +99,7 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
           }}
           maxLength={30}
           onClick={(e) => e.stopPropagation()}
+          autoFocus
         />
         <div style={styles.editButtons}>
           <button
@@ -1021,6 +1033,7 @@ const styles = {
     borderRadius: '8px',
     border: '1px solid rgba(46, 63, 50, 0.08)',
     transition: 'all 0.2s ease',
+    maxWidth: 'calc(100% - 60px)',
   },
 
   nameInput: {
@@ -1031,10 +1044,11 @@ const styles = {
     fontWeight: '500',
     color: ACCENT,
     letterSpacing: '-0.3px',
-    width: '140px',
+    width: '100px',
     padding: 0,
     margin: 0,
     outline: 'none',
+    textTransform: 'uppercase',
   },
 
   editButtons: {
