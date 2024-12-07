@@ -7,12 +7,14 @@ const PostcodesStep = ({ values, onChange, onNext }) => {
   const postcodes = ['M1', 'M2', 'M3', 'M4', 'M5'];
 
   const styles = {
-    container: {
+    wrapper: {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
       gap: '24px',
       padding: '0',
+      height: '100%',
+      maxHeight: 'calc(100% - 80px)',
     },
 
     header: {
@@ -111,7 +113,7 @@ const PostcodesStep = ({ values, onChange, onNext }) => {
   };
 
   return (
-    <div style={styles.container}>
+    <div style={styles.wrapper}>
       <div style={styles.header}>
         <h2 style={styles.title}>Location</h2>
         <p style={styles.subtitle}>
