@@ -51,9 +51,27 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     FinalizeStep
   ];
 
+  // Add reset function
+  const resetModal = () => {
+    setStep(0);
+    setIsSaving(false);
+    setIsSaved(false);
+    setSearchCriteria({
+      locations: [],
+      propertyTypes: [],
+      minBedrooms: 1,
+      maxBedrooms: 5,
+      minPrice: 0,
+      maxPrice: 3000,
+      mustHaves: [],
+      name: '',
+      notifications: true,
+    });
+  };
+
+  // Update handleSaveSearch
   const handleSaveSearch = async () => {
     if (isSaving) return;
-    
     try {
       setIsSaving(true);
       const whopUserId = localStorage.getItem('whop_user_id');
@@ -88,11 +106,12 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
 
       setIsSaved(true);
       setTimeout(() => {
+        resetModal();  // Reset before closing
         onClose();
         window.dispatchEvent(new CustomEvent('refreshSearches'));
       }, 500);
-
     } catch (error) {
+      alert('Failed to update search');
       console.error('Error updating search:', error);
     } finally {
       setIsSaving(false);
@@ -159,7 +178,10 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
 
   return BaseSearchModal.renderModalFrame({
     isOpen,
-    onClose,
+    onClose: () => {
+      resetModal();  // Reset before closing
+      onClose();
+    },
     title: 'Edit Search',
     step,
     setStep,
