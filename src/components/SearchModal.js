@@ -7,15 +7,23 @@ import MustHavesStep from './steps/MustHavesStep.js';
 import FinalizeStep from './steps/FinalizeStep.js';
 
 const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
-  const isEditing = !!searchToEdit;
+  const [step, setStep] = useState(0);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [searchCriteria, setSearchCriteria] = useState({
+    city: 'Manchester',
+    locations: [],
+    propertyTypes: [],
+    minBedrooms: 1,
+    maxBedrooms: 5,
+    minPrice: 0,
+    maxPrice: 3000,
+    mustHaves: [],
+    name: '',
+    notifications: true,
+  });
 
-  const steps = isEditing ? [
-    LocationStep,
-    PropertyTypeStep,
-    PriceBedroomsStep,
-    MustHavesStep,
-    FinalizeStep
-  ] : [
+  const steps = [
     CityStep,
     LocationStep,
     PropertyTypeStep,
@@ -24,23 +32,7 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
     FinalizeStep
   ];
 
-  const [step, setStep] = useState(0);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
-  const [searchCriteria, setSearchCriteria] = useState({
-    city: 'Manchester',
-    locations: isEditing ? searchToEdit.location.split(', ') : [],
-    propertyTypes: isEditing ? [searchToEdit.type] : [],
-    minBedrooms: isEditing ? searchToEdit.criteria.minBedrooms : 1,
-    maxBedrooms: isEditing ? searchToEdit.criteria.maxBedrooms : 5,
-    minPrice: isEditing ? parseInt(searchToEdit.price.split('-')[0].replace('£', '')) : 0,
-    maxPrice: isEditing ? parseInt(searchToEdit.price.split('-')[1]) : 3000,
-    mustHaves: isEditing ? searchToEdit.criteria.mustHaves : [],
-    name: isEditing ? searchToEdit.name : '',
-    notifications: isEditing ? searchToEdit.active : true,
-  });
-
-  const modalTitle = isEditing ? 'Edit Search' : 'New Search';
+  const modalTitle = 'New Search';
 
   const handleSaveSearch = async () => {
     if (isSaving) return;
@@ -53,8 +45,8 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
         throw new Error('No user ID available');
       }
 
-      const endpoint = isEditing ? '/api/update-search' : '/api/save-search';
-      const method = isEditing ? 'PUT' : 'POST';
+      const endpoint = '/api/save-search';
+      const method = 'POST';
 
       const response = await fetch(endpoint, {
         method,
@@ -72,7 +64,6 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
           property_types: searchCriteria.propertyTypes,
           must_haves: searchCriteria.mustHaves,
           notifications: searchCriteria.notifications,
-          ...(isEditing && { searchId: searchToEdit.id }),
         }),
       });
 
@@ -219,80 +210,47 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
       <CurrentStep 
         values={
           // If editing, skip city step values
-          isEditing ? (
-            step === 0 ? searchCriteria.locations :
-            step === 1 ? searchCriteria.propertyTypes :
-            step === 2 ? {
-              minBedrooms: searchCriteria.minBedrooms,
-              maxBedrooms: searchCriteria.maxBedrooms,
-              minPrice: searchCriteria.minPrice,
-              maxPrice: searchCriteria.maxPrice
-            } :
-            step === 3 ? searchCriteria.mustHaves :
-            {
-              name: searchCriteria.name,
-              notifications: searchCriteria.notifications
-            }
-          ) : (
-            // Normal flow for new search
-            step === 0 ? searchCriteria.city :
-            step === 1 ? searchCriteria.locations :
-            step === 2 ? searchCriteria.propertyTypes :
-            step === 3 ? {
-              minBedrooms: searchCriteria.minBedrooms,
-              maxBedrooms: searchCriteria.maxBedrooms,
-              minPrice: searchCriteria.minPrice,
-              maxPrice: searchCriteria.maxPrice
-            } :
-            step === 4 ? searchCriteria.mustHaves :
-            {
-              name: searchCriteria.name,
-              notifications: searchCriteria.notifications
-            }
-          )
+          step === 0 ? searchCriteria.city :
+          step === 1 ? searchCriteria.locations :
+          step === 2 ? searchCriteria.propertyTypes :
+          step === 3 ? {
+            minBedrooms: searchCriteria.minBedrooms,
+            maxBedrooms: searchCriteria.maxBedrooms,
+            minPrice: searchCriteria.minPrice,
+            maxPrice: searchCriteria.maxPrice
+          } :
+          step === 4 ? searchCriteria.mustHaves :
+          {
+            name: searchCriteria.name,
+            notifications: searchCriteria.notifications
+          }
         }
         onChange={(values) => {
           switch(step) {
             case 0:
               setSearchCriteria({...searchCriteria, 
-                [isEditing ? 'locations' : 'city']: values
+                city: values
               });
               break;
             case 1:
               setSearchCriteria({...searchCriteria, 
-                [isEditing ? 'propertyTypes' : 'locations']: values
+                locations: values
               });
               break;
             case 2:
-              if (isEditing) {
-                setSearchCriteria({
-                  ...searchCriteria,
-                  minBedrooms: values.minBedrooms,
-                  maxBedrooms: values.maxBedrooms,
-                  minPrice: values.minPrice,
-                  maxPrice: values.maxPrice
-                });
-              } else {
-                setSearchCriteria({...searchCriteria, propertyTypes: values});
-              }
+              setSearchCriteria({...searchCriteria, propertyTypes: values});
               break;
             case 3:
-              if (isEditing) {
-                setSearchCriteria({...searchCriteria, mustHaves: values});
-              } else {
-                setSearchCriteria({
-                  ...searchCriteria,
-                  minBedrooms: values.minBedrooms,
-                  maxBedrooms: values.maxBedrooms,
-                  minPrice: values.minPrice,
-                  maxPrice: values.maxPrice
-                });
-              }
+              setSearchCriteria({
+                ...searchCriteria,
+                minBedrooms: values.minBedrooms,
+                maxBedrooms: values.maxBedrooms,
+                minPrice: values.minPrice,
+                maxPrice: values.maxPrice
+              });
               break;
             case 4:
-              if (!isEditing) {
-                setSearchCriteria({...searchCriteria, mustHaves: values});
-              }
+              setSearchCriteria({...searchCriteria, mustHaves: values});
               break;
             default:
               setSearchCriteria({
@@ -306,7 +264,6 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
         onSave={step === steps.length - 1 ? handleSaveSearch : undefined}
         isSaving={isSaving}
         isSaved={isSaved}
-        isEditing={isEditing}
       />
     );
   };
