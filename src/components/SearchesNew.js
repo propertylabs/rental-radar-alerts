@@ -1,7 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { RiAddLine, RiMapPinLine, RiPriceTag3Line, RiHome4Line, RiSearchLine } from 'react-icons/ri';
+import { 
+  RiAddLine, 
+  RiMapPinLine, 
+  RiPriceTag3Line, 
+  RiHome4Line, 
+  RiMoreFill, 
+  RiSearchLine, 
+  RiEditBoxLine, 
+  RiDeleteBinLine, 
+  RiNotificationLine, 
+  RiNotificationOffLine 
+} from 'react-icons/ri';
 
 const ACCENT = '#2E3F32';
+
+const SearchNameDisplay = ({ name }) => (
+  <div style={styles.nameContainer}>
+    <span style={styles.searchName}>{name.toUpperCase()}</span>
+    <RiEditBoxLine style={styles.editIcon} />
+  </div>
+);
 
 const SearchesNew = ({ onOpenSearchModal }) => {
   const [isStandalone] = useState(() => 
@@ -11,6 +29,23 @@ const SearchesNew = ({ onOpenSearchModal }) => {
   );
   const [searches, setSearches] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeMenu, setActiveMenu] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [searchToDelete, setSearchToDelete] = useState(null);
+  const [cooldownButtons, setCooldownButtons] = useState(new Set());
+  const [whopUserId, setWhopUserId] = useState(null);
+  const [newSearchId, setNewSearchId] = useState(null);
+
+  // Add all the menu styles from Searches.js
+  useEffect(() => {
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = menuStyles;
+    document.head.appendChild(styleSheet);
+
+    return () => {
+      document.head.removeChild(styleSheet);
+    };
+  }, [menuStyles]);
 
   // Fetch searches when component mounts
   useEffect(() => {
