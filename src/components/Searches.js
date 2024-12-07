@@ -1,8 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { RiAddLine, RiMapPinLine, RiPriceTag3Line, RiHome4Line, RiMoreFill, RiSearchLine, RiEditBoxLine, RiDeleteBinLine, RiNotificationLine, RiNotificationOffLine } from 'react-icons/ri';
-import SearchModal from './SearchModal.js';
+import React, { useState, useEffect } from 'react';
+import { 
+  RiAddLine, 
+  RiMapPinLine, 
+  RiPriceTag3Line, 
+  RiHome4Line, 
+  RiMoreFill, 
+  RiSearchLine, 
+  RiEditBoxLine, 
+  RiDeleteBinLine, 
+  RiNotificationLine, 
+  RiNotificationOffLine 
+} from 'react-icons/ri';
 
-const ACCENT = '#2E3F32'; // Deep forest green
+const ACCENT = '#2E3F32';
 
 const SearchNameDisplay = ({ name }) => (
   <div style={styles.nameContainer}>
@@ -11,11 +21,91 @@ const SearchNameDisplay = ({ name }) => (
   </div>
 );
 
-const Searches = ({ onOpenSearchModal }) => {
+const menuStyles = `
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+  }
+
+  .menu-animation {
+    animation: scaleIn 0.2s ease-out forwards;
+    transform-origin: top right;
+  }
+
+  .card-delete-animation {
+    animation: fadeOut 0.3s ease-out forwards;
+  }
+
+  @keyframes slide-in-new {
+    from {
+      transform: translateY(${-206}px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-down {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(16px);
+    }
+  }
+
+  .slide-in-new {
+    animation: slide-in-new 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+
+  .slide-down {
+    animation: slide-down 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes deleteCard {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+
+  .card-deleting {
+    animation: deleteCard 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+
+  .card-moving {
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+`;
+
+const SearchesNew = ({ onOpenSearchModal }) => {
   const [isStandalone] = useState(() => 
     window.matchMedia('(display-mode: standalone)').matches || 
     window.navigator.standalone || 
-    true  // Default to true to ensure we're always below safe area
+    true
   );
   const [searches, setSearches] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -23,91 +113,8 @@ const Searches = ({ onOpenSearchModal }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [searchToDelete, setSearchToDelete] = useState(null);
   const [cooldownButtons, setCooldownButtons] = useState(new Set());
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [modalState, setModalState] = useState(false);
   const [whopUserId, setWhopUserId] = useState(null);
   const [newSearchId, setNewSearchId] = useState(null);
-
-  const menuStyles = `
-    @keyframes scaleIn {
-      from {
-        opacity: 0;
-        transform: scale(0.8);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes fadeOut {
-      from {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      to {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-    }
-
-    .menu-animation {
-      animation: scaleIn 0.2s ease-out forwards;
-      transform-origin: top right;
-    }
-
-    .card-delete-animation {
-      animation: fadeOut 0.3s ease-out forwards;
-    }
-
-    @keyframes slide-in-new {
-      from {
-        transform: translateY(${-206}px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    @keyframes slide-down {
-      from {
-        transform: translateY(0);
-      }
-      to {
-        transform: translateY(16px);
-      }
-    }
-
-    .slide-in-new {
-      animation: slide-in-new 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-    }
-
-    .slide-down {
-      animation: slide-down 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    }
-
-    @keyframes deleteCard {
-      0% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translateX(100%);
-        opacity: 0;
-      }
-    }
-
-    .card-deleting {
-      animation: deleteCard 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-    }
-
-    .card-moving {
-      transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-  `;
 
   useEffect(() => {
     const styleSheet = document.createElement("style");
@@ -119,72 +126,6 @@ const Searches = ({ onOpenSearchModal }) => {
     };
   }, [menuStyles]);
 
-  // Modify fetchUserSearches to handle loading state
-  const fetchUserSearches = async (newId = null) => {
-    setIsLoading(true);
-    
-    try {
-      const whopUserId = localStorage.getItem('whop_user_id');
-      if (!whopUserId) {
-        console.error('No user ID found');
-        setIsLoading(false);
-        return;
-      }
-
-      const response = await fetch(`/api/get-user-searches?userId=${whopUserId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Full API response:', result); // Log the full response
-
-        if (Array.isArray(result)) {
-          const formattedSearches = result
-            .map(search => {
-              console.log('Individual search:', search); // Log each search object
-              return {
-                id: search.id,
-                name: search.searchName,
-                location: search.postcodes.join(', '),
-                price: search.criteria.minPrice && search.criteria.maxPrice 
-                  ? `£${search.criteria.minPrice}-${search.criteria.maxPrice}`
-                  : 'Any price',
-                type: search.criteria.propertyTypes[0] || 'Any type',
-                lastAlert: search.last_alert || 'No alerts yet',
-                active: search.notifications,
-                createdAt: search.created_at,
-              };
-            })
-            .sort((a, b) => b.createdAt - a.createdAt);
-
-          setSearches(formattedSearches);
-          if (newId) {
-            setNewSearchId(newId);
-            setTimeout(() => setNewSearchId(null), 400);
-          }
-        }
-      } else {
-        console.error('Failed to fetch searches:', response.status);
-      }
-    } catch (error) {
-      console.error('Error fetching searches:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Fetch searches when component mounts
-  useEffect(() => {
-    const userId = localStorage.getItem('whop_user_id');
-    setWhopUserId(userId);
-    fetchUserSearches();
-  }, []);
-
-  // Revert the useEffect for click outside handling
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (activeMenu) {
@@ -198,7 +139,6 @@ const Searches = ({ onOpenSearchModal }) => {
     };
   }, [activeMenu]);
 
-  // Revert the handleMoreClick to its simpler form
   const handleMoreClick = (searchId, event) => {
     event.stopPropagation();
     setActiveMenu(activeMenu === searchId ? null : searchId);
@@ -207,15 +147,14 @@ const Searches = ({ onOpenSearchModal }) => {
   const handleDeleteClick = (searchId) => {
     setSearchToDelete(searchId);
     setShowDeleteConfirm(true);
-    setActiveMenu(null); // Close the menu
-    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    setActiveMenu(null);
+    document.body.style.overflow = 'hidden';
   };
 
   const handleConfirmDelete = async () => {
     if (!searchToDelete) return;
 
     try {
-      // First animate the card out
       const cardToDelete = searches.find(s => s.id === searchToDelete);
       if (cardToDelete) {
         setSearches(prevSearches => 
@@ -226,7 +165,6 @@ const Searches = ({ onOpenSearchModal }) => {
           )
         );
 
-        // Wait for deletion animation
         await new Promise(resolve => setTimeout(resolve, 300));
       }
 
@@ -243,9 +181,6 @@ const Searches = ({ onOpenSearchModal }) => {
 
       if (response.ok) {
         setSearches(prevSearches => prevSearches.filter(search => search.id !== searchToDelete));
-        console.log('Search deleted successfully');
-      } else {
-        console.error('Failed to delete search');
       }
     } catch (error) {
       console.error('Error deleting search:', error);
@@ -256,17 +191,10 @@ const Searches = ({ onOpenSearchModal }) => {
     }
   };
 
-  
   const handleToggleNotifications = async (searchId, newStatus, event) => {
     event.stopPropagation();
     
     if (cooldownButtons.has(searchId)) {
-      return;
-    }
-
-    const whopUserId = localStorage.getItem('whop_user_id');
-    if (!whopUserId) {
-      console.error('User not authenticated');
       return;
     }
 
@@ -299,51 +227,69 @@ const Searches = ({ onOpenSearchModal }) => {
             ? {...search, active: newStatus}
             : search
         ));
-      } else {
-        console.error('Failed to update notifications:', await response.json());
       }
     } catch (error) {
       console.error('Error updating notifications:', error);
     }
   };
 
-  const handleCloseModal = () => {
-    setShowDeleteConfirm(false);
-    setSearchToDelete(null);
-    document.body.style.overflow = '';
-  };
-
-  const handleDeleteSearch = async (searchId) => {
+  const fetchUserSearches = async () => {
+    setIsLoading(true);
     try {
       const whopUserId = localStorage.getItem('whop_user_id');
       if (!whopUserId) {
-        console.error('User not authenticated');
+        console.error('No user ID found');
+        setIsLoading(false);
         return;
       }
 
-      const response = await fetch('/api/delete-search', {
-        method: 'DELETE',
+      const response = await fetch(`/api/get-user-searches?userId=${whopUserId}`, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          searchId,
-          user_id: whopUserId 
-        }),
       });
-
+      
       if (response.ok) {
-        setSearches(prevSearches => prevSearches.filter(search => search.id !== searchId));
-        console.log('Search deleted successfully');
-      } else {
-        console.error('Failed to delete search');
+        const result = await response.json();
+        if (Array.isArray(result)) {
+          const formattedSearches = result
+            .map(search => ({
+              id: search.id,
+              name: search.searchName,
+              location: search.postcodes.join(', '),
+              price: search.criteria.minPrice && search.criteria.maxPrice 
+                ? `£${search.criteria.minPrice}-${search.criteria.maxPrice}`
+                : 'Any price',
+              type: search.criteria.propertyTypes[0] || 'Any type',
+              lastAlert: search.last_alert || 'No alerts yet',
+              active: search.notifications,
+              createdAt: search.created_at,
+            }))
+            .sort((a, b) => b.createdAt - a.createdAt);
+
+          setSearches(formattedSearches);
+        }
       }
     } catch (error) {
-      console.error('Error deleting search:', error);
+      console.error('Error fetching searches:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Add this new function for a simpler refresh
+  useEffect(() => {
+    const userId = localStorage.getItem('whop_user_id');
+    setWhopUserId(userId);
+    fetchUserSearches();
+  }, []);
+
+  const getNotificationButtonStyle = (searchId) => ({
+    ...styles.menuItem,
+    opacity: cooldownButtons.has(searchId) ? 0.5 : 1,
+    cursor: cooldownButtons.has(searchId) ? 'default' : 'pointer',
+  });
+
   const refreshSearches = async () => {
     console.log('Starting refreshSearches');
     const whopUserId = localStorage.getItem('whop_user_id');
@@ -377,7 +323,6 @@ const Searches = ({ onOpenSearchModal }) => {
     }
   };
 
-  // Add event listener for refresh
   useEffect(() => {
     const handleRefresh = () => {
       refreshSearches();
@@ -387,20 +332,28 @@ const Searches = ({ onOpenSearchModal }) => {
     return () => window.removeEventListener('refreshSearches', handleRefresh);
   }, []);
 
-  // Loading state UI
-  if (isLoading) {
-    return (
-      <div style={styles.pageContainer}>
-        <div style={{
-          ...styles.contentWrapper,
-          paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px'
-        }}>
-          <div style={styles.header}>
-            <h1 style={styles.title}>Saved Searches</h1>
-            <div style={styles.skeletonAddButton} />
-          </div>
-          <div style={styles.searchList}>
-            {[1, 2, 3].map(i => (
+  return (
+    <div style={styles.pageContainer}>
+      <div style={{
+        ...styles.contentWrapper,
+        paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px',
+      }}>
+        <h1 
+          style={{...styles.title, cursor: 'pointer'}} 
+          onClick={refreshSearches}
+        >
+          Searches (New)
+        </h1>
+        <button 
+          style={styles.addButton}
+          onClick={onOpenSearchModal}
+        >
+          <RiAddLine style={styles.addButtonIcon} />
+        </button>
+        
+        <div style={styles.scrollContainer}>
+          {isLoading ? (
+            [...Array(3)].map((_, i) => (
               <div key={i} style={styles.skeletonCard}>
                 <div style={styles.skeletonContent}>
                   <div style={styles.skeletonTop}>
@@ -414,153 +367,8 @@ const Searches = ({ onOpenSearchModal }) => {
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const getNotificationButtonStyle = (searchId) => ({
-    ...styles.menuItem,
-    opacity: cooldownButtons.has(searchId) ? 0.5 : 1, // Visual feedback for cooldown
-    cursor: cooldownButtons.has(searchId) ? 'default' : 'pointer',
-  });
-
-  // Modify the search list rendering
-  const renderSearchList = () => {
-    if (searches.length === 0) {
-      return (
-        <div style={styles.emptyState}>
-          <RiSearchLine style={styles.emptyStateIcon} />
-          <p style={styles.emptyStateText}>No saved searches yet</p>
-          <p style={styles.emptyStateSubtext}>Create your first search to get started</p>
-        </div>
-      );
-    }
-
-    return (
-      <div style={styles.searchList}>
-        {searches.map((search, index) => (
-          <div 
-            key={search.id}
-            style={{
-              ...styles.searchCard,
-              transform: `translateY(${index * (206 + 24)}px)`,
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              opacity: search.id === newSearchId ? 0 : 1,
-            }}
-            className={`
-              card-moving
-              ${search.isDeleting ? 'card-deleting' : ''}
-              ${search.id === newSearchId ? 'slide-in-new' : ''}
-            `}
-          >
-            <div style={styles.cardStatus}>
-              <SearchNameDisplay name={search.name} />
-              <button 
-                style={styles.moreButton}
-                onClick={(e) => handleMoreClick(search.id, e)}
-              >
-                <RiMoreFill style={{ fontSize: '24px' }} />
-              </button>
-            </div>
-
-            <div style={styles.mainContent}>
-              <div style={styles.locationSection}>
-                <RiMapPinLine style={styles.locationIcon} />
-                <h2 style={styles.locationText}>{search.location}</h2>
-              </div>
-
-              <div style={styles.criteriaSection}>
-                <div style={styles.pill}>
-                  <RiPriceTag3Line style={styles.pillIcon} />
-                  <span>{search.price}</span>
-                </div>
-                <div style={styles.pill}>
-                  <RiHome4Line style={styles.pillIcon} />
-                  <span>{search.type}</span>
-                </div>
-              </div>
-            </div>
-
-            <div style={styles.lastUpdated}>
-              Updated {search.lastAlert}
-            </div>
-
-            {activeMenu === search.id && (
-              <div 
-                className="menu-animation"
-                style={styles.menu}
-              >
-                <button 
-                  style={{
-                    ...styles.menuItem,
-                    color: '#ff3b30', // iOS red
-                  }} 
-                  onClick={(e) => handleDeleteClick(search.id, e)}
-                >
-                  <RiDeleteBinLine style={{ fontSize: '20px', color: '#ff3b30' }} />
-                  <span>Delete</span>
-                </button>
-                <button style={styles.menuItem}>
-                  <RiEditBoxLine style={{ fontSize: '20px', color: ACCENT }} />
-                  <span>Edit</span>
-                </button>
-                <button 
-                  style={getNotificationButtonStyle(search.id)}
-                  onClick={(e) => handleToggleNotifications(search.id, !search.active, e)}
-                >
-                  {search.active ? (
-                    <RiNotificationLine style={{ fontSize: '20px', color: ACCENT }} />
-                  ) : (
-                    <RiNotificationOffLine style={{ fontSize: '20px', color: ACCENT }} />
-                  )}
-                  <span>Notifications {search.active ? 'On' : 'Off'}</span>
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  return (
-    <>
-      <SearchModal 
-        isOpen={isModalOpen} 
-        onClose={() => {
-          setIsModalOpen(false);
-        }}
-        whopUserId={whopUserId}
-      />
-      <div style={styles.pageContainer}>
-        <div style={{
-          ...styles.contentWrapper,
-          paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px',
-          maxHeight: searches.length === 0 ? '100%' : 'auto',
-          minHeight: searches.length === 0 ? '100%' : 'auto',
-        }}>
-          <div style={styles.header}>
-            <h1 
-              style={{...styles.title, cursor: 'pointer'}} 
-              onClick={refreshSearches}
-            >
-              Saved Searches
-            </h1>
-            <button 
-              style={styles.addButton}
-              onClick={onOpenSearchModal}
-            >
-              <RiAddLine style={styles.addButtonIcon} />
-            </button>
-          </div>
-
-          {searches.length === 0 ? (
+            ))
+          ) : searches.length === 0 ? (
             <div style={styles.emptyState}>
               <RiSearchLine style={styles.emptyStateIcon} />
               <p style={styles.emptyStateText}>No saved searches yet</p>
@@ -568,13 +376,95 @@ const Searches = ({ onOpenSearchModal }) => {
             </div>
           ) : (
             <div style={styles.searchList}>
-              {renderSearchList()}
+              {searches.map((search, index) => (
+                <div 
+                  key={search.id}
+                  style={{
+                    ...styles.searchCard,
+                    transform: `translateY(${index * (206 + 24)}px)`,
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    opacity: search.id === newSearchId ? 0 : 1,
+                  }}
+                  className={`
+                    card-moving
+                    ${search.isDeleting ? 'card-deleting' : ''}
+                    ${search.id === newSearchId ? 'slide-in-new' : ''}
+                  `}
+                >
+                  <div style={styles.cardStatus}>
+                    <SearchNameDisplay name={search.name} />
+                    <button 
+                      style={styles.moreButton}
+                      onClick={(e) => handleMoreClick(search.id, e)}
+                    >
+                      <RiMoreFill style={{ fontSize: '24px' }} />
+                    </button>
+                  </div>
+
+                  <div style={styles.mainContent}>
+                    <div style={styles.locationSection}>
+                      <RiMapPinLine style={styles.locationIcon} />
+                      <h2 style={styles.locationText}>{search.location}</h2>
+                    </div>
+
+                    <div style={styles.criteriaSection}>
+                      <div style={styles.pill}>
+                        <RiPriceTag3Line style={styles.pillIcon} />
+                        <span>{search.price}</span>
+                      </div>
+                      <div style={styles.pill}>
+                        <RiHome4Line style={styles.pillIcon} />
+                        <span>{search.type}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={styles.lastUpdated}>
+                    Updated {search.lastAlert}
+                  </div>
+
+                  {activeMenu === search.id && (
+                    <div 
+                      className="menu-animation"
+                      style={styles.menu}
+                    >
+                      <button 
+                        style={{
+                          ...styles.menuItem,
+                          color: '#ff3b30',
+                        }} 
+                        onClick={(e) => handleDeleteClick(search.id, e)}
+                      >
+                        <RiDeleteBinLine style={{ fontSize: '20px', color: '#ff3b30' }} />
+                        <span>Delete</span>
+                      </button>
+                      <button style={styles.menuItem}>
+                        <RiEditBoxLine style={{ fontSize: '20px', color: ACCENT }} />
+                        <span>Edit</span>
+                      </button>
+                      <button 
+                        style={getNotificationButtonStyle(search.id)}
+                        onClick={(e) => handleToggleNotifications(search.id, !search.active, e)}
+                      >
+                        {search.active ? (
+                          <RiNotificationLine style={{ fontSize: '20px', color: ACCENT }} />
+                        ) : (
+                          <RiNotificationOffLine style={{ fontSize: '20px', color: ACCENT }} />
+                        )}
+                        <span>Notifications {search.active ? 'On' : 'Off'}</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           )}
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div style={styles.modalBackdrop}>
           <div style={styles.confirmModal}>
@@ -603,7 +493,7 @@ const Searches = ({ onOpenSearchModal }) => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
@@ -614,36 +504,33 @@ const styles = {
     left: 0,
     right: 0,
     bottom: 0,
-    overflow: 'auto',
-    WebkitOverflowScrolling: 'touch',
+    overflow: 'hidden',
     background: 'linear-gradient(to bottom, #f8f9fa, #f0f2f1)',
-    '-webkit-transform': 'translateZ(0)',
+    WebkitOverflowScrolling: 'touch',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+    '-webkit-font-smoothing': 'antialiased',
+    '-moz-osx-font-smoothing': 'grayscale',
   },
 
   contentWrapper: {
-    padding: '16px',
-    paddingBottom: '32px',
-    maxWidth: '800px',
-    margin: '0 auto',
-    minHeight: '100%',
-  },
-
-  header: {
+    height: '100%',
     display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '24px',
+    flexDirection: 'column',
   },
 
   title: {
     fontSize: '32px',
     fontWeight: '700',
     color: ACCENT,
-    margin: 0,
+    margin: '0 20px 16px',
     letterSpacing: '-0.5px',
+    fontFamily: 'inherit',
   },
 
   addButton: {
+    position: 'absolute',
+    top: 'calc(env(safe-area-inset-top) + 16px)',
+    right: '20px',
     width: '40px',
     height: '40px',
     borderRadius: '50%',
@@ -655,10 +542,6 @@ const styles = {
     cursor: 'pointer',
     transition: 'all 0.2s ease',
     boxShadow: '0 2px 8px rgba(46, 63, 50, 0.15)',
-    ':hover': {
-      transform: 'scale(1.05)',
-      boxShadow: '0 4px 12px rgba(46, 63, 50, 0.25)',
-    },
   },
 
   addButtonIcon: {
@@ -666,11 +549,117 @@ const styles = {
     fontSize: '24px',
   },
 
+  scrollContainer: {
+    flex: 1,
+    overflow: 'auto',
+    paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)',
+    padding: '0 20px',
+  },
+
   searchList: {
+    position: 'relative',
+    height: '600px',
+  },
+
+  skeletonCard: {
+    background: '#fff',
+    borderRadius: '20px',
+    padding: '16px',
+    marginBottom: '24px',
+    boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
+    height: '172px',
     display: 'flex',
     flexDirection: 'column',
-    gap: '24px',
-    position: 'relative',
+    border: '1px solid rgba(46, 63, 50, 0.08)',
+  },
+
+  skeletonContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+  },
+
+  skeletonTop: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '16px',
+  },
+
+  skeletonCount: {
+    width: '140px',
+    height: '34px',
+    borderRadius: '8px',
+    background: 'rgba(46, 63, 50, 0.08)',
+    animation: 'pulse 1.5s ease-in-out infinite',
+  },
+
+  skeletonDot: {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    background: 'rgba(46, 63, 50, 0.08)',
+    animation: 'pulse 1.5s ease-in-out infinite',
+    marginRight: '-8px',
+  },
+
+  skeletonLocation: {
+    width: '60%',
+    height: '24px',
+    borderRadius: '12px',
+    background: 'rgba(46, 63, 50, 0.08)',
+    animation: 'pulse 1.5s ease-in-out infinite',
+    marginTop: '12px',
+  },
+
+  skeletonPills: {
+    display: 'flex',
+    gap: '8px',
+    marginTop: 'auto',
+    paddingTop: '16px',
+    marginBottom: '12px',
+  },
+
+  skeletonPill: {
+    width: '120px',
+    height: '36px',
+    borderRadius: '20px',
+    background: 'rgba(46, 63, 50, 0.08)',
+    animation: 'pulse 1.5s ease-in-out infinite',
+    padding: '8px 12px',
+  },
+
+  emptyState: {
+    background: '#fff',
+    borderRadius: '20px',
+    padding: '32px 24px',
+    border: '1px solid rgba(46, 63, 50, 0.08)',
+    boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    height: '142px',
+  },
+
+  emptyStateIcon: {
+    fontSize: '32px',
+    color: 'rgba(46, 63, 50, 0.2)',
+    marginBottom: '8px',
+  },
+
+  emptyStateText: {
+    fontSize: '18px',
+    fontWeight: '600',
+    color: ACCENT,
+    margin: 0,
+  },
+
+  emptyStateSubtext: {
+    fontSize: '15px',
+    color: '#666',
+    margin: 0,
   },
 
   searchCard: {
@@ -680,28 +669,6 @@ const styles = {
     border: '1px solid rgba(46, 63, 50, 0.08)',
     boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
     height: '172px',
-    transform: 'translateY(0)',  // Base position for animations
-    willChange: 'transform',  // Optimize for animations
-  },
-
-  '@keyframes slideInFromTop': {
-    from: {
-      transform: 'translateY(-100%)',
-      opacity: 0
-    },
-    to: {
-      transform: 'translateY(0)',
-      opacity: 1
-    }
-  },
-
-  '@keyframes moveDown': {
-    from: {
-      transform: 'translateY(calc(var(--slot-index) * (172px + 16px)))'
-    },
-    to: {
-      transform: 'translateY(calc((var(--slot-index) + 1) * (172px + 16px)))'
-    }
   },
 
   cardStatus: {
@@ -711,10 +678,30 @@ const styles = {
     marginBottom: '16px',
   },
 
-  statusIndicator: {
+  nameContainer: {
     display: 'flex',
-    alignItems: 'baseline',
-    gap: '4px',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '6px 12px',
+    background: 'rgba(46, 63, 50, 0.04)',
+    borderRadius: '8px',
+    border: '1px solid rgba(46, 63, 50, 0.08)',
+    transition: 'all 0.2s ease',
+    cursor: 'pointer',
+  },
+
+  searchName: {
+    fontFamily: 'SF Mono, Menlo, monospace',
+    fontSize: '15px',
+    fontWeight: '500',
+    color: ACCENT,
+    letterSpacing: '-0.3px',
+  },
+
+  editIcon: {
+    fontSize: '14px',
+    color: 'rgba(46, 63, 50, 0.4)',
+    transition: 'color 0.2s ease',
   },
 
   moreButton: {
@@ -731,10 +718,6 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     WebkitTapHighlightColor: 'transparent',
-    ':hover': {
-      background: 'rgba(46, 63, 50, 0.08)',
-      color: ACCENT,
-    },
   },
 
   mainContent: {
@@ -791,144 +774,6 @@ const styles = {
     marginTop: '12px',
   },
 
-  emptyState: {
-    background: '#fff',
-    borderRadius: '20px',
-    padding: '32px 24px',
-    border: '1px solid rgba(46, 63, 50, 0.08)',
-    boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '8px',
-    height: '142px',
-  },
-
-  emptyStateIcon: {
-    fontSize: '32px',
-    color: 'rgba(46, 63, 50, 0.2)',
-    marginBottom: '8px',
-  },
-
-  emptyStateText: {
-    fontSize: '18px',
-    fontWeight: '600',
-    color: ACCENT,
-    margin: 0,
-  },
-
-  emptyStateSubtext: {
-    fontSize: '15px',
-    color: '#666',
-    margin: 0,
-  },
-
-  // Skeleton styles with matching theme
-  skeletonCard: {
-    background: '#fff',
-    borderRadius: '20px',
-    padding: '16px',
-    border: '1px solid rgba(46, 63, 50, 0.08)',
-    boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
-    height: '172px',
-  },
-
-  skeletonContent: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '16px',
-    height: '100%',
-    justifyContent: 'space-between',
-  },
-
-  skeletonTop: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-
-  skeletonCount: {
-    width: '80px',
-    height: '28px',
-    borderRadius: '14px',
-    background: 'rgba(46, 63, 50, 0.08)',
-    animation: 'pulse 1.5s ease-in-out infinite',
-  },
-
-  skeletonDot: {
-    width: '24px',
-    height: '24px',
-    borderRadius: '50%',
-    background: 'rgba(46, 63, 50, 0.08)',
-    animation: 'pulse 1.5s ease-in-out infinite',
-  },
-
-  skeletonLocation: {
-    width: '70%',
-    height: '24px',
-    borderRadius: '12px',
-    background: 'rgba(46, 63, 50, 0.08)',
-    animation: 'pulse 1.5s ease-in-out infinite',
-  },
-
-  skeletonPills: {
-    display: 'flex',
-    gap: '8px',
-  },
-
-  skeletonPill: {
-    width: '100px',
-    height: '32px',
-    borderRadius: '16px',
-    background: 'rgba(46, 63, 50, 0.08)',
-    animation: 'pulse 1.5s ease-in-out infinite',
-  },
-
-  '@keyframes pulse': {
-    '0%': { opacity: 0.6 },
-    '50%': { opacity: 0.4 },
-    '100%': { opacity: 0.6 },
-  },
-
-  nameContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    padding: '6px 12px',
-    background: 'rgba(46, 63, 50, 0.04)',
-    borderRadius: '8px',
-    border: '1px solid rgba(46, 63, 50, 0.08)',
-    transition: 'all 0.2s ease',
-    cursor: 'pointer',
-    ':hover': {
-      background: 'rgba(46, 63, 50, 0.06)',
-      borderColor: 'rgba(46, 63, 50, 0.12)',
-    },
-  },
-
-  searchName: {
-    fontFamily: 'SF Mono, Menlo, monospace',
-    fontSize: '15px',
-    fontWeight: '500',
-    color: ACCENT,
-    letterSpacing: '-0.3px',
-  },
-
-  editIcon: {
-    fontSize: '14px',
-    color: 'rgba(46, 63, 50, 0.4)',
-    transition: 'color 0.2s ease',
-  },
-
-  skeletonAddButton: {
-    width: '40px',
-    height: '40px',
-    borderRadius: '50%',
-    background: 'rgba(46, 63, 50, 0.08)',
-    animation: 'pulse 1.5s ease-in-out infinite',
-  },
-
   menu: {
     position: 'absolute',
     right: '16px',
@@ -960,63 +805,6 @@ const styles = {
     color: 'inherit',
     textDecoration: 'none',
     WebkitAppearance: 'none',
-    ':active': {
-      background: 'rgba(46, 63, 50, 0.06)',
-    },
-  },
-
-  modal: {
-    background: 'white',
-    borderRadius: '20px',
-    padding: '24px',
-    width: '90%',
-    maxWidth: '320px',
-  },
-
-  modalTitle: {
-    margin: 0,
-    marginBottom: '16px',
-    fontSize: '20px',
-    fontWeight: '600',
-    color: ACCENT,
-  },
-
-  modalText: {
-    margin: 0,
-    marginBottom: '24px',
-    color: '#666',
-  },
-
-  modalButtons: {
-    display: 'flex',
-    gap: '12px',
-  },
-
-  modalButton: {
-    flex: 1,
-    padding: '12px',
-    borderRadius: '12px',
-    border: 'none',
-    fontSize: '16px',
-    fontWeight: '500',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-  },
-
-  cancelButton: {
-    background: '#f5f5f5',
-    color: '#666',
-    ':hover': {
-      background: '#eeeeee',
-    },
-  },
-
-  deleteButton: {
-    background: '#ff4444',
-    color: 'white',
-    ':hover': {
-      background: '#ff2222',
-    },
   },
 
   modalBackdrop: {
@@ -1081,40 +869,6 @@ const styles = {
     background: '#ff3b30',
     color: 'white',
   },
-
-  '@keyframes slideDown': {
-    from: {
-      transform: 'translateY(-20px)',
-      opacity: 0
-    },
-    to: {
-      transform: 'translateY(0)',
-      opacity: 1
-    }
-  },
-
-  '@keyframes slideIn': {
-    from: {
-      transform: 'translateY(-100%)',
-      opacity: 0
-    },
-    to: {
-      transform: 'translateY(0)',
-      opacity: 1
-    }
-  },
-
-  newSearchCard: {
-    background: '#fff',
-    borderRadius: '20px',
-    padding: '16px',
-    border: '1px solid rgba(46, 63, 50, 0.08)',
-    boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
-    height: '172px',
-    animation: 'slideIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards',
-  },
 };
 
-export default Searches;
-
-
+export default SearchesNew; 

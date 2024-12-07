@@ -10,7 +10,6 @@ import Navigation from './components/Navigation.js';
 import NotSub from './components/NotSub.js';
 import ModalBackdrop from './components/ModalBackdrop.js';
 import SearchModal from './components/SearchModal.js';
-import SearchesNew from './components/SearchesNew.js';
 
 const DashboardLayout = ({ children }) => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
@@ -52,7 +51,6 @@ function App() {
           <Route path="/searches" element={<DashboardLayout><Searches /></DashboardLayout>} />
           <Route path="/alerts" element={<DashboardLayout><Alerts /></DashboardLayout>} />
           <Route path="/settings" element={<DashboardLayout><Settings /></DashboardLayout>} />
-          <Route path="/searches-new" element={<DashboardLayout><SearchesNew /></DashboardLayout>} />
         </Route>
       </Routes>
     </Router>

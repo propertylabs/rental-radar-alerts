@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const ACCENT = '#2E3F32';
 
@@ -9,7 +8,6 @@ const Alerts = () => {
     window.navigator.standalone || 
     true
   );
-  const navigate = useNavigate();
 
   return (
     <div style={styles.pageContainer}>
@@ -20,15 +18,7 @@ const Alerts = () => {
         <h1 style={styles.title}>Alerts</h1>
         
         <div style={styles.scrollContainer}>
-          <div style={styles.devMenu}>
-            <h2 style={styles.devTitle}>Developer Menu</h2>
-            <button 
-              style={styles.devButton}
-              onClick={() => navigate('/searches-new')}
-            >
-              Try New Searches Page
-            </button>
-          </div>
+          {/* Regular alerts content will go here */}
         </div>
       </div>
     </div>
