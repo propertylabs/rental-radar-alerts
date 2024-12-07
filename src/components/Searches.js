@@ -119,7 +119,9 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
             style={{...styles.editButton, ...styles.saveButton}}
             onClick={(e) => {
               e.stopPropagation();
-              handleSave();
+              if (editedName.trim() && editedName.trim() !== name) {
+                setShowConfirm(true);
+              }
             }}
             disabled={isLoading || !editedName.trim() || editedName.trim() === name}
           >
