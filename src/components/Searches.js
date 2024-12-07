@@ -108,6 +108,16 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
                 setEditedName(name);
               }
             }}
+            onBlur={(e) => {
+              // If text is edited, show save modal
+              if (editedName.trim() && editedName.trim() !== name) {
+                handleSaveClick();
+              } else {
+                // If no changes, just close the editor
+                setIsEditing(false);
+                setEditedName(name);
+              }
+            }}
             maxLength={30}
             onClick={(e) => e.stopPropagation()}
             autoFocus
