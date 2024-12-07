@@ -11,12 +11,11 @@ const PostcodesStep = ({ values, onChange, onNext }) => {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: '32px',
-      padding: '0px',
+      gap: '24px',
+      padding: '0',
     },
 
     header: {
-      marginBottom: '4px',
     },
 
     subtitle: {
