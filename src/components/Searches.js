@@ -50,12 +50,17 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
 
   // New function for handling the actual API save
   const handleConfirmSave = async () => {
-    let response;
+    console.log('Starting save process...');
     try {
       setIsLoading(true);
       const whopUserId = localStorage.getItem('whop_user_id');
+      console.log('Making API call with:', {
+        userId: whopUserId,
+        searchId,
+        searchName: editedName.trim()
+      });
       
-      response = await fetch('/api/update-search-name', {
+      const response = await fetch('/api/update-search-name', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -68,25 +73,27 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
       });
 
       const data = await response.json();
+      console.log('API Response:', data);
 
       if (response.ok) {
+        console.log('API call successful, updating UI...');
         onNameUpdate(searchId, editedName.trim());
-        // Only reset after successful save
-        setTimeout(() => {
-          resetEditState();
-        }, 500);
+        // Wait for the UI to update before resetting
+        await new Promise(resolve => setTimeout(resolve, 500));
+        console.log('Resetting state...');
+        resetEditState();
       } else {
+        console.error('API call failed:', data.error);
         alert('Failed to update name');
         setEditedName(name);
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error during save:', error);
       alert('Error updating name');
       setEditedName(name);
     } finally {
-      if (!response?.ok) {
-        setIsLoading(false);
-      }
+      console.log('Save process complete');
+      setIsLoading(false);
     }
   };
 
