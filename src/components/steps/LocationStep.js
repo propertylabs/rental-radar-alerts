@@ -64,29 +64,29 @@ const LocationStep = ({ values, onChange, onNext }) => {
 
   const styles = {
     wrapper: {
+      flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: '24px',
-      padding: '0',
-      height: '100%',
-      maxHeight: 'calc(100% - 80px)',
+      gap: '32px',
+      padding: '0px',
     },
 
     header: {
-      paddingBottom: '8px',
+      marginBottom: '4px',
     },
 
     title: {
       fontSize: '24px',
       fontWeight: '700',
       color: '#2E3F32',
-      marginBottom: '8px',
+      margin: '0 0 8px 0',
       letterSpacing: '-0.5px',
     },
 
     subtitle: {
       fontSize: '17px',
       color: '#666',
+      margin: 0,
       lineHeight: 1.4,
       letterSpacing: '-0.2px',
     },
