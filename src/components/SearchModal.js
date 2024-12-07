@@ -208,8 +208,8 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
     
     return (
       <CurrentStep 
-        values={
-          step === 0 ? searchCriteria.city :
+        value={step === 0 ? searchCriteria.city : null}
+        values={step !== 0 ? (
           step === 1 ? searchCriteria.locations :
           step === 2 ? searchCriteria.propertyTypes :
           step === 3 ? {
@@ -223,7 +223,7 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
             name: searchCriteria.name,
             notifications: searchCriteria.notifications
           }
-        }
+        ) : null}
         onChange={(values) => {
           switch(step) {
             case 0:
