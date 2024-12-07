@@ -24,11 +24,47 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
   // Simple modal state
   const [showModal, setShowModal] = useState(false);
 
+  // New function for handling the actual API save
+  const handleConfirmSave = async () => {
+    try {
+      setIsLoading(true);
+      const whopUserId = localStorage.getItem('whop_user_id');
+      
+      const response = await fetch('/api/update-search-name', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: whopUserId,
+          searchId,
+          searchName: editedName.trim()
+        })
+      });
+
+      if (response.ok) {
+        onNameUpdate(searchId, editedName.trim());
+        setShowModal(false);
+        setIsEditing(false);
+      } else {
+        alert('Failed to update name');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error updating name');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Function for initial save button click
   const handleSaveClick = () => {
-    if (editedName.trim() === name) {
+    // If name hasn't changed, just close the editor
+    if (!editedName.trim() || editedName.trim() === name) {
       setIsEditing(false);
       return;
     }
+    // If name has changed, show confirmation modal
     setShowModal(true);
   };
 
@@ -91,7 +127,7 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
                 </button>
                 <button 
                   style={{...styles.confirmButton, ...styles.deleteButton}}
-                  onClick={handleSaveClick}
+                  onClick={handleConfirmSave}
                   disabled={isLoading}
                 >
                   {isLoading ? 'Saving...' : 'Update'}
