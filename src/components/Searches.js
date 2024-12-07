@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   RiAddLine, 
   RiMapPinLine, 
@@ -14,12 +14,142 @@ import {
 
 const ACCENT = '#2E3F32';
 
-const SearchNameDisplay = ({ name }) => (
-  <div style={styles.nameContainer}>
-    <span style={styles.searchName}>{name.toUpperCase()}</span>
-    <RiEditBoxLine style={styles.editIcon} />
-  </div>
-);
+const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedName, setEditedName] = useState(name);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  const handleStartEdit = (e) => {
+    e.stopPropagation();
+    setIsEditing(true);
+    setEditedName(name);
+  };
+
+  const handleSave = async () => {
+    if (editedName.trim() === name) {
+      setIsEditing(false);
+      return;
+    }
+
+    setShowConfirm(true);
+  };
+
+  const handleConfirmSave = async () => {
+    setShowConfirm(false);
+    setIsLoading(true);
+    
+    try {
+      const whopUserId = localStorage.getItem('whop_user_id');
+      const response = await fetch('/api/update-search-name', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: whopUserId,
+          searchId,
+          searchName: editedName.trim()
+        })
+      });
+
+      if (response.ok) {
+        onNameUpdate(searchId, editedName.trim());
+        setIsEditing(false);
+      } else {
+        console.error('Failed to update name');
+      }
+    } catch (error) {
+      console.error('Error updating name:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isEditing) {
+    return (
+      <div style={styles.nameEditContainer}>
+        <input
+          ref={inputRef}
+          style={styles.nameInput}
+          value={editedName}
+          onChange={(e) => setEditedName(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleSave();
+            if (e.key === 'Escape') setIsEditing(false);
+          }}
+          maxLength={30}
+          onClick={(e) => e.stopPropagation()}
+        />
+        <div style={styles.editButtons}>
+          <button
+            style={styles.editButton}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsEditing(false);
+            }}
+            disabled={isLoading}
+          >
+            Cancel
+          </button>
+          <button
+            style={{...styles.editButton, ...styles.saveButton}}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleSave();
+            }}
+            disabled={isLoading || !editedName.trim() || editedName.trim() === name}
+          >
+            {isLoading ? '...' : 'Save'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div 
+      style={styles.nameContainer}
+      onClick={handleStartEdit}
+    >
+      <span style={styles.searchName}>{name.toUpperCase()}</span>
+      <RiEditBoxLine style={styles.editIcon} />
+
+      {showConfirm && (
+        <div style={styles.confirmOverlay} onClick={(e) => e.stopPropagation()}>
+          <div style={styles.confirmDialog}>
+            <h3 style={styles.confirmTitle}>Update Search Name?</h3>
+            <p style={styles.confirmText}>
+              Change name from "{name}" to "{editedName.trim()}"?
+            </p>
+            <div style={styles.confirmButtons}>
+              <button 
+                style={{...styles.confirmButton, ...styles.cancelButton}}
+                onClick={() => setShowConfirm(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                style={{...styles.confirmButton, ...styles.saveButton}}
+                onClick={handleConfirmSave}
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const menuStyles = `
   @keyframes scaleIn {
@@ -332,6 +462,14 @@ const SearchesNew = ({ onOpenSearchModal }) => {
     return () => window.removeEventListener('refreshSearches', handleRefresh);
   }, []);
 
+  const handleNameUpdate = (searchId, newName) => {
+    setSearches(searches.map(search => 
+      search.id === searchId 
+        ? {...search, name: newName}
+        : search
+    ));
+  };
+
   return (
     <div style={styles.pageContainer}>
       <div style={{
@@ -395,7 +533,11 @@ const SearchesNew = ({ onOpenSearchModal }) => {
                   `}
                 >
                   <div style={styles.cardStatus}>
-                    <SearchNameDisplay name={search.name} />
+                    <SearchNameDisplay 
+                      name={search.name} 
+                      searchId={search.id}
+                      onNameUpdate={handleNameUpdate}
+                    />
                     <button 
                       style={styles.moreButton}
                       onClick={(e) => handleMoreClick(search.id, e)}
@@ -868,6 +1010,78 @@ const styles = {
   deleteButton: {
     background: '#ff3b30',
     color: 'white',
+  },
+
+  nameEditContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '6px 12px',
+    background: 'rgba(46, 63, 50, 0.04)',
+    borderRadius: '8px',
+    border: '1px solid rgba(46, 63, 50, 0.08)',
+    transition: 'all 0.2s ease',
+  },
+
+  nameInput: {
+    background: 'none',
+    border: 'none',
+    fontFamily: 'SF Mono, Menlo, monospace',
+    fontSize: '15px',
+    fontWeight: '500',
+    color: ACCENT,
+    letterSpacing: '-0.3px',
+    width: '140px',
+    padding: 0,
+    margin: 0,
+    outline: 'none',
+  },
+
+  editButtons: {
+    display: 'flex',
+    gap: '8px',
+    marginLeft: '8px',
+  },
+
+  editButton: {
+    background: 'none',
+    border: 'none',
+    padding: '4px 8px',
+    borderRadius: '6px',
+    fontSize: '13px',
+    fontWeight: '500',
+    cursor: 'pointer',
+    color: ACCENT,
+    transition: 'all 0.2s ease',
+  },
+
+  saveButton: {
+    background: ACCENT,
+    color: 'white',
+  },
+
+  confirmOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0, 0, 0, 0.4)',
+    backdropFilter: 'blur(8px)',
+    WebkitBackdropFilter: 'blur(8px)',
+    zIndex: 100000,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '16px',
+  },
+
+  confirmDialog: {
+    background: 'white',
+    borderRadius: '16px',
+    padding: '24px',
+    width: '100%',
+    maxWidth: '320px',
   },
 };
 
