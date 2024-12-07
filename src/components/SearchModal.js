@@ -37,7 +37,6 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [searchCriteria, setSearchCriteria] = useState({
-    city: 'Manchester',
     locations: searchToEdit?.location?.split(', ') || [],
     propertyTypes: searchToEdit?.type ? [searchToEdit.type] : [],
     minBedrooms: searchToEdit?.minBedrooms || 1,
@@ -237,16 +236,15 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
     return (
       <CurrentStep 
         values={
-          step === 0 ? searchCriteria.city :
-          step === 1 ? searchCriteria.locations :
-          step === 2 ? searchCriteria.propertyTypes :
-          step === 3 ? {
+          step === 0 ? searchCriteria.locations :
+          step === 1 ? searchCriteria.propertyTypes :
+          step === 2 ? {
             minBedrooms: searchCriteria.minBedrooms,
             maxBedrooms: searchCriteria.maxBedrooms,
             minPrice: searchCriteria.minPrice,
             maxPrice: searchCriteria.maxPrice
           } :
-          step === 4 ? searchCriteria.mustHaves :
+          step === 3 ? searchCriteria.mustHaves :
           {
             name: searchCriteria.name,
             notifications: searchCriteria.notifications
