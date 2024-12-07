@@ -203,8 +203,8 @@ const LocationStep = ({ values, onChange, onNext }) => {
       borderRadius: '16px',
       display: 'flex',
       flexDirection: 'column',
-      maxHeight: 'calc(100% - 240px)',
       overflow: 'hidden',
+      marginBottom: 'calc(env(safe-area-inset-bottom) + 80px)',
     },
 
     tagsContainer: {
@@ -221,7 +221,6 @@ const LocationStep = ({ values, onChange, onNext }) => {
     tag: {
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'space-between',
       height: '48px',
       padding: '0 14px',
       background: 'white',
@@ -233,10 +232,13 @@ const LocationStep = ({ values, onChange, onNext }) => {
       letterSpacing: '-0.5px',
       fontFamily: 'SF Mono, Menlo, monospace',
       boxShadow: '0 2px 6px rgba(46, 63, 50, 0.06)',
-      whiteSpace: 'nowrap',
+      position: 'relative',
+      paddingRight: '46px',
     },
 
     removeTag: {
+      position: 'absolute',
+      right: '7px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -244,8 +246,6 @@ const LocationStep = ({ values, onChange, onNext }) => {
       height: '32px',
       borderRadius: '50%',
       color: '#666',
-      marginLeft: '10px',
-      flexShrink: 0,
       cursor: 'pointer',
       ':hover': {
         background: 'rgba(46, 63, 50, 0.06)',
