@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ReactDOM from 'react-dom';
 import { 
   RiAddLine, 
   RiMapPinLine, 
@@ -23,36 +24,12 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
   // Simple modal state
   const [showModal, setShowModal] = useState(false);
 
-  const handleSaveClick = async () => {
-    try {
-      setIsLoading(true);
-      const whopUserId = localStorage.getItem('whop_user_id');
-      
-      const response = await fetch('/api/update-search-name', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: whopUserId,
-          searchId,
-          searchName: editedName.trim()
-        })
-      });
-
-      if (response.ok) {
-        onNameUpdate(searchId, editedName.trim());
-        setShowModal(false);
-        setIsEditing(false);
-      } else {
-        alert('Failed to update name');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Error updating name');
-    } finally {
-      setIsLoading(false);
+  const handleSaveClick = () => {
+    if (editedName.trim() === name) {
+      setIsEditing(false);
+      return;
     }
+    setShowModal(true);
   };
 
   // When editing
@@ -67,7 +44,7 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
             onChange={(e) => setEditedName(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                setShowModal(true);
+                handleSaveClick();
               }
               if (e.key === 'Escape') {
                 setIsEditing(false);
@@ -90,7 +67,7 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
             </button>
             <button
               style={{...styles.editButton, ...styles.saveButton}}
-              onClick={() => setShowModal(true)}
+              onClick={handleSaveClick}
               disabled={!editedName.trim() || editedName.trim() === name}
             >
               Save
@@ -98,8 +75,7 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
           </div>
         </div>
 
-        {/* Move modal to root level */}
-        {showModal && (
+        {showModal && ReactDOM.createPortal(
           <div style={styles.modalBackdrop}>
             <div style={styles.confirmModal}>
               <h3 style={styles.confirmTitle}>Update Search Name?</h3>
@@ -122,7 +98,8 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
                 </button>
               </div>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
       </>
     );
