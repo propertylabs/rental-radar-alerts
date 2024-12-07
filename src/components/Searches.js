@@ -20,9 +20,27 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
   const [editedName, setEditedName] = useState(name);
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef(null);
+  const containerRef = useRef(null);
 
   // Simple modal state
   const [showModal, setShowModal] = useState(false);
+
+  // Add click outside handler
+  useEffect(() => {
+    if (!isEditing) return;
+
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setIsEditing(false);
+        setEditedName(name);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isEditing, name]);
 
   // New function for handling the actual API save
   const handleConfirmSave = async () => {
@@ -72,7 +90,10 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
   if (isEditing) {
     return (
       <>
-        <div style={styles.nameEditContainer}>
+        <div 
+          ref={containerRef}
+          style={styles.nameEditContainer}
+        >
           <input
             ref={inputRef}
             style={styles.nameInput}
