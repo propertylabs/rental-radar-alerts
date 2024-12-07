@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import CityStep from './steps/CityStep.js';
 import LocationStep from './steps/LocationStep.js';
 import PropertyTypeStep from './steps/PropertyTypeStep.js';
@@ -8,64 +8,30 @@ import FinalizeStep from './steps/FinalizeStep.js';
 
 const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
   const isEditing = !!searchToEdit;
-  const [isInitialized, setIsInitialized] = useState(false);
 
-  const [step, setStep] = useState(0);
+  const getPriceValues = () => {
+    if (!searchToEdit?.price) return { minPrice: 0, maxPrice: 3000 };
+    const [min, max] = searchToEdit.price.split('-');
+    return {
+      minPrice: parseInt(min?.replace('£', '')) || 0,
+      maxPrice: parseInt(max) || 3000
+    };
+  };
+
+  const [step, setStep] = useState(isEditing ? 1 : 0);
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [searchCriteria, setSearchCriteria] = useState({
-    city: null,
-    locations: [],
-    propertyTypes: [],
-    minBedrooms: 1,
-    maxBedrooms: 5,
-    minPrice: 0,
-    maxPrice: 3000,
-    mustHaves: [],
-    name: '',
-    notifications: true,
+    city: searchToEdit?.city || null,
+    locations: searchToEdit?.location?.split(', ') || [],
+    propertyTypes: searchToEdit?.type ? [searchToEdit.type] : [],
+    minBedrooms: parseInt(searchToEdit?.criteria?.minBedrooms) || 1,
+    maxBedrooms: parseInt(searchToEdit?.criteria?.maxBedrooms) || 5,
+    ...getPriceValues(),
+    mustHaves: searchToEdit?.criteria?.mustHaves || [],
+    name: searchToEdit?.name || '',
+    notifications: searchToEdit?.notifications ?? true,
   });
-
-  useEffect(() => {
-    if (searchToEdit && !isInitialized) {
-      setSearchCriteria({
-        city: searchToEdit.city || null,
-        locations: searchToEdit.location?.split(', ') || [],
-        propertyTypes: searchToEdit.type ? [searchToEdit.type] : [],
-        minBedrooms: searchToEdit.criteria?.minBedrooms || 1,
-        maxBedrooms: searchToEdit.criteria?.maxBedrooms || 5,
-        minPrice: searchToEdit.price?.split('-')[0]?.replace('£', '') || 0,
-        maxPrice: searchToEdit.price?.split('-')[1] || 3000,
-        mustHaves: searchToEdit.criteria?.mustHaves || [],
-        name: searchToEdit.name || '',
-        notifications: searchToEdit.notifications ?? true,
-      });
-      setStep(isEditing ? 1 : 0);
-      setIsInitialized(true);
-    }
-  }, [searchToEdit, isEditing]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      setIsInitialized(false);
-    }
-  }, [isOpen]);
-
-  if (isOpen && isEditing && !isInitialized) {
-    return (
-      <div style={styles.backdrop}>
-        <div style={styles.modal}>
-          <div style={styles.header}>
-            <div style={styles.headerContent}>
-              <div style={styles.headerCenter}>
-                <h2 style={styles.title}>Loading...</h2>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const modalTitle = isEditing ? 'Edit Search' : 'New Search';
 

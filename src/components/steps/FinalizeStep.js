@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { RiBellLine, RiBellFill } from 'react-icons/ri';
 
-const FinalizeStep = ({ values, onChange, onSave, isSaving, isSaved }) => {
+const FinalizeStep = ({ values, onChange, onSave, isSaving, isSaved, isEditing }) => {
   const styles = {
     container: {
       flex: 1,
@@ -134,7 +134,7 @@ const FinalizeStep = ({ values, onChange, onSave, isSaving, isSaved }) => {
   const getButtonText = () => {
     if (isSaved) return 'Saved';
     if (isSaving) return 'Saving...';
-    return 'Save Search';
+    return isEditing ? 'Save Changes' : 'Save Search';
   };
 
   return (
