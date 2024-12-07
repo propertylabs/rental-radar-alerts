@@ -539,12 +539,7 @@ const Searches = ({ onOpenSearchModal }) => {
         whopUserId={whopUserId}
       />
       <div style={styles.pageContainer}>
-        <div style={{
-          ...styles.contentWrapper,
-          paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px',
-          maxHeight: searches.length === 0 ? '100%' : 'auto',
-          minHeight: searches.length === 0 ? '100%' : 'auto',
-        }}>
+        <div style={styles.headerWrapper}>
           <div style={styles.header}>
             <h1 
               style={{...styles.title, cursor: 'pointer'}} 
@@ -559,7 +554,12 @@ const Searches = ({ onOpenSearchModal }) => {
               <RiAddLine style={styles.addButtonIcon} />
             </button>
           </div>
-
+        </div>
+        <div style={{
+          ...styles.contentWrapper,
+          maxHeight: searches.length === 0 ? '100%' : 'auto',
+          minHeight: searches.length === 0 ? '100%' : 'auto',
+        }}>
           {searches.length === 0 ? (
             <div style={styles.emptyState}>
               <RiSearchLine style={styles.emptyStateIcon} />
@@ -626,13 +626,27 @@ const styles = {
     maxWidth: '800px',
     margin: '0 auto',
     minHeight: '100%',
+    paddingTop: '80px',
+  },
+
+  headerWrapper: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    background: 'linear-gradient(to bottom, #f8f9fa, #f8f9fa)',
+    paddingTop: props => props.isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px',
+    paddingBottom: '16px',
   },
 
   header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '24px',
+    maxWidth: '800px',
+    margin: '0 auto',
+    padding: '0 16px',
   },
 
   title: {

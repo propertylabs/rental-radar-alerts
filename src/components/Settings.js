@@ -171,7 +171,7 @@ const styles = {
     right: 0,
     bottom: 0,
     overflow: 'hidden',
-    background: '#f2f2f7',
+    background: 'linear-gradient(to bottom, #f8f9fa, #f0f2f1)',
     WebkitOverflowScrolling: 'touch',
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
     '-webkit-font-smoothing': 'antialiased',
