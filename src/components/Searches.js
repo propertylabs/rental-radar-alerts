@@ -102,7 +102,12 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
               Cancel
             </button>
             <button
-              style={{...styles.editButton, ...styles.saveButton}}
+              style={{
+                ...styles.editButton,
+                ...styles.saveButton,
+                opacity: (!editedName.trim() || editedName.trim() === name) ? 0.5 : 1,
+                cursor: (!editedName.trim() || editedName.trim() === name) ? 'default' : 'pointer',
+              }}
               onClick={handleSaveClick}
               disabled={!editedName.trim() || editedName.trim() === name}
             >
@@ -1065,6 +1070,7 @@ const styles = {
   saveButton: {
     background: ACCENT,
     color: 'white',
+    transition: 'all 0.2s ease',
   },
 
   confirmOverlay: {
