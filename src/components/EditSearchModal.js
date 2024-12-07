@@ -322,6 +322,19 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     );
   };
 
+  // Add doneButton style
+  const styles = {
+    doneButton: {
+      background: 'none',
+      border: 'none',
+      padding: '8px 16px',
+      color: '#007AFF',
+      fontSize: '17px',
+      fontWeight: '500',
+      cursor: 'pointer',
+    }
+  };
+
   return BaseSearchModal.renderModalFrame({
     isOpen,
     onClose,
