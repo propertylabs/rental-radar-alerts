@@ -9,6 +9,151 @@ import { RiMapPinLine, RiHome4Line, RiPriceTag3Line, RiCheckboxLine, RiBellLine,
 
 const ACCENT = '#2E3F32'; // Deep forest green
 
+// Move EditMenuStep outside of EditSearchModal
+const EditMenuStep = ({ onSelectStep }) => {
+  const menuItems = [
+    { 
+      id: 0, 
+      title: 'Location',
+      description: 'Change postcodes and areas',
+      icon: RiMapPinLine 
+    },
+    { 
+      id: 1, 
+      title: 'Property Type',
+      description: 'Switch between house, flat, or room',
+      icon: RiHome4Line 
+    },
+    { 
+      id: 2, 
+      title: 'Price & Bedrooms',
+      description: 'Adjust your budget and size requirements',
+      icon: RiPriceTag3Line 
+    },
+    { 
+      id: 3, 
+      title: 'Must-Haves',
+      description: 'Update essential property features',
+      icon: RiCheckboxLine 
+    },
+    { 
+      id: 4, 
+      title: 'Name & Notifications',
+      description: 'Change search name and alert preferences',
+      icon: RiBellLine 
+    },
+  ];
+
+  const styles = {
+    container: {
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '16px',
+      padding: '0px',
+    },
+
+    header: {
+      marginBottom: '4px',
+    },
+
+    title: {
+      fontSize: '24px',
+      fontWeight: '700',
+      color: '#2E3F32',
+      margin: '0 0 8px 0',
+      letterSpacing: '-0.5px',
+    },
+
+    description: {
+      fontSize: '17px',
+      color: '#666',
+      margin: 0,
+      lineHeight: 1.4,
+      letterSpacing: '-0.2px',
+    },
+
+    menuList: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '12px',
+      padding: '8px',
+    },
+
+    menuItem: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '16px',
+      padding: '16px',
+      background: 'rgba(46, 63, 50, 0.02)',
+      borderRadius: '16px',
+      border: '1px solid rgba(46, 63, 50, 0.08)',
+      cursor: 'pointer',
+      transition: 'all 0.2s ease',
+    },
+
+    menuItemIcon: {
+      fontSize: '24px',
+      color: ACCENT,
+      flexShrink: 0,
+    },
+
+    menuItemContent: {
+      flex: 1,
+    },
+
+    menuItemTitle: {
+      fontSize: '17px',
+      fontWeight: '600',
+      color: ACCENT,
+      marginBottom: '4px',
+    },
+
+    menuItemDescription: {
+      fontSize: '15px',
+      color: '#666',
+      lineHeight: 1.3,
+    },
+
+    menuItemArrow: {
+      fontSize: '20px',
+      color: '#666',
+      flexShrink: 0,
+    },
+  };
+
+  return (
+    <div style={styles.container}>
+      <div style={styles.header}>
+        <h2 style={styles.title}>Edit Search</h2>
+        <p style={styles.description}>
+          Choose what you'd like to modify
+        </p>
+      </div>
+
+      <div style={styles.menuList}>
+        {menuItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <button
+              key={item.id}
+              style={styles.menuItem}
+              onClick={() => onSelectStep(item.id)}
+            >
+              <Icon style={styles.menuItemIcon} />
+              <div style={styles.menuItemContent}>
+                <div style={styles.menuItemTitle}>{item.title}</div>
+                <div style={styles.menuItemDescription}>{item.description}</div>
+              </div>
+              <RiArrowRightSLine style={styles.menuItemArrow} />
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 const EditSearchModal = ({ isOpen, onClose, searchData }) => {
   console.log('EditSearchModal render:', { isOpen, searchData });
 
@@ -180,151 +325,6 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
         isSaved={isSaved}
         isEditing={true}
       />
-    );
-  };
-
-  // Add new component for step selection menu
-  const EditMenuStep = ({ onSelectStep }) => {
-    const menuItems = [
-      { 
-        id: 0, 
-        title: 'Location',
-        description: 'Change postcodes and areas',
-        icon: RiMapPinLine 
-      },
-      { 
-        id: 1, 
-        title: 'Property Type',
-        description: 'Switch between house, flat, or room',
-        icon: RiHome4Line 
-      },
-      { 
-        id: 2, 
-        title: 'Price & Bedrooms',
-        description: 'Adjust your budget and size requirements',
-        icon: RiPriceTag3Line 
-      },
-      { 
-        id: 3, 
-        title: 'Must-Haves',
-        description: 'Update essential property features',
-        icon: RiCheckboxLine 
-      },
-      { 
-        id: 4, 
-        title: 'Name & Notifications',
-        description: 'Change search name and alert preferences',
-        icon: RiBellLine 
-      },
-    ];
-
-    const styles = {
-      container: {
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px',
-        padding: '0px',
-      },
-
-      header: {
-        marginBottom: '4px',
-      },
-
-      title: {
-        fontSize: '24px',
-        fontWeight: '700',
-        color: '#2E3F32',
-        margin: '0 0 8px 0',
-        letterSpacing: '-0.5px',
-      },
-
-      description: {
-        fontSize: '17px',
-        color: '#666',
-        margin: 0,
-        lineHeight: 1.4,
-        letterSpacing: '-0.2px',
-      },
-
-      menuList: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '12px',
-        padding: '8px',
-      },
-
-      menuItem: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '16px',
-        padding: '16px',
-        background: 'rgba(46, 63, 50, 0.02)',
-        borderRadius: '16px',
-        border: '1px solid rgba(46, 63, 50, 0.08)',
-        cursor: 'pointer',
-        transition: 'all 0.2s ease',
-      },
-
-      menuItemIcon: {
-        fontSize: '24px',
-        color: ACCENT,
-        flexShrink: 0,
-      },
-
-      menuItemContent: {
-        flex: 1,
-      },
-
-      menuItemTitle: {
-        fontSize: '17px',
-        fontWeight: '600',
-        color: ACCENT,
-        marginBottom: '4px',
-      },
-
-      menuItemDescription: {
-        fontSize: '15px',
-        color: '#666',
-        lineHeight: 1.3,
-      },
-
-      menuItemArrow: {
-        fontSize: '20px',
-        color: '#666',
-        flexShrink: 0,
-      },
-    };
-
-    return (
-      <div style={styles.container}>
-        <div style={styles.header}>
-          <h2 style={styles.title}>Edit Search</h2>
-          <p style={styles.description}>
-            Choose what you'd like to modify
-          </p>
-        </div>
-
-        <div style={styles.menuList}>
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.id}
-                style={styles.menuItem}
-                onClick={() => onSelectStep(item.id)}
-              >
-                <Icon style={styles.menuItemIcon} />
-                <div style={styles.menuItemContent}>
-                  <div style={styles.menuItemTitle}>{item.title}</div>
-                  <div style={styles.menuItemDescription}>{item.description}</div>
-                </div>
-                <RiArrowRightSLine style={styles.menuItemArrow} />
-              </button>
-            );
-          })}
-        </div>
-      </div>
     );
   };
 
