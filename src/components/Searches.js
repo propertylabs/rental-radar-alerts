@@ -157,7 +157,10 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
               <div style={styles.confirmButtons}>
                 <button 
                   style={{...styles.confirmButton, ...styles.cancelButton}}
-                  onClick={() => setShowModal(false)}
+                  onClick={() => {
+                    setShowModal(false);
+                    setEditedName(name);
+                  }}
                 >
                   Cancel
                 </button>
