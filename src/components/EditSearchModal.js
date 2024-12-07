@@ -1,18 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BaseSearchModal from './BaseSearchModal';
-import CityStep from './steps/CityStep.js';
 import LocationStep from './steps/LocationStep.js';
 import PropertyTypeStep from './steps/PropertyTypeStep.js';
 import PriceBedroomsStep from './steps/PriceBedroomsStep.js';
 import MustHavesStep from './steps/MustHavesStep.js';
 import FinalizeStep from './steps/FinalizeStep.js';
 
-const SearchModal = ({ isOpen, onClose }) => {
+const EditSearchModal = ({ isOpen, onClose, searchData }) => {
   const [step, setStep] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [searchCriteria, setSearchCriteria] = useState({
-    city: null,
     locations: [],
     propertyTypes: [],
     minBedrooms: 1,
@@ -24,8 +22,24 @@ const SearchModal = ({ isOpen, onClose }) => {
     notifications: true,
   });
 
+  // Initialize with search data when available
+  useEffect(() => {
+    if (searchData) {
+      setSearchCriteria({
+        locations: searchData.location.split(', '),
+        propertyTypes: [searchData.type],
+        minBedrooms: searchData.criteria.minBedrooms,
+        maxBedrooms: searchData.criteria.maxBedrooms,
+        minPrice: parseInt(searchData.price.split('-')[0].replace('£', '')),
+        maxPrice: parseInt(searchData.price.split('-')[1]),
+        mustHaves: searchData.criteria.mustHaves,
+        name: searchData.name,
+        notifications: searchData.active,
+      });
+    }
+  }, [searchData]);
+
   const steps = [
-    CityStep,
     LocationStep,
     PropertyTypeStep,
     PriceBedroomsStep,
@@ -44,16 +58,14 @@ const SearchModal = ({ isOpen, onClose }) => {
         throw new Error('No user ID available');
       }
 
-      const endpoint = '/api/save-search';
-      const method = 'POST';
-
-      const response = await fetch(endpoint, {
-        method,
+      const response = await fetch('/api/update-search', {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           user_id: whopUserId,
+          searchId: searchData.id,
           search_name: searchCriteria.name,
           postcodes: searchCriteria.locations,
           min_price: searchCriteria.minPrice,
@@ -66,35 +78,19 @@ const SearchModal = ({ isOpen, onClose }) => {
         }),
       });
 
-      const data = await response.json();
-      
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to save search');
+        throw new Error('Failed to update search');
       }
 
-      setStep(0);
-      setIsSaving(false);
-      setSearchCriteria({
-        city: null,
-        locations: [],
-        propertyTypes: [],
-        minBedrooms: 1,
-        maxBedrooms: 5,
-        minPrice: 0,
-        maxPrice: 3000,
-        mustHaves: [],
-        name: '',
-        notifications: true,
-      });
-      
-      onClose();
-
+      setIsSaved(true);
       setTimeout(() => {
+        onClose();
         window.dispatchEvent(new CustomEvent('refreshSearches'));
       }, 500);
 
     } catch (error) {
-      console.error('Error saving search:', error);
+      console.error('Error updating search:', error);
+    } finally {
       setIsSaving(false);
     }
   };
@@ -104,35 +100,30 @@ const SearchModal = ({ isOpen, onClose }) => {
     
     return (
       <CurrentStep 
-        value={step === 0 ? searchCriteria.city : null}
-        values={step !== 0 ? (
-          step === 1 ? searchCriteria.locations :
-          step === 2 ? searchCriteria.propertyTypes :
-          step === 3 ? {
+        values={
+          step === 0 ? searchCriteria.locations :
+          step === 1 ? searchCriteria.propertyTypes :
+          step === 2 ? {
             minBedrooms: searchCriteria.minBedrooms,
             maxBedrooms: searchCriteria.maxBedrooms,
             minPrice: searchCriteria.minPrice,
             maxPrice: searchCriteria.maxPrice
           } :
-          step === 4 ? searchCriteria.mustHaves :
+          step === 3 ? searchCriteria.mustHaves :
           {
             name: searchCriteria.name,
             notifications: searchCriteria.notifications
           }
-        ) : null}
+        }
         onChange={(values) => {
           switch(step) {
             case 0:
-              console.log('City step change:', values);
-              setSearchCriteria({...searchCriteria, city: values});
-              break;
-            case 1:
               setSearchCriteria({...searchCriteria, locations: values});
               break;
-            case 2:
+            case 1:
               setSearchCriteria({...searchCriteria, propertyTypes: values});
               break;
-            case 3:
+            case 2:
               setSearchCriteria({
                 ...searchCriteria,
                 minBedrooms: values.minBedrooms,
@@ -141,7 +132,7 @@ const SearchModal = ({ isOpen, onClose }) => {
                 maxPrice: values.maxPrice
               });
               break;
-            case 4:
+            case 3:
               setSearchCriteria({...searchCriteria, mustHaves: values});
               break;
             default:
@@ -152,40 +143,23 @@ const SearchModal = ({ isOpen, onClose }) => {
               });
           }
         }}
-        onNext={() => {
-          console.log('Moving to next step from:', step);
-          setStep(prev => prev + 1);
-        }}
+        onNext={() => setStep(prev => prev + 1)}
         onSave={step === steps.length - 1 ? handleSaveSearch : undefined}
         isSaving={isSaving}
         isSaved={isSaved}
+        isEditing={true}
       />
     );
   };
 
   return BaseSearchModal.renderModalFrame({
     isOpen,
-    onClose: () => {
-      onClose();
-      setStep(0);
-      setSearchCriteria({
-        city: null,
-        locations: [],
-        propertyTypes: [],
-        minBedrooms: 1,
-        maxBedrooms: 5,
-        minPrice: 0,
-        maxPrice: 3000,
-        mustHaves: [],
-        name: '',
-        notifications: true,
-      });
-    },
-    title: 'New Search',
+    onClose,
+    title: 'Edit Search',
     step,
     setStep,
     children: renderStep()
   });
 };
 
-export default SearchModal; 
+export default EditSearchModal;
