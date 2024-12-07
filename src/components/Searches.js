@@ -25,14 +25,20 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
   // Simple modal state
   const [showModal, setShowModal] = useState(false);
 
+  // Add this helper function to handle all resets
+  const resetEditState = () => {
+    setIsEditing(false);
+    setShowModal(false);
+    setEditedName(name);
+  };
+
   // Add click outside handler
   useEffect(() => {
     if (!isEditing) return;
 
     const handleClickOutside = (event) => {
       if (containerRef.current && !containerRef.current.contains(event.target)) {
-        setIsEditing(false);
-        setEditedName(name);
+        resetEditState();
       }
     };
 
@@ -104,18 +110,14 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
                 handleSaveClick();
               }
               if (e.key === 'Escape') {
-                setIsEditing(false);
-                setEditedName(name);
+                resetEditState();
               }
             }}
             onBlur={(e) => {
-              // If text is edited, show save modal
               if (editedName.trim() && editedName.trim() !== name) {
                 handleSaveClick();
               } else {
-                // If no changes, just close the editor
-                setIsEditing(false);
-                setEditedName(name);
+                resetEditState();
               }
             }}
             maxLength={30}
@@ -125,10 +127,7 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
           <div style={styles.editButtons}>
             <button
               style={styles.editButton}
-              onClick={() => {
-                setIsEditing(false);
-                setEditedName(name);
-              }}
+              onClick={() => resetEditState()}
             >
               Cancel
             </button>
@@ -157,11 +156,7 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
               <div style={styles.confirmButtons}>
                 <button 
                   style={{...styles.confirmButton, ...styles.cancelButton}}
-                  onClick={() => {
-                    setShowModal(false);
-                    setEditedName(name);
-                    setIsEditing(false);
-                  }}
+                  onClick={resetEditState}
                 >
                   Cancel
                 </button>
