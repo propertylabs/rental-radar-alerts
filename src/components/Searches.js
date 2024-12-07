@@ -58,61 +58,63 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
   // When editing
   if (isEditing) {
     return (
-      <div style={styles.nameEditContainer}>
-        <input
-          ref={inputRef}
-          style={styles.nameInput}
-          value={editedName.toUpperCase()}
-          onChange={(e) => setEditedName(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              setShowModal(true);
-            }
-            if (e.key === 'Escape') {
-              setIsEditing(false);
-              setEditedName(name);
-            }
-          }}
-          maxLength={30}
-          onClick={(e) => e.stopPropagation()}
-          autoFocus
-        />
-        <div style={styles.editButtons}>
-          <button
-            style={styles.editButton}
-            onClick={() => {
-              setIsEditing(false);
-              setEditedName(name);
+      <>
+        <div style={styles.nameEditContainer}>
+          <input
+            ref={inputRef}
+            style={styles.nameInput}
+            value={editedName.toUpperCase()}
+            onChange={(e) => setEditedName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                setShowModal(true);
+              }
+              if (e.key === 'Escape') {
+                setIsEditing(false);
+                setEditedName(name);
+              }
             }}
-          >
-            Cancel
-          </button>
-          <button
-            style={{...styles.editButton, ...styles.saveButton}}
-            onClick={() => setShowModal(true)}
-            disabled={!editedName.trim() || editedName.trim() === name}
-          >
-            Save
-          </button>
+            maxLength={30}
+            onClick={(e) => e.stopPropagation()}
+            autoFocus
+          />
+          <div style={styles.editButtons}>
+            <button
+              style={styles.editButton}
+              onClick={() => {
+                setIsEditing(false);
+                setEditedName(name);
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              style={{...styles.editButton, ...styles.saveButton}}
+              onClick={() => setShowModal(true)}
+              disabled={!editedName.trim() || editedName.trim() === name}
+            >
+              Save
+            </button>
+          </div>
         </div>
 
-        {/* Simple confirmation modal */}
+        {/* Move modal to root level */}
         {showModal && (
-          <div style={styles.modalOverlay} onClick={() => setShowModal(false)}>
-            <div style={styles.modal} onClick={e => e.stopPropagation()}>
-              <h3 style={styles.modalTitle}>Update Search Name?</h3>
-              <p style={styles.modalText}>
+          <div style={styles.modalBackdrop}>
+            <div style={styles.confirmModal}>
+              <h3 style={styles.confirmTitle}>Update Search Name?</h3>
+              <p style={styles.confirmText}>
                 Change name from "{name}" to "{editedName.trim()}"?
               </p>
-              <div style={styles.modalButtons}>
+              <div style={styles.confirmButtons}>
                 <button 
-                  style={styles.modalButton}
+                  style={{...styles.confirmButton, ...styles.cancelButton}}
                   onClick={() => setShowModal(false)}
                 >
                   Cancel
                 </button>
                 <button 
-                  style={{...styles.modalButton, ...styles.modalConfirmButton}}
+                  style={{...styles.confirmButton, ...styles.deleteButton}}
                   onClick={handleSaveClick}
                   disabled={isLoading}
                 >
@@ -122,7 +124,7 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
             </div>
           </div>
         )}
-      </div>
+      </>
     );
   }
 
