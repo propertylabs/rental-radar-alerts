@@ -10,35 +10,42 @@ import Navigation from './components/Navigation.js';
 import NotSub from './components/NotSub.js';
 import ModalBackdrop from './components/ModalBackdrop.js';
 import SearchModal from './components/SearchModal.js';
+import EditSearchModal from './components/EditSearchModal.js';
 
 const DashboardLayout = ({ children }) => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [searchToEdit, setSearchToEdit] = useState(null);
   
   useEffect(() => {
-    if (isSearchModalOpen) {
+    if (isSearchModalOpen || isEditModalOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
-      setSearchToEdit(null);  // Reset edit state when modal closes
+      setSearchToEdit(null);
     }
-  }, [isSearchModalOpen]);
+  }, [isSearchModalOpen, isEditModalOpen]);
 
   return (
     <div>
       <Navigation />
       <div className="content">
         {React.cloneElement(children, { 
-          onOpenSearchModal: (searchData) => {
+          onOpenSearchModal: () => setIsSearchModalOpen(true),
+          onOpenEditModal: (searchData) => {
             setSearchToEdit(searchData);
-            setIsSearchModalOpen(true);
+            setIsEditModalOpen(true);
           }
         })}
       </div>
       <SearchModal 
         isOpen={isSearchModalOpen}
         onClose={() => setIsSearchModalOpen(false)}
-        searchToEdit={searchToEdit}
+      />
+      <EditSearchModal 
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        searchData={searchToEdit}
       />
     </div>
   );

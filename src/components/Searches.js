@@ -294,7 +294,7 @@ const menuStyles = `
   }
 `;
 
-const SearchesNew = ({ onOpenSearchModal }) => {
+const SearchesNew = ({ onOpenSearchModal, onOpenEditModal }) => {
   const [isStandalone] = useState(() => 
     window.matchMedia('(display-mode: standalone)').matches || 
     window.navigator.standalone || 
@@ -651,8 +651,8 @@ const SearchesNew = ({ onOpenSearchModal }) => {
                         style={styles.menuItem}
                         onClick={(e) => {
                           e.stopPropagation();
-                          setActiveMenu(null);  // Close the menu
-                          onOpenSearchModal(search);  // Pass the search data to edit
+                          setActiveMenu(null);
+                          onOpenEditModal(search);
                         }}
                       >
                         <RiEditBoxLine style={{ fontSize: '20px', color: ACCENT }} />
