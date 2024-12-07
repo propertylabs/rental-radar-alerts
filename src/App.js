@@ -52,12 +52,8 @@ function App() {
           <Route path="/searches" element={<DashboardLayout><Searches /></DashboardLayout>} />
           <Route path="/alerts" element={<DashboardLayout><Alerts /></DashboardLayout>} />
           <Route path="/settings" element={<DashboardLayout><Settings /></DashboardLayout>} />
+          <Route path="/searches-new" element={<DashboardLayout><SearchesNew /></DashboardLayout>} />
         </Route>
-        <Route path="/searches-new" element={
-          <AppLayout>
-            <SearchesNew />
-          </AppLayout>
-        } />
       </Routes>
     </Router>
   );
