@@ -16,20 +16,20 @@ const PostcodesStep = ({ values, onChange, onNext }) => {
     },
 
     header: {
+      paddingBottom: '8px',
     },
 
-    subtitle: {
+    title: {
       fontSize: '24px',
       fontWeight: '700',
       color: '#2E3F32',
-      margin: '0 0 8px 0',
+      marginBottom: '8px',
       letterSpacing: '-0.5px',
     },
 
-    description: {
+    subtitle: {
       fontSize: '17px',
       color: '#666',
-      margin: 0,
       lineHeight: 1.4,
       letterSpacing: '-0.2px',
     },
@@ -113,8 +113,8 @@ const PostcodesStep = ({ values, onChange, onNext }) => {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <h3 style={styles.subtitle}>Location</h3>
-        <p style={styles.description}>
+        <h2 style={styles.title}>Location</h2>
+        <p style={styles.subtitle}>
           Select the areas you're interested in. You can choose multiple postcodes.
         </p>
       </div>
