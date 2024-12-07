@@ -32,11 +32,11 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
       setSearchCriteria({
         locations: searchData.location.split(', '),
         propertyTypes: [searchData.type],
-        minBedrooms: searchData.criteria.minBedrooms,
-        maxBedrooms: searchData.criteria.maxBedrooms,
-        minPrice: parseInt(searchData.price.split('-')[0].replace('£', '')),
-        maxPrice: parseInt(searchData.price.split('-')[1]),
-        mustHaves: searchData.criteria.mustHaves,
+        minBedrooms: 1,
+        maxBedrooms: 5,
+        minPrice: searchData.price === 'Any price' ? 0 : parseInt(searchData.price.split('-')[0].replace('£', '')),
+        maxPrice: searchData.price === 'Any price' ? 3000 : parseInt(searchData.price.split('-')[1]),
+        mustHaves: [],
         name: searchData.name,
         notifications: searchData.active,
       });
