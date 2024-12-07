@@ -7,6 +7,8 @@ import MustHavesStep from './steps/MustHavesStep.js';
 import FinalizeStep from './steps/FinalizeStep.js';
 
 const EditSearchModal = ({ isOpen, onClose, searchData }) => {
+  console.log('EditSearchModal render:', { isOpen, searchData });
+
   const [step, setStep] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -24,7 +26,9 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
 
   // Initialize with search data when available
   useEffect(() => {
+    console.log('searchData changed:', searchData);
     if (searchData) {
+      console.log('Setting search criteria with:', searchData);
       setSearchCriteria({
         locations: searchData.location.split(', '),
         propertyTypes: [searchData.type],
@@ -96,6 +100,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
   };
 
   const renderStep = () => {
+    console.log('Rendering step:', step, 'with criteria:', searchCriteria);
     const CurrentStep = steps[step];
     
     return (
