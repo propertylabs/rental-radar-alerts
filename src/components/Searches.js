@@ -50,11 +50,12 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
 
   // New function for handling the actual API save
   const handleConfirmSave = async () => {
+    let response;
     try {
       setIsLoading(true);
       const whopUserId = localStorage.getItem('whop_user_id');
       
-      const response = await fetch('/api/update-search-name', {
+      response = await fetch('/api/update-search-name', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -66,14 +67,14 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
         })
       });
 
-      const data = await response.json(); // Wait for the response data
+      const data = await response.json();
 
       if (response.ok) {
         onNameUpdate(searchId, editedName.trim());
         // Only reset after successful save
         setTimeout(() => {
           resetEditState();
-        }, 500); // Give time to see the "Saving..." state
+        }, 500);
       } else {
         alert('Failed to update name');
         setEditedName(name);
@@ -83,8 +84,7 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
       alert('Error updating name');
       setEditedName(name);
     } finally {
-      // Don't set loading to false if we succeeded (let the resetEditState handle it)
-      if (!response.ok) {
+      if (!response?.ok) {
         setIsLoading(false);
       }
     }
