@@ -11,7 +11,7 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [searchCriteria, setSearchCriteria] = useState({
-    city: 'Manchester',
+    city: null,
     locations: [],
     propertyTypes: [],
     minBedrooms: 1,
@@ -227,6 +227,7 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
         onChange={(values) => {
           switch(step) {
             case 0:
+              console.log('City step change:', values);
               setSearchCriteria({...searchCriteria, city: values});
               break;
             case 1:
@@ -255,7 +256,10 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
               });
           }
         }}
-        onNext={() => setStep(prev => prev + 1)}
+        onNext={() => {
+          console.log('Moving to next step from:', step);
+          setStep(prev => prev + 1);
+        }}
         onSave={step === steps.length - 1 ? handleSaveSearch : undefined}
         isSaving={isSaving}
         isSaved={isSaved}
@@ -268,7 +272,7 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
     setStep(0);
     setIsSaving(false);
     setSearchCriteria({
-      city: 'Manchester',
+      city: null,
       locations: [],
       propertyTypes: [],
       minBedrooms: 1,
