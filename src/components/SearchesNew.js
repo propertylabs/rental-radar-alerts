@@ -290,13 +290,60 @@ const SearchesNew = ({ onOpenSearchModal }) => {
     cursor: cooldownButtons.has(searchId) ? 'default' : 'pointer',
   });
 
+  const refreshSearches = async () => {
+    console.log('Starting refreshSearches');
+    const whopUserId = localStorage.getItem('whop_user_id');
+    if (!whopUserId) return;
+
+    const response = await fetch(`/api/get-user-searches?userId=${whopUserId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      console.log('Refresh response received');
+      const result = await response.json();
+      if (Array.isArray(result)) {
+        const formattedSearches = result.map(search => ({
+          id: search.id,
+          name: search.searchName,
+          location: search.postcodes.join(', '),
+          price: search.criteria.minPrice && search.criteria.maxPrice 
+            ? `£${search.criteria.minPrice}-${search.criteria.maxPrice}`
+            : 'Any price',
+          type: search.criteria.propertyTypes[0] || 'Any type',
+          lastAlert: search.last_alert || 'No alerts yet',
+          active: search.notifications
+        }));
+        console.log('Setting new searches:', formattedSearches);
+        setSearches(formattedSearches);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handleRefresh = () => {
+      refreshSearches();
+    };
+    
+    window.addEventListener('refreshSearches', handleRefresh);
+    return () => window.removeEventListener('refreshSearches', handleRefresh);
+  }, []);
+
   return (
     <div style={styles.pageContainer}>
       <div style={{
         ...styles.contentWrapper,
         paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px',
       }}>
-        <h1 style={styles.title}>Searches (New)</h1>
+        <h1 
+          style={{...styles.title, cursor: 'pointer'}} 
+          onClick={refreshSearches}
+        >
+          Searches (New)
+        </h1>
         <button 
           style={styles.addButton}
           onClick={onOpenSearchModal}
