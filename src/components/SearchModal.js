@@ -9,17 +9,20 @@ import FinalizeStep from './steps/FinalizeStep.js';
 const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
   const isEditing = !!searchToEdit;
 
-  const [currentStep, setCurrentStep] = useState(isEditing ? 1 : 0);
-  const [formData, setFormData] = useState({
-    city: searchToEdit?.city || '',
-    postcodes: searchToEdit?.location?.split(', ') || [],
+  const [step, setStep] = useState(isEditing ? 1 : 0);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [searchCriteria, setSearchCriteria] = useState({
+    city: searchToEdit?.city || null,
+    locations: searchToEdit?.location?.split(', ') || [],
     propertyTypes: searchToEdit?.type ? [searchToEdit.type] : [],
-    minPrice: searchToEdit?.price?.split('-')[0]?.replace('£', '') || '',
-    maxPrice: searchToEdit?.price?.split('-')[1] || '',
-    minBedrooms: searchToEdit?.criteria?.minBedrooms || '',
-    maxBedrooms: searchToEdit?.criteria?.maxBedrooms || '',
+    minBedrooms: searchToEdit?.criteria?.minBedrooms || 1,
+    maxBedrooms: searchToEdit?.criteria?.maxBedrooms || 5,
+    minPrice: searchToEdit?.price?.split('-')[0]?.replace('£', '') || 0,
+    maxPrice: searchToEdit?.price?.split('-')[1] || 3000,
     mustHaves: searchToEdit?.criteria?.mustHaves || [],
-    searchName: searchToEdit?.name || '',
+    name: searchToEdit?.name || '',
+    notifications: searchToEdit?.notifications ?? true,
   });
 
   const modalTitle = isEditing ? 'Edit Search' : 'New Search';
@@ -50,8 +53,11 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
         throw new Error('No user ID available');
       }
 
-      const response = await fetch('/api/save-search', {
-        method: 'POST',
+      const endpoint = isEditing ? '/api/update-search' : '/api/save-search';
+      const method = isEditing ? 'PUT' : 'POST';
+
+      const response = await fetch(endpoint, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -65,7 +71,8 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
           max_bedrooms: searchCriteria.maxBedrooms,
           property_types: searchCriteria.propertyTypes,
           must_haves: searchCriteria.mustHaves,
-          notifications: searchCriteria.notifications
+          notifications: searchCriteria.notifications,
+          ...(isEditing && { searchId: searchToEdit.id }),
         }),
       });
 
@@ -75,7 +82,6 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
         throw new Error(data.error || 'Failed to save search');
       }
 
-      // Reset modal state
       setStep(1);
       setIsSaving(false);
       setSearchCriteria({
@@ -91,12 +97,8 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
         notifications: true,
       });
       
-      // Close modal
-      if (typeof onClose === 'function') {
-        onClose();
-      }
+      onClose();
 
-      // After modal closes, dispatch refresh event
       setTimeout(() => {
         window.dispatchEvent(new CustomEvent('refreshSearches'));
       }, 500);
