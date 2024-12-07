@@ -9,15 +9,6 @@ import FinalizeStep from './steps/FinalizeStep.js';
 const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
   const isEditing = !!searchToEdit;
 
-  const getPriceValues = () => {
-    if (!searchToEdit?.price) return { minPrice: 0, maxPrice: 3000 };
-    const [min, max] = searchToEdit.price.split('-');
-    return {
-      minPrice: parseInt(min?.replace('£', '')) || 0,
-      maxPrice: parseInt(max) || 3000
-    };
-  };
-
   const steps = isEditing ? [
     LocationStep,
     PropertyTypeStep,
@@ -33,19 +24,20 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
     FinalizeStep
   ];
 
-  const [step, setStep] = useState(isEditing ? 0 : 0);
+  const [step, setStep] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [searchCriteria, setSearchCriteria] = useState({
-    locations: searchToEdit?.postcodes || [],
-    propertyTypes: searchToEdit?.criteria?.propertyTypes || [],
-    minBedrooms: searchToEdit?.criteria?.minBedrooms || 1,
-    maxBedrooms: searchToEdit?.criteria?.maxBedrooms || 5,
-    minPrice: searchToEdit?.criteria?.minPrice || 0,
-    maxPrice: searchToEdit?.criteria?.maxPrice || 3000,
-    mustHaves: searchToEdit?.criteria?.mustHaves || [],
-    name: searchToEdit?.searchName || '',
-    notifications: searchToEdit?.notifications ?? true,
+    city: 'Manchester',
+    locations: isEditing ? searchToEdit.location.split(', ') : [],
+    propertyTypes: isEditing ? [searchToEdit.type] : [],
+    minBedrooms: isEditing ? searchToEdit.criteria.minBedrooms : 1,
+    maxBedrooms: isEditing ? searchToEdit.criteria.maxBedrooms : 5,
+    minPrice: isEditing ? parseInt(searchToEdit.price.split('-')[0].replace('£', '')) : 0,
+    maxPrice: isEditing ? parseInt(searchToEdit.price.split('-')[1]) : 3000,
+    mustHaves: isEditing ? searchToEdit.criteria.mustHaves : [],
+    name: isEditing ? searchToEdit.name : '',
+    notifications: isEditing ? searchToEdit.active : true,
   });
 
   const modalTitle = isEditing ? 'Edit Search' : 'New Search';
