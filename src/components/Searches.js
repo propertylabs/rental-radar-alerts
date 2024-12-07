@@ -663,7 +663,7 @@ const styles = {
 
   addButtonIcon: {
     color: '#fff',
-    fontSize: '24px !important',
+    fontSize: '24px',
   },
 
   searchList: {
