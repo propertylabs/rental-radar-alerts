@@ -21,6 +21,86 @@ const SearchNameDisplay = ({ name }) => (
   </div>
 );
 
+const menuStyles = `
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+  }
+
+  .menu-animation {
+    animation: scaleIn 0.2s ease-out forwards;
+    transform-origin: top right;
+  }
+
+  .card-delete-animation {
+    animation: fadeOut 0.3s ease-out forwards;
+  }
+
+  @keyframes slide-in-new {
+    from {
+      transform: translateY(${-206}px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-down {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(16px);
+    }
+  }
+
+  .slide-in-new {
+    animation: slide-in-new 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+
+  .slide-down {
+    animation: slide-down 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes deleteCard {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+
+  .card-deleting {
+    animation: deleteCard 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+
+  .card-moving {
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+`;
+
 const SearchesNew = ({ onOpenSearchModal }) => {
   const [isStandalone] = useState(() => 
     window.matchMedia('(display-mode: standalone)').matches || 
