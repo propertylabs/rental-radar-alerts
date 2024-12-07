@@ -209,7 +209,6 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
     return (
       <CurrentStep 
         values={
-          // If editing, skip city step values
           step === 0 ? searchCriteria.city :
           step === 1 ? searchCriteria.locations :
           step === 2 ? searchCriteria.propertyTypes :
@@ -228,14 +227,10 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
         onChange={(values) => {
           switch(step) {
             case 0:
-              setSearchCriteria({...searchCriteria, 
-                city: values
-              });
+              setSearchCriteria({...searchCriteria, city: values});
               break;
             case 1:
-              setSearchCriteria({...searchCriteria, 
-                locations: values
-              });
+              setSearchCriteria({...searchCriteria, locations: values});
               break;
             case 2:
               setSearchCriteria({...searchCriteria, propertyTypes: values});
