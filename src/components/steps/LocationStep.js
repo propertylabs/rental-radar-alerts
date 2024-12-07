@@ -206,7 +206,7 @@ const LocationStep = ({ values, onChange, onNext }) => {
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
-      marginBottom: '80px',
+      marginBottom: 'calc(env(safe-area-inset-bottom) + 80px)',
     },
 
     tagsContainer: {
@@ -279,8 +279,8 @@ const LocationStep = ({ values, onChange, onNext }) => {
     },
 
     continueButton: {
-      position: 'absolute',
-      bottom: 'max(env(safe-area-inset-bottom), 24px)',
+      position: 'fixed',
+      bottom: 'env(safe-area-inset-bottom, 24px)',
       left: '16px',
       right: '16px',
       background: values.length > 0
