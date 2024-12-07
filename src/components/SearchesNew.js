@@ -15,9 +15,12 @@ const SearchesNew = () => {
         ...styles.contentWrapper,
         paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px',
       }}>
-        <h1 style={styles.title}>Saved Searches</h1>
+        <h1 style={styles.title}>Saved Searches (New)</h1>
         <div style={styles.scrollContainer}>
-          <p>New Searches page coming soon...</p>
+          <div style={styles.devInfo}>
+            <h2 style={styles.devInfoTitle}>Development Version</h2>
+            <p style={styles.devInfoText}>This is the new version of the Searches page, currently under development.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -26,17 +29,15 @@ const SearchesNew = () => {
 
 const styles = {
   pageContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    overflow: 'hidden',
+    flex: 1,
+    overflow: 'auto',
     background: 'linear-gradient(to bottom, #f8f9fa, #f0f2f1)',
     WebkitOverflowScrolling: 'touch',
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
     '-webkit-font-smoothing': 'antialiased',
     '-moz-osx-font-smoothing': 'grayscale',
+    position: 'relative',
+    height: '100%',
   },
 
   contentWrapper: {
@@ -59,6 +60,29 @@ const styles = {
     overflow: 'auto',
     paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)',
     padding: '0 20px',
+  },
+
+  devInfo: {
+    background: 'white',
+    borderRadius: '12px',
+    padding: '20px',
+    marginTop: '20px',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+  },
+
+  devInfoTitle: {
+    fontSize: '18px',
+    fontWeight: '600',
+    color: ACCENT,
+    marginTop: 0,
+    marginBottom: '12px',
+  },
+
+  devInfoText: {
+    fontSize: '15px',
+    color: '#666',
+    lineHeight: '1.4',
+    margin: 0,
   },
 };
 
