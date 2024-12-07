@@ -73,7 +73,7 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
         throw new Error(data.error || 'Failed to save search');
       }
 
-      setStep(1);
+      setStep(0);
       setIsSaving(false);
       setSearchCriteria({
         city: null,
@@ -264,12 +264,11 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
   };
 
   const handleCloseButton = () => {
-    console.log('Inside handleCloseButton');
     onClose();
-    setStep(1);
+    setStep(0);
     setIsSaving(false);
     setSearchCriteria({
-      city: null,
+      city: 'Manchester',
       locations: [],
       propertyTypes: [],
       minBedrooms: 1,
