@@ -563,7 +563,6 @@ const styles = {
     background: 'rgba(46, 63, 50, 0.08)',
     animation: 'pulse 1.5s ease-in-out infinite',
     marginTop: '12px',
-    marginLeft: '28px',
   },
 
   skeletonPills: {
