@@ -66,9 +66,14 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
         })
       });
 
+      const data = await response.json(); // Wait for the response data
+
       if (response.ok) {
         onNameUpdate(searchId, editedName.trim());
-        resetEditState();
+        // Only reset after successful save
+        setTimeout(() => {
+          resetEditState();
+        }, 500); // Give time to see the "Saving..." state
       } else {
         alert('Failed to update name');
         setEditedName(name);
@@ -78,7 +83,10 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
       alert('Error updating name');
       setEditedName(name);
     } finally {
-      setIsLoading(false);
+      // Don't set loading to false if we succeeded (let the resetEditState handle it)
+      if (!response.ok) {
+        setIsLoading(false);
+      }
     }
   };
 
