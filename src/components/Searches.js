@@ -178,7 +178,11 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
                 </button>
                 <button 
                   style={{...styles.confirmButton, ...styles.deleteButton}}
-                  onClick={handleConfirmSave}
+                  onClick={(e) => {
+                    console.log('Update button clicked');
+                    e.preventDefault();
+                    handleConfirmSave();
+                  }}
                   disabled={isLoading}
                 >
                   {isLoading ? 'Saving...' : 'Update'}
@@ -519,6 +523,7 @@ const SearchesNew = ({ onOpenSearchModal }) => {
   }, []);
 
   const handleNameUpdate = (searchId, newName) => {
+    console.log('Updating name in UI:', { searchId, newName });
     setSearches(searches.map(search => 
       search.id === searchId 
         ? {...search, name: newName}
