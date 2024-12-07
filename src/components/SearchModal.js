@@ -18,7 +18,22 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
     };
   };
 
-  const [step, setStep] = useState(isEditing ? 1 : 0);
+  const steps = isEditing ? [
+    LocationStep,
+    PropertyTypeStep,
+    PriceBedroomsStep,
+    MustHavesStep,
+    FinalizeStep
+  ] : [
+    CityStep,
+    LocationStep,
+    PropertyTypeStep,
+    PriceBedroomsStep,
+    MustHavesStep,
+    FinalizeStep
+  ];
+
+  const [step, setStep] = useState(isEditing ? 0 : 0);
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [searchCriteria, setSearchCriteria] = useState({
@@ -34,21 +49,6 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
   });
 
   const modalTitle = isEditing ? 'Edit Search' : 'New Search';
-
-  const steps = isEditing ? [
-    LocationStep,
-    PropertyTypeStep,
-    PriceBedroomsStep,
-    MustHavesStep,
-    FinalizeStep
-  ] : [
-    CityStep,
-    LocationStep,
-    PropertyTypeStep,
-    PriceBedroomsStep,
-    MustHavesStep,
-    FinalizeStep
-  ];
 
   const handleSaveSearch = async () => {
     if (isSaving) return;
@@ -221,7 +221,17 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
   };
 
   const renderStep = () => {
+    console.log('Current step:', step);
+    console.log('Steps array:', steps);
+    console.log('Current step component:', steps[step]);
+    console.log('Search criteria:', searchCriteria);
+    
     const CurrentStep = steps[step];
+    
+    if (!CurrentStep) {
+      console.error('No step component found for step:', step);
+      return null;
+    }
     
     return (
       <CurrentStep 
