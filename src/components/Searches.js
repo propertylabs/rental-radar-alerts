@@ -18,35 +18,16 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(name);
   const [isLoading, setIsLoading] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
   const inputRef = useRef(null);
 
-  useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
-    }
-  }, [isEditing]);
+  // Simple modal state
+  const [showModal, setShowModal] = useState(false);
 
-  const handleStartEdit = (e) => {
-    e.stopPropagation();
-    setIsEditing(true);
-    setEditedName(name);
-  };
-
-  const handleConfirmSave = async () => {
-    setShowConfirm(false);
-    setIsLoading(true);
-    
+  const handleSaveClick = async () => {
     try {
+      setIsLoading(true);
       const whopUserId = localStorage.getItem('whop_user_id');
-      console.log('Starting name update:', {
-        userId: whopUserId,
-        searchId,
-        searchName: editedName.trim(),
-        currentName: name
-      });
-
+      
       const response = await fetch('/api/update-search-name', {
         method: 'PUT',
         headers: {
@@ -59,25 +40,22 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
         })
       });
 
-      const data = await response.json();
-      console.log('API Response:', data);
-
       if (response.ok) {
         onNameUpdate(searchId, editedName.trim());
+        setShowModal(false);
         setIsEditing(false);
-        console.log('Name update successful');
       } else {
-        console.error('Failed to update name:', data.error);
-        alert('Failed to update name. Please try again.');
+        alert('Failed to update name');
       }
     } catch (error) {
-      console.error('Error updating name:', error);
-      alert('Error updating name. Please try again.');
+      console.error('Error:', error);
+      alert('Error updating name');
     } finally {
       setIsLoading(false);
     }
   };
 
+  // When editing
   if (isEditing) {
     return (
       <div style={styles.nameEditContainer}>
@@ -87,8 +65,8 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
           value={editedName.toUpperCase()}
           onChange={(e) => setEditedName(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' && editedName.trim() && editedName.trim() !== name) {
-              setShowConfirm(true);
+            if (e.key === 'Enter') {
+              setShowModal(true);
             }
             if (e.key === 'Escape') {
               setIsEditing(false);
@@ -102,62 +80,63 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
         <div style={styles.editButtons}>
           <button
             style={styles.editButton}
-            onClick={(e) => {
-              e.stopPropagation();
+            onClick={() => {
               setIsEditing(false);
               setEditedName(name);
             }}
-            disabled={isLoading}
           >
             Cancel
           </button>
           <button
             style={{...styles.editButton, ...styles.saveButton}}
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowConfirm(true);
-            }}
-            disabled={isLoading || !editedName.trim() || editedName.trim() === name}
+            onClick={() => setShowModal(true)}
+            disabled={!editedName.trim() || editedName.trim() === name}
           >
-            {isLoading ? '...' : 'Save'}
+            Save
           </button>
         </div>
+
+        {/* Simple confirmation modal */}
+        {showModal && (
+          <div style={styles.modalOverlay} onClick={() => setShowModal(false)}>
+            <div style={styles.modal} onClick={e => e.stopPropagation()}>
+              <h3 style={styles.modalTitle}>Update Search Name?</h3>
+              <p style={styles.modalText}>
+                Change name from "{name}" to "{editedName.trim()}"?
+              </p>
+              <div style={styles.modalButtons}>
+                <button 
+                  style={styles.modalButton}
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancel
+                </button>
+                <button 
+                  style={{...styles.modalButton, ...styles.modalConfirmButton}}
+                  onClick={handleSaveClick}
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Saving...' : 'Update'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
 
+  // When not editing (display mode)
   return (
     <div 
       style={styles.nameContainer}
-      onClick={handleStartEdit}
+      onClick={() => {
+        setIsEditing(true);
+        setEditedName(name);
+      }}
     >
       <span style={styles.searchName}>{name.toUpperCase()}</span>
       <RiEditBoxLine style={styles.editIcon} />
-
-      {showConfirm && (
-        <div style={styles.confirmOverlay} onClick={(e) => e.stopPropagation()}>
-          <div style={styles.confirmDialog}>
-            <h3 style={styles.confirmTitle}>Update Search Name?</h3>
-            <p style={styles.confirmText}>
-              Change name from "{name}" to "{editedName.trim()}"?
-            </p>
-            <div style={styles.confirmButtons}>
-              <button 
-                style={{...styles.confirmButton, ...styles.cancelButton}}
-                onClick={() => setShowConfirm(false)}
-              >
-                Cancel
-              </button>
-              <button 
-                style={{...styles.confirmButton, ...styles.saveButton}}
-                onClick={handleConfirmSave}
-              >
-                Update
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
