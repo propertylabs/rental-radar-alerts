@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-const ACCENT = '#2E3F32';
+const ACCENT = '#2E3F32'; // Deep forest green
 
-const Alerts = () => {
+const SearchesNew = () => {
   const [isStandalone] = useState(() => 
     window.matchMedia('(display-mode: standalone)').matches || 
     window.navigator.standalone || 
     true
   );
-  const navigate = useNavigate();
 
   return (
     <div style={styles.pageContainer}>
@@ -17,18 +15,9 @@ const Alerts = () => {
         ...styles.contentWrapper,
         paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px',
       }}>
-        <h1 style={styles.title}>Alerts</h1>
-        
+        <h1 style={styles.title}>Saved Searches</h1>
         <div style={styles.scrollContainer}>
-          <div style={styles.devMenu}>
-            <h2 style={styles.devTitle}>Developer Menu</h2>
-            <button 
-              style={styles.devButton}
-              onClick={() => navigate('/searches-new')}
-            >
-              Try New Searches Page
-            </button>
-          </div>
+          <p>New Searches page coming soon...</p>
         </div>
       </div>
     </div>
@@ -71,38 +60,6 @@ const styles = {
     paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)',
     padding: '0 20px',
   },
-
-  devMenu: {
-    background: 'white',
-    borderRadius: '12px',
-    padding: '20px',
-    marginTop: '20px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-  },
-
-  devTitle: {
-    fontSize: '18px',
-    fontWeight: '600',
-    color: ACCENT,
-    marginTop: 0,
-    marginBottom: '16px',
-  },
-
-  devButton: {
-    width: '100%',
-    padding: '12px 16px',
-    background: ACCENT,
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    fontSize: '16px',
-    fontWeight: '500',
-    cursor: 'pointer',
-    transition: 'background-color 0.2s ease',
-    ':hover': {
-      backgroundColor: '#243528',
-    },
-  },
 };
 
-export default Alerts;
+export default SearchesNew; 
