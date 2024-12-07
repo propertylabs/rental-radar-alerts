@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RiAddLine, RiMapPinLine, RiPriceTag3Line, RiHome4Line, RiSearchLine } from 'react-icons/ri';
 
-const ACCENT = '#2E3F32'; // Deep forest green
+const ACCENT = '#2E3F32';
 
 const SearchesNew = ({ onOpenSearchModal }) => {
   const [isStandalone] = useState(() => 
@@ -67,16 +67,14 @@ const SearchesNew = ({ onOpenSearchModal }) => {
         ...styles.contentWrapper,
         paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px',
       }}>
-        <div style={styles.header}>
-          <h1 style={styles.title}>Searches (New)</h1>
-          <button 
-            style={styles.addButton}
-            onClick={onOpenSearchModal}
-          >
-            <RiAddLine style={styles.addButtonIcon} />
-          </button>
-        </div>
-
+        <h1 style={styles.title}>Searches (New)</h1>
+        <button 
+          style={styles.addButton}
+          onClick={onOpenSearchModal}
+        >
+          <RiAddLine style={styles.addButtonIcon} />
+        </button>
+        
         <div style={styles.scrollContainer}>
           {isLoading ? (
             // Skeleton loading state
@@ -144,15 +142,17 @@ const SearchesNew = ({ onOpenSearchModal }) => {
 
 const styles = {
   pageContainer: {
-    flex: 1,
-    overflow: 'auto',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    overflow: 'hidden',
     background: 'linear-gradient(to bottom, #f8f9fa, #f0f2f1)',
     WebkitOverflowScrolling: 'touch',
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
     '-webkit-font-smoothing': 'antialiased',
     '-moz-osx-font-smoothing': 'grayscale',
-    position: 'relative',
-    height: '100%',
   },
 
   contentWrapper: {
@@ -161,23 +161,19 @@ const styles = {
     flexDirection: 'column',
   },
 
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    margin: '0 20px 16px',
-  },
-
   title: {
     fontSize: '32px',
     fontWeight: '700',
     color: ACCENT,
-    margin: 0,
+    margin: '0 20px 16px',
     letterSpacing: '-0.5px',
     fontFamily: 'inherit',
   },
 
   addButton: {
+    position: 'absolute',
+    top: 'calc(env(safe-area-inset-top) + 16px)',
+    right: '20px',
     width: '40px',
     height: '40px',
     borderRadius: '50%',
