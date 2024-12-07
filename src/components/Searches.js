@@ -68,14 +68,15 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
 
       if (response.ok) {
         onNameUpdate(searchId, editedName.trim());
-        setShowModal(false);
-        setIsEditing(false);
+        resetEditState();
       } else {
         alert('Failed to update name');
+        setEditedName(name);
       }
     } catch (error) {
       console.error('Error:', error);
       alert('Error updating name');
+      setEditedName(name);
     } finally {
       setIsLoading(false);
     }
