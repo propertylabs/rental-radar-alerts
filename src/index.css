@@ -6,6 +6,7 @@ html, body, #root {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   letter-spacing: -0.2px;
   margin: 0;
   padding: 0;
@@ -33,4 +34,34 @@ html, body, #root {
   html, body {
     height: -webkit-fill-available;
   }
+}
+
+/* Typography scale */
+h1 {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+h3 {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+p, input, button {
+  font-size: 17px;
+  letter-spacing: -0.2px;
+}
+
+.caption {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
 }
