@@ -6,22 +6,38 @@ import PriceBedroomsStep from './steps/PriceBedroomsStep.js';
 import MustHavesStep from './steps/MustHavesStep.js';
 import FinalizeStep from './steps/FinalizeStep.js';
 
-const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
-  const [step, setStep] = useState(1);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
-  const [searchCriteria, setSearchCriteria] = useState({
-    city: null,
-    locations: [],
-    propertyTypes: [],
-    minBedrooms: 1,
-    maxBedrooms: 5,
-    minPrice: 0,
-    maxPrice: 3000,
-    mustHaves: [],
-    name: '',
-    notifications: true,
+const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
+  const isEditing = !!searchToEdit;
+
+  const [currentStep, setCurrentStep] = useState(isEditing ? 1 : 0);
+  const [formData, setFormData] = useState({
+    city: searchToEdit?.city || '',
+    postcodes: searchToEdit?.location?.split(', ') || [],
+    propertyTypes: searchToEdit?.type ? [searchToEdit.type] : [],
+    minPrice: searchToEdit?.price?.split('-')[0]?.replace('£', '') || '',
+    maxPrice: searchToEdit?.price?.split('-')[1] || '',
+    minBedrooms: searchToEdit?.criteria?.minBedrooms || '',
+    maxBedrooms: searchToEdit?.criteria?.maxBedrooms || '',
+    mustHaves: searchToEdit?.criteria?.mustHaves || [],
+    searchName: searchToEdit?.name || '',
   });
+
+  const modalTitle = isEditing ? 'Edit Search' : 'New Search';
+
+  const steps = isEditing ? [
+    LocationStep,
+    PropertyTypeStep,
+    PriceBedroomsStep,
+    MustHavesStep,
+    FinalizeStep
+  ] : [
+    CityStep,
+    LocationStep,
+    PropertyTypeStep,
+    PriceBedroomsStep,
+    MustHavesStep,
+    FinalizeStep
+  ];
 
   const handleSaveSearch = async () => {
     if (isSaving) return;
@@ -299,7 +315,7 @@ const SearchModal = ({ isOpen, onClose, whopUserId, onSearchSaved }) => {
               )}
             </div>
             <div style={styles.headerCenter}>
-              <h2 style={styles.title}>New Search</h2>
+              <h2 style={styles.title}>{modalTitle}</h2>
             </div>
             <div style={styles.headerRight}>
               <button style={styles.closeButton} onClick={handleCloseButton}>×</button>
