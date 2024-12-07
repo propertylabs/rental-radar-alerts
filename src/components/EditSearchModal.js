@@ -6,6 +6,7 @@ import PriceBedroomsStep from './steps/PriceBedroomsStep.js';
 import MustHavesStep from './steps/MustHavesStep.js';
 import FinalizeStep from './steps/FinalizeStep.js';
 import { RiMapPinLine, RiHome4Line, RiPriceTag3Line, RiCheckboxLine, RiBellLine, RiArrowRightSLine } from 'react-icons/ri';
+import EditStepComponent from './steps/EditStepComponent.js';
 
 const ACCENT = '#2E3F32'; // Deep forest green
 
@@ -285,6 +286,18 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     }
   };
 
+  const styles = {
+    doneButton: {
+      background: 'none',
+      border: 'none',
+      padding: '8px 16px',
+      color: '#007AFF',
+      fontSize: '17px',
+      fontWeight: '500',
+      cursor: 'pointer',
+    }
+  };
+
   const renderStep = () => {
     if (selectedStep === null) {
       return (
@@ -296,10 +309,9 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     }
 
     const step = steps[selectedStep];
-    const StepComponent = step.component;
-
     return (
-      <StepComponent 
+      <EditStepComponent
+        StepComponent={step.component}
         values={
           selectedStep === 0 ? searchCriteria.locations :
           selectedStep === 1 ? searchCriteria.propertyTypes :
@@ -316,23 +328,10 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
           }
         }
         onChange={(values) => handleSectionSave(selectedStep, values)}
-        isEditing={true}
+        onBack={() => setSelectedStep(null)}
         isSaving={isSaving}
       />
     );
-  };
-
-  // Add doneButton style
-  const styles = {
-    doneButton: {
-      background: 'none',
-      border: 'none',
-      padding: '8px 16px',
-      color: '#007AFF',
-      fontSize: '17px',
-      fontWeight: '500',
-      cursor: 'pointer',
-    }
   };
 
   return BaseSearchModal.renderModalFrame({
@@ -340,7 +339,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     onClose,
     title: selectedStep === null ? 'Edit Search' : steps[selectedStep].title,
     showCloseButton: false,
-    showBackButton: selectedStep !== null,
+    showBackButton: false,
     customHeaderRight: selectedStep === null ? (
       <button 
         style={styles.doneButton} 
