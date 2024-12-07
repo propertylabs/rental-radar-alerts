@@ -9,15 +9,6 @@ import FinalizeStep from './steps/FinalizeStep.js';
 const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
   const isEditing = !!searchToEdit;
 
-  const getPriceValues = () => {
-    if (!searchToEdit?.price) return { minPrice: 0, maxPrice: 3000 };
-    const [min, max] = searchToEdit.price.split('-');
-    return {
-      minPrice: parseInt(min?.replace('£', '')) || 0,
-      maxPrice: parseInt(max) || 3000
-    };
-  };
-
   const steps = isEditing ? [
     LocationStep,
     PropertyTypeStep,
