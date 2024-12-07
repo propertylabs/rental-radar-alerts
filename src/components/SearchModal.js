@@ -213,57 +213,86 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
   };
 
   const renderStep = () => {
-    console.log('Current step:', step);
-    console.log('Steps array:', steps);
-    console.log('Current step component:', steps[step]);
-    console.log('Search criteria:', searchCriteria);
-    
     const CurrentStep = steps[step];
-    
-    if (!CurrentStep) {
-      console.error('No step component found for step:', step);
-      return null;
-    }
     
     return (
       <CurrentStep 
         values={
-          step === 0 ? searchCriteria.locations :
-          step === 1 ? searchCriteria.propertyTypes :
-          step === 2 ? {
-            minBedrooms: searchCriteria.minBedrooms,
-            maxBedrooms: searchCriteria.maxBedrooms,
-            minPrice: searchCriteria.minPrice,
-            maxPrice: searchCriteria.maxPrice
-          } :
-          step === 3 ? searchCriteria.mustHaves :
-          {
-            name: searchCriteria.name,
-            notifications: searchCriteria.notifications
-          }
+          // If editing, skip city step values
+          isEditing ? (
+            step === 0 ? searchCriteria.locations :
+            step === 1 ? searchCriteria.propertyTypes :
+            step === 2 ? {
+              minBedrooms: searchCriteria.minBedrooms,
+              maxBedrooms: searchCriteria.maxBedrooms,
+              minPrice: searchCriteria.minPrice,
+              maxPrice: searchCriteria.maxPrice
+            } :
+            step === 3 ? searchCriteria.mustHaves :
+            {
+              name: searchCriteria.name,
+              notifications: searchCriteria.notifications
+            }
+          ) : (
+            // Normal flow for new search
+            step === 0 ? searchCriteria.city :
+            step === 1 ? searchCriteria.locations :
+            step === 2 ? searchCriteria.propertyTypes :
+            step === 3 ? {
+              minBedrooms: searchCriteria.minBedrooms,
+              maxBedrooms: searchCriteria.maxBedrooms,
+              minPrice: searchCriteria.minPrice,
+              maxPrice: searchCriteria.maxPrice
+            } :
+            step === 4 ? searchCriteria.mustHaves :
+            {
+              name: searchCriteria.name,
+              notifications: searchCriteria.notifications
+            }
+          )
         }
         onChange={(values) => {
           switch(step) {
             case 0:
-              setSearchCriteria({...searchCriteria, city: values});
-              break;
-            case 1:
-              setSearchCriteria({...searchCriteria, locations: values});
-              break;
-            case 2:
-              setSearchCriteria({...searchCriteria, propertyTypes: values});
-              break;
-            case 3:
-              setSearchCriteria({
-                ...searchCriteria,
-                minBedrooms: values.minBedrooms,
-                maxBedrooms: values.maxBedrooms,
-                minPrice: values.minPrice,
-                maxPrice: values.maxPrice
+              setSearchCriteria({...searchCriteria, 
+                [isEditing ? 'locations' : 'city']: values
               });
               break;
+            case 1:
+              setSearchCriteria({...searchCriteria, 
+                [isEditing ? 'propertyTypes' : 'locations']: values
+              });
+              break;
+            case 2:
+              if (isEditing) {
+                setSearchCriteria({
+                  ...searchCriteria,
+                  minBedrooms: values.minBedrooms,
+                  maxBedrooms: values.maxBedrooms,
+                  minPrice: values.minPrice,
+                  maxPrice: values.maxPrice
+                });
+              } else {
+                setSearchCriteria({...searchCriteria, propertyTypes: values});
+              }
+              break;
+            case 3:
+              if (isEditing) {
+                setSearchCriteria({...searchCriteria, mustHaves: values});
+              } else {
+                setSearchCriteria({
+                  ...searchCriteria,
+                  minBedrooms: values.minBedrooms,
+                  maxBedrooms: values.maxBedrooms,
+                  minPrice: values.minPrice,
+                  maxPrice: values.maxPrice
+                });
+              }
+              break;
             case 4:
-              setSearchCriteria({...searchCriteria, mustHaves: values});
+              if (!isEditing) {
+                setSearchCriteria({...searchCriteria, mustHaves: values});
+              }
               break;
             default:
               setSearchCriteria({
