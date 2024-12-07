@@ -34,15 +34,6 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
     setEditedName(name);
   };
 
-  const handleSave = async () => {
-    if (!editedName.trim() || editedName.trim() === name) {
-      setIsEditing(false);
-      return;
-    }
-
-    setShowConfirm(true);
-  };
-
   const handleConfirmSave = async () => {
     setShowConfirm(false);
     setIsLoading(true);
@@ -96,8 +87,13 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
           value={editedName.toUpperCase()}
           onChange={(e) => setEditedName(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') handleSave();
-            if (e.key === 'Escape') setIsEditing(false);
+            if (e.key === 'Enter' && editedName.trim() && editedName.trim() !== name) {
+              setShowConfirm(true);
+            }
+            if (e.key === 'Escape') {
+              setIsEditing(false);
+              setEditedName(name);
+            }
           }}
           maxLength={30}
           onClick={(e) => e.stopPropagation()}
@@ -121,6 +117,8 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
               e.stopPropagation();
               if (editedName.trim() && editedName.trim() !== name) {
                 setShowConfirm(true);
+              } else {
+                setIsEditing(false);
               }
             }}
             disabled={isLoading || !editedName.trim() || editedName.trim() === name}
