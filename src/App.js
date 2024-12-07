@@ -13,13 +13,14 @@ import SearchModal from './components/SearchModal.js';
 
 const DashboardLayout = ({ children }) => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [searchToEdit, setSearchToEdit] = useState(null);
   
-  // Add effect to control body scroll
   useEffect(() => {
     if (isSearchModalOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
+      setSearchToEdit(null);  // Reset edit state when modal closes
     }
   }, [isSearchModalOpen]);
 
@@ -28,12 +29,16 @@ const DashboardLayout = ({ children }) => {
       <Navigation />
       <div className="content">
         {React.cloneElement(children, { 
-          onOpenSearchModal: () => setIsSearchModalOpen(true)
+          onOpenSearchModal: (searchData) => {
+            setSearchToEdit(searchData);
+            setIsSearchModalOpen(true);
+          }
         })}
       </div>
       <SearchModal 
         isOpen={isSearchModalOpen}
         onClose={() => setIsSearchModalOpen(false)}
+        searchToEdit={searchToEdit}
       />
     </div>
   );

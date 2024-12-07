@@ -647,7 +647,14 @@ const SearchesNew = ({ onOpenSearchModal }) => {
                         <RiDeleteBinLine style={{ fontSize: '20px', color: '#ff3b30' }} />
                         <span>Delete</span>
                       </button>
-                      <button style={styles.menuItem}>
+                      <button 
+                        style={styles.menuItem}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveMenu(null);  // Close the menu
+                          onOpenSearchModal(search);  // Pass the search data to edit
+                        }}
+                      >
                         <RiEditBoxLine style={{ fontSize: '20px', color: ACCENT }} />
                         <span>Edit</span>
                       </button>
