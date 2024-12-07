@@ -125,7 +125,12 @@ const CityStep = ({ value, onChange, onNext }) => {
   };
 
   const handleCityClick = (cityId) => {
+    console.log('City clicked:', cityId);
+    console.log('Current value:', value);
+    console.log('Is disabled:', cities.find(city => city.id === cityId).disabled);
+    
     if (!cities.find(city => city.id === cityId).disabled) {
+      console.log('Calling onChange with:', cityId === value ? null : cityId);
       onChange(cityId === value ? null : cityId);
     }
   };
