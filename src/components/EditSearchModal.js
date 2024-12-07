@@ -7,6 +7,8 @@ import MustHavesStep from './steps/MustHavesStep.js';
 import FinalizeStep from './steps/FinalizeStep.js';
 import { RiMapPinLine, RiHome4Line, RiPriceTag3Line, RiCheckboxLine, RiBellLine, RiArrowRightSLine } from 'react-icons/ri';
 
+const ACCENT = '#2E3F32'; // Deep forest green
+
 const EditSearchModal = ({ isOpen, onClose, searchData }) => {
   console.log('EditSearchModal render:', { isOpen, searchData });
 
