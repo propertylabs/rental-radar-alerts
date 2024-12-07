@@ -69,6 +69,8 @@ const LocationStep = ({ values, onChange, onNext }) => {
       flexDirection: 'column',
       gap: '32px',
       padding: '0px',
+      position: 'relative',
+      height: '100%',
     },
 
     header: {
@@ -204,7 +206,7 @@ const LocationStep = ({ values, onChange, onNext }) => {
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
-      marginBottom: 'calc(env(safe-area-inset-bottom) + 80px)',
+      marginBottom: '80px',
     },
 
     tagsContainer: {
