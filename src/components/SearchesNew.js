@@ -521,55 +521,59 @@ const styles = {
     marginBottom: '24px',
     boxShadow: '0 4px 12px rgba(46, 63, 50, 0.08)',
     height: '172px',
+    display: 'flex',
+    flexDirection: 'column',
   },
 
   skeletonContent: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '16px',
-    height: '100%',
+    flex: 1,
   },
 
   skeletonTop: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: '16px',
   },
 
   skeletonCount: {
-    width: '80px',
-    height: '28px',
-    borderRadius: '14px',
+    width: '120px',
+    height: '32px',
+    borderRadius: '8px',
     background: 'rgba(46, 63, 50, 0.08)',
     animation: 'pulse 1.5s ease-in-out infinite',
   },
 
   skeletonDot: {
-    width: '24px',
-    height: '24px',
+    width: '40px',
+    height: '40px',
     borderRadius: '50%',
     background: 'rgba(46, 63, 50, 0.08)',
     animation: 'pulse 1.5s ease-in-out infinite',
   },
 
   skeletonLocation: {
-    width: '70%',
+    width: '60%',
     height: '24px',
     borderRadius: '12px',
     background: 'rgba(46, 63, 50, 0.08)',
     animation: 'pulse 1.5s ease-in-out infinite',
+    marginTop: '12px',
   },
 
   skeletonPills: {
     display: 'flex',
     gap: '8px',
     marginTop: 'auto',
+    paddingTop: '16px',
   },
 
   skeletonPill: {
-    width: '100px',
-    height: '32px',
-    borderRadius: '16px',
+    width: '120px',
+    height: '36px',
+    borderRadius: '20px',
     background: 'rgba(46, 63, 50, 0.08)',
     animation: 'pulse 1.5s ease-in-out infinite',
   },
