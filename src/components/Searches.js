@@ -35,7 +35,7 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
   };
 
   const handleSave = async () => {
-    if (editedName.trim() === name) {
+    if (!editedName.trim() || editedName.trim() === name) {
       setIsEditing(false);
       return;
     }
@@ -49,10 +49,11 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
     
     try {
       const whopUserId = localStorage.getItem('whop_user_id');
-      console.log('Attempting to update name:', {
+      console.log('Starting name update:', {
         userId: whopUserId,
         searchId,
-        searchName: editedName.trim()
+        searchName: editedName.trim(),
+        currentName: name
       });
 
       const response = await fetch('/api/update-search-name', {
@@ -73,6 +74,7 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
       if (response.ok) {
         onNameUpdate(searchId, editedName.trim());
         setIsEditing(false);
+        console.log('Name update successful');
       } else {
         console.error('Failed to update name:', data.error);
         alert('Failed to update name. Please try again.');
@@ -107,6 +109,7 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
             onClick={(e) => {
               e.stopPropagation();
               setIsEditing(false);
+              setEditedName(name);
             }}
             disabled={isLoading}
           >
