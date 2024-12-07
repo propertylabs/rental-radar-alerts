@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import BaseSearchModal from './BaseSearchModal';
+import BaseSearchModal from './BaseSearchModal.js';
 import LocationStep from './steps/LocationStep.js';
 import PropertyTypeStep from './steps/PropertyTypeStep.js';
 import PriceBedroomsStep from './steps/PriceBedroomsStep.js';
