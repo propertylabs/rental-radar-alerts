@@ -663,7 +663,7 @@ const styles = {
 
   addButtonIcon: {
     color: '#fff',
-    fontSize: '24px',
+    fontSize: '24px !important',
   },
 
   searchList: {
@@ -1116,3 +1116,5 @@ const styles = {
 };
 
 export default Searches;
+
+
