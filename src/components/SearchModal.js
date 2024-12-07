@@ -221,67 +221,64 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
   };
 
   const renderStep = () => {
-    switch(step) {
-      case 1:
-        return <CityStep 
-          value={searchCriteria.city}
-          onChange={(city) => setSearchCriteria({...searchCriteria, city})}
-          onNext={() => setStep(2)}
-        />;
-      case 2:
-        return <LocationStep 
-          values={searchCriteria.locations}
-          city={searchCriteria.city}
-          onChange={(locations) => setSearchCriteria({...searchCriteria, locations})}
-          onNext={() => setStep(3)}
-        />;
-      case 3:
-        return <PropertyTypeStep 
-          values={searchCriteria.propertyTypes}
-          onChange={(types) => setSearchCriteria({...searchCriteria, propertyTypes: types})}
-          onNext={() => setStep(4)}
-        />;
-      case 4:
-        return <PriceBedroomsStep 
-          values={{
+    const CurrentStep = steps[step];
+    
+    return (
+      <CurrentStep 
+        values={
+          step === 0 ? searchCriteria.city :
+          step === 1 ? searchCriteria.locations :
+          step === 2 ? searchCriteria.propertyTypes :
+          step === 3 ? {
             minBedrooms: searchCriteria.minBedrooms,
             maxBedrooms: searchCriteria.maxBedrooms,
             minPrice: searchCriteria.minPrice,
             maxPrice: searchCriteria.maxPrice
-          }}
-          onChange={(values) => setSearchCriteria({
-            ...searchCriteria,
-            minBedrooms: values.minBedrooms,
-            maxBedrooms: values.maxBedrooms,
-            minPrice: values.minPrice,
-            maxPrice: values.maxPrice
-          })}
-          onNext={() => setStep(5)}
-        />;
-      case 5:
-        return <MustHavesStep 
-          values={searchCriteria.mustHaves}
-          onChange={(mustHaves) => setSearchCriteria({...searchCriteria, mustHaves})}
-          onNext={() => setStep(6)}
-        />;
-      case 6:
-        return <FinalizeStep 
-          values={{
+          } :
+          step === 4 ? searchCriteria.mustHaves :
+          {
             name: searchCriteria.name,
             notifications: searchCriteria.notifications
-          }}
-          onChange={(values) => setSearchCriteria({
-            ...searchCriteria,
-            name: values.name,
-            notifications: values.notifications
-          })}
-          onSave={handleSaveSearch}
-          isSaving={isSaving}
-          isSaved={isSaved}
-        />;
-      default:
-        return null;
-    }
+          }
+        }
+        onChange={(values) => {
+          switch(step) {
+            case 0:
+              setSearchCriteria({...searchCriteria, city: values});
+              break;
+            case 1:
+              setSearchCriteria({...searchCriteria, locations: values});
+              break;
+            case 2:
+              setSearchCriteria({...searchCriteria, propertyTypes: values});
+              break;
+            case 3:
+              setSearchCriteria({
+                ...searchCriteria,
+                minBedrooms: values.minBedrooms,
+                maxBedrooms: values.maxBedrooms,
+                minPrice: values.minPrice,
+                maxPrice: values.maxPrice
+              });
+              break;
+            case 4:
+              setSearchCriteria({...searchCriteria, mustHaves: values});
+              break;
+            default:
+              setSearchCriteria({
+                ...searchCriteria,
+                name: values.name,
+                notifications: values.notifications
+              });
+          }
+        }}
+        onNext={() => setStep(prev => prev + 1)}
+        onSave={step === steps.length - 1 ? handleSaveSearch : undefined}
+        isSaving={isSaving}
+        isSaved={isSaved}
+        isEditing={isEditing}
+      />
+    );
   };
 
   const handleCloseButton = () => {
