@@ -37,15 +37,15 @@ const SearchModal = ({ isOpen, onClose, searchToEdit }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [searchCriteria, setSearchCriteria] = useState({
-    locations: searchToEdit?.location?.split(', ') || [],
-    propertyTypes: searchToEdit?.type ? [searchToEdit.type] : [],
-    minBedrooms: searchToEdit?.minBedrooms || 1,
-    maxBedrooms: searchToEdit?.maxBedrooms || 5,
-    minPrice: searchToEdit?.price ? parseInt(searchToEdit.price.split('-')[0].replace('£', '')) : 0,
-    maxPrice: searchToEdit?.price ? parseInt(searchToEdit.price.split('-')[1]) : 3000,
+    locations: searchToEdit?.postcodes || [],
+    propertyTypes: searchToEdit?.criteria?.propertyTypes || [],
+    minBedrooms: searchToEdit?.criteria?.minBedrooms || 1,
+    maxBedrooms: searchToEdit?.criteria?.maxBedrooms || 5,
+    minPrice: searchToEdit?.criteria?.minPrice || 0,
+    maxPrice: searchToEdit?.criteria?.maxPrice || 3000,
     mustHaves: searchToEdit?.criteria?.mustHaves || [],
-    name: searchToEdit?.name || '',
-    notifications: searchToEdit?.active ?? true,
+    name: searchToEdit?.searchName || '',
+    notifications: searchToEdit?.notifications ?? true,
   });
 
   const modalTitle = isEditing ? 'Edit Search' : 'New Search';
