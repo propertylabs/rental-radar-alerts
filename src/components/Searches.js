@@ -160,6 +160,7 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
                   onClick={() => {
                     setShowModal(false);
                     setEditedName(name);
+                    setIsEditing(false);
                   }}
                 >
                   Cancel
