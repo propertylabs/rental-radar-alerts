@@ -37,6 +37,9 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
     if (!isEditing) return;
 
     const handleClickOutside = (event) => {
+      // Don't handle clicks outside if modal is open
+      if (showModal) return;
+      
       if (containerRef.current && !containerRef.current.contains(event.target)) {
         resetEditState();
       }
@@ -46,7 +49,7 @@ const SearchNameDisplay = ({ name, searchId, onNameUpdate }) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isEditing, name]);
+  }, [isEditing, name, showModal]);
 
   // New function for handling the actual API save
   const handleConfirmSave = async () => {
