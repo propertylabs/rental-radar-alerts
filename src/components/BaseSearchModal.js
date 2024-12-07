@@ -101,7 +101,7 @@ const BaseSearchModal = {
     },
   },
 
-  renderModalFrame: ({ isOpen, onClose, children, title, step, setStep }) => (
+  renderModalFrame: ({ isOpen, onClose, children, title, showBack, onBack }) => (
     <div 
       style={{
         ...BaseSearchModal.styles.backdrop,
@@ -122,10 +122,10 @@ const BaseSearchModal = {
         <div style={BaseSearchModal.styles.header}>
           <div style={BaseSearchModal.styles.headerContent}>
             <div style={BaseSearchModal.styles.headerLeft}>
-              {step > 0 && (
+              {showBack && (
                 <button 
                   style={BaseSearchModal.styles.backButton} 
-                  onClick={() => setStep(prev => prev - 1)}
+                  onClick={onBack}
                 >
                   ← Back
                 </button>

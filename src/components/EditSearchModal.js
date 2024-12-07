@@ -10,40 +10,7 @@ import { RiMapPinLine, RiHome4Line, RiPriceTag3Line, RiCheckboxLine, RiBellLine,
 const ACCENT = '#2E3F32'; // Deep forest green
 
 // Move EditMenuStep outside of EditSearchModal
-const EditMenuStep = ({ onSelectStep }) => {
-  const menuItems = [
-    { 
-      id: 0, 
-      title: 'Location',
-      description: 'Change postcodes and areas',
-      icon: RiMapPinLine 
-    },
-    { 
-      id: 1, 
-      title: 'Property Type',
-      description: 'Switch between house, flat, or room',
-      icon: RiHome4Line 
-    },
-    { 
-      id: 2, 
-      title: 'Price & Bedrooms',
-      description: 'Adjust your budget and size requirements',
-      icon: RiPriceTag3Line 
-    },
-    { 
-      id: 3, 
-      title: 'Must-Haves',
-      description: 'Update essential property features',
-      icon: RiCheckboxLine 
-    },
-    { 
-      id: 4, 
-      title: 'Name & Notifications',
-      description: 'Change search name and alert preferences',
-      icon: RiBellLine 
-    },
-  ];
-
+const EditMenuStep = ({ steps, onSelectStep }) => {
   const styles = {
     container: {
       flex: 1,
@@ -132,18 +99,18 @@ const EditMenuStep = ({ onSelectStep }) => {
       </div>
 
       <div style={styles.menuList}>
-        {menuItems.map((item) => {
-          const Icon = item.icon;
+        {steps.map((step) => {
+          const Icon = step.icon;
           return (
             <button
-              key={item.id}
+              key={step.id}
               style={styles.menuItem}
-              onClick={() => onSelectStep(item.id)}
+              onClick={() => onSelectStep(step.id)}
             >
               <Icon style={styles.menuItemIcon} />
               <div style={styles.menuItemContent}>
-                <div style={styles.menuItemTitle}>{item.title}</div>
-                <div style={styles.menuItemDescription}>{item.description}</div>
+                <div style={styles.menuItemTitle}>{step.title}</div>
+                <div style={styles.menuItemDescription}>{step.description}</div>
               </div>
               <RiArrowRightSLine style={styles.menuItemArrow} />
             </button>
@@ -155,11 +122,8 @@ const EditMenuStep = ({ onSelectStep }) => {
 };
 
 const EditSearchModal = ({ isOpen, onClose, searchData }) => {
-  console.log('EditSearchModal render:', { isOpen, searchData });
-
-  const [step, setStep] = useState(-1);
+  const [selectedStep, setSelectedStep] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
   const [searchCriteria, setSearchCriteria] = useState({
     locations: [],
     propertyTypes: [],
@@ -174,9 +138,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
 
   // Initialize with search data when available
   useEffect(() => {
-    console.log('searchData changed:', searchData);
     if (searchData) {
-      console.log('Setting search criteria with:', searchData);
       setSearchCriteria({
         locations: searchData.location.split(', '),
         propertyTypes: [searchData.type],
@@ -192,19 +154,46 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
   }, [searchData]);
 
   const steps = [
-    EditMenuStep,
-    LocationStep,
-    PropertyTypeStep,
-    PriceBedroomsStep,
-    MustHavesStep,
-    FinalizeStep
+    { 
+      id: 0,
+      title: 'Location',
+      description: 'Change postcodes and areas',
+      icon: RiMapPinLine,
+      component: LocationStep
+    },
+    { 
+      id: 1,
+      title: 'Property Type',
+      description: 'Switch between house, flat, or room',
+      icon: RiHome4Line,
+      component: PropertyTypeStep
+    },
+    { 
+      id: 2,
+      title: 'Price & Bedrooms',
+      description: 'Adjust your budget and size requirements',
+      icon: RiPriceTag3Line,
+      component: PriceBedroomsStep
+    },
+    { 
+      id: 3,
+      title: 'Must-Haves',
+      description: 'Update essential property features',
+      icon: RiCheckboxLine,
+      component: MustHavesStep
+    },
+    { 
+      id: 4,
+      title: 'Name & Notifications',
+      description: 'Change search name and alert preferences',
+      icon: RiBellLine,
+      component: FinalizeStep
+    },
   ];
 
-  // Add reset function
   const resetModal = () => {
-    setStep(-1);
+    setSelectedStep(null);
     setIsSaving(false);
-    setIsSaved(false);
     setSearchCriteria({
       locations: [],
       propertyTypes: [],
@@ -218,17 +207,41 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     });
   };
 
-  // Update handleSaveSearch
-  const handleSaveSearch = async () => {
-    if (isSaving) return;
+  const handleSectionSave = async (stepId, values) => {
+    setIsSaving(true);
     try {
-      setIsSaving(true);
       const whopUserId = localStorage.getItem('whop_user_id');
       
       if (!whopUserId) {
         throw new Error('No user ID available');
       }
 
+      // Update local state first
+      const updatedCriteria = { ...searchCriteria };
+      switch(stepId) {
+        case 0:
+          updatedCriteria.locations = values;
+          break;
+        case 1:
+          updatedCriteria.propertyTypes = values;
+          break;
+        case 2:
+          updatedCriteria.minBedrooms = values.minBedrooms;
+          updatedCriteria.maxBedrooms = values.maxBedrooms;
+          updatedCriteria.minPrice = values.minPrice;
+          updatedCriteria.maxPrice = values.maxPrice;
+          break;
+        case 3:
+          updatedCriteria.mustHaves = values;
+          break;
+        case 4:
+          updatedCriteria.name = values.name;
+          updatedCriteria.notifications = values.notifications;
+          break;
+      }
+      setSearchCriteria(updatedCriteria);
+
+      // Save to API
       const response = await fetch('/api/update-search', {
         method: 'PUT',
         headers: {
@@ -237,15 +250,15 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
         body: JSON.stringify({
           user_id: whopUserId,
           searchId: searchData.id,
-          search_name: searchCriteria.name,
-          postcodes: searchCriteria.locations,
-          min_price: searchCriteria.minPrice,
-          max_price: searchCriteria.maxPrice,
-          min_bedrooms: searchCriteria.minBedrooms,
-          max_bedrooms: searchCriteria.maxBedrooms,
-          property_types: searchCriteria.propertyTypes,
-          must_haves: searchCriteria.mustHaves,
-          notifications: searchCriteria.notifications,
+          search_name: updatedCriteria.name,
+          postcodes: updatedCriteria.locations,
+          min_price: updatedCriteria.minPrice,
+          max_price: updatedCriteria.maxPrice,
+          min_bedrooms: updatedCriteria.minBedrooms,
+          max_bedrooms: updatedCriteria.maxBedrooms,
+          property_types: updatedCriteria.propertyTypes,
+          must_haves: updatedCriteria.mustHaves,
+          notifications: updatedCriteria.notifications,
         }),
       });
 
@@ -253,12 +266,10 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
         throw new Error('Failed to update search');
       }
 
-      setIsSaved(true);
-      setTimeout(() => {
-        resetModal();  // Reset before closing
-        onClose();
-        window.dispatchEvent(new CustomEvent('refreshSearches'));
-      }, 500);
+      // Return to menu and refresh list
+      setSelectedStep(null);
+      window.dispatchEvent(new CustomEvent('refreshSearches'));
+
     } catch (error) {
       alert('Failed to update search');
       console.error('Error updating search:', error);
@@ -268,62 +279,38 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
   };
 
   const renderStep = () => {
-    const CurrentStep = steps[step + 1];
-    
-    if (step === -1) {
-      return <CurrentStep onSelectStep={(selectedStep) => setStep(selectedStep)} />;
+    if (selectedStep === null) {
+      return (
+        <EditMenuStep 
+          steps={steps}
+          onSelectStep={setSelectedStep}
+        />
+      );
     }
 
+    const step = steps[selectedStep];
+    const StepComponent = step.component;
+
     return (
-      <CurrentStep 
+      <StepComponent 
         values={
-          step === 0 ? searchCriteria.locations :
-          step === 1 ? searchCriteria.propertyTypes :
-          step === 2 ? {
+          selectedStep === 0 ? searchCriteria.locations :
+          selectedStep === 1 ? searchCriteria.propertyTypes :
+          selectedStep === 2 ? {
             minBedrooms: searchCriteria.minBedrooms,
             maxBedrooms: searchCriteria.maxBedrooms,
             minPrice: searchCriteria.minPrice,
             maxPrice: searchCriteria.maxPrice
           } :
-          step === 3 ? searchCriteria.mustHaves :
+          selectedStep === 3 ? searchCriteria.mustHaves :
           {
             name: searchCriteria.name,
             notifications: searchCriteria.notifications
           }
         }
-        onChange={(values) => {
-          switch(step) {
-            case 0:
-              setSearchCriteria({...searchCriteria, locations: values});
-              break;
-            case 1:
-              setSearchCriteria({...searchCriteria, propertyTypes: values});
-              break;
-            case 2:
-              setSearchCriteria({
-                ...searchCriteria,
-                minBedrooms: values.minBedrooms,
-                maxBedrooms: values.maxBedrooms,
-                minPrice: values.minPrice,
-                maxPrice: values.maxPrice
-              });
-              break;
-            case 3:
-              setSearchCriteria({...searchCriteria, mustHaves: values});
-              break;
-            default:
-              setSearchCriteria({
-                ...searchCriteria,
-                name: values.name,
-                notifications: values.notifications
-              });
-          }
-        }}
-        onNext={() => setStep(-1)}
-        onSave={step === steps.length - 2 ? handleSaveSearch : undefined}
-        isSaving={isSaving}
-        isSaved={isSaved}
+        onChange={(values) => handleSectionSave(selectedStep, values)}
         isEditing={true}
+        isSaving={isSaving}
       />
     );
   };
@@ -331,12 +318,12 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
   return BaseSearchModal.renderModalFrame({
     isOpen,
     onClose: () => {
-      resetModal();  // Reset before closing
+      resetModal();
       onClose();
     },
-    title: 'Edit Search',
-    step,
-    setStep,
+    title: selectedStep === null ? 'Edit Search' : steps[selectedStep].title,
+    showBack: selectedStep !== null,
+    onBack: () => setSelectedStep(null),
     children: renderStep()
   });
 };

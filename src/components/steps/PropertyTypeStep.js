@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { RiHome4Line, RiBuilding2Line, RiDoorLine } from 'react-icons/ri';
 
-const PropertyTypeStep = ({ values, onChange, onNext }) => {
+const PropertyTypeStep = ({ values, onChange, isEditing }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [errorButtonId, setErrorButtonId] = useState(null);
   const [pressedId, setPressedId] = useState(null);
@@ -274,10 +274,10 @@ const PropertyTypeStep = ({ values, onChange, onNext }) => {
 
       <button 
         style={styles.nextButton}
-        onClick={onNext}
+        onClick={() => onChange(values)}
         disabled={values.length === 0}
       >
-        Continue
+        {isEditing ? 'Save Changes' : 'Continue'}
       </button>
     </div>
   );
