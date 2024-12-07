@@ -57,6 +57,11 @@ const EditMenuStep = ({ steps, onSelectStep }) => {
       border: '1px solid rgba(46, 63, 50, 0.08)',
       cursor: 'pointer',
       transition: 'all 0.2s ease',
+      WebkitTapHighlightColor: 'transparent',
+      ':active': {
+        transform: 'scale(0.98)',
+        opacity: 0.9,
+      },
     },
 
     menuItemIcon: {
@@ -138,7 +143,9 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
 
   // Initialize with search data when available
   useEffect(() => {
+    console.log('Raw search data:', searchData);
     if (searchData) {
+      console.log('Setting search criteria with:', searchData);
       setSearchCriteria({
         locations: searchData.location.split(', '),
         propertyTypes: [searchData.type],
@@ -317,13 +324,18 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
 
   return BaseSearchModal.renderModalFrame({
     isOpen,
-    onClose: () => {
-      resetModal();
-      onClose();
-    },
+    onClose,
     title: selectedStep === null ? 'Edit Search' : steps[selectedStep].title,
-    showBack: selectedStep !== null,
-    onBack: () => setSelectedStep(null),
+    showCloseButton: false,
+    showBackButton: selectedStep !== null,
+    customHeaderRight: selectedStep === null ? (
+      <button 
+        style={styles.doneButton} 
+        onClick={onClose}
+      >
+        Done
+      </button>
+    ) : null,
     children: renderStep()
   });
 };

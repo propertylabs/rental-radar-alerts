@@ -101,7 +101,16 @@ const BaseSearchModal = {
     },
   },
 
-  renderModalFrame: ({ isOpen, onClose, children, title, showBack, onBack }) => (
+  renderModalFrame: ({ 
+    isOpen, 
+    onClose, 
+    children, 
+    title, 
+    showCloseButton = true, 
+    showBackButton,
+    onBack,
+    customHeaderRight 
+  }) => (
     <div 
       style={{
         ...BaseSearchModal.styles.backdrop,
@@ -122,7 +131,7 @@ const BaseSearchModal = {
         <div style={BaseSearchModal.styles.header}>
           <div style={BaseSearchModal.styles.headerContent}>
             <div style={BaseSearchModal.styles.headerLeft}>
-              {showBack && (
+              {showBackButton && (
                 <button 
                   style={BaseSearchModal.styles.backButton} 
                   onClick={onBack}
@@ -135,12 +144,11 @@ const BaseSearchModal = {
               <h2 style={BaseSearchModal.styles.title}>{title}</h2>
             </div>
             <div style={BaseSearchModal.styles.headerRight}>
-              <button 
-                style={BaseSearchModal.styles.closeButton} 
-                onClick={onClose}
-              >
-                ×
-              </button>
+              {customHeaderRight || (showCloseButton && (
+                <button style={BaseSearchModal.styles.closeButton} onClick={onClose}>
+                  ×
+                </button>
+              ))}
             </div>
           </div>
         </div>

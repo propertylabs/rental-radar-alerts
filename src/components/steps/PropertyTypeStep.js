@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { RiHome4Line, RiBuilding2Line, RiDoorLine } from 'react-icons/ri';
 
-const PropertyTypeStep = ({ values, onChange, onNext, isEditing }) => {
+const PropertyTypeStep = ({ values, onChange, onNext, isEditing, onBack }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [errorButtonId, setErrorButtonId] = useState(null);
   const [pressedId, setPressedId] = useState(null);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [localValues, setLocalValues] = useState(values);
 
   const options = [
     { 
@@ -56,6 +58,11 @@ const PropertyTypeStep = ({ values, onChange, onNext, isEditing }) => {
   const isDisabled = (id) => {
     if (id === 'Room') return hasNonRoomSelection;
     return isRoomSelected;
+  };
+
+  const handleChange = (newValues) => {
+    setLocalValues(newValues);
+    setHasChanges(true);
   };
 
   const styles = {
@@ -274,10 +281,9 @@ const PropertyTypeStep = ({ values, onChange, onNext, isEditing }) => {
 
       <button 
         style={styles.nextButton}
-        onClick={isEditing ? () => onChange(values) : onNext}
-        disabled={values.length === 0}
+        onClick={hasChanges ? () => onChange(localValues) : onBack}
       >
-        {isEditing ? 'Save Changes' : 'Continue'}
+        {hasChanges ? 'Save Changes' : 'Back'}
       </button>
     </div>
   );
