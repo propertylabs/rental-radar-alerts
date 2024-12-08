@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { RiHome4Line, RiBuilding2Line, RiDoorLine } from 'react-icons/ri';
 
-const PropertyTypeStep = ({ values, onChange, onNext, isEditing }) => {
+const PropertyTypeStep = ({ values, onChange }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [errorButtonId, setErrorButtonId] = useState(null);
   const [pressedId, setPressedId] = useState(null);
@@ -205,28 +205,6 @@ const PropertyTypeStep = ({ values, onChange, onNext, isEditing }) => {
       fontSize: '16px',
       color: '#2E3F32',
     },
-
-    nextButton: {
-      position: 'absolute',
-      bottom: 'max(env(safe-area-inset-bottom), 24px)',
-      left: '16px',
-      right: '16px',
-      background: values.length > 0 
-        ? 'linear-gradient(145deg, #2E3F32, #3A4F3E)'
-        : 'rgba(46, 63, 50, 0.1)',
-      border: 'none',
-      borderRadius: '16px',
-      padding: '18px',
-      color: values.length > 0 ? 'white' : '#666',
-      fontSize: '17px',
-      fontWeight: '600',
-      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-      cursor: values.length > 0 ? 'pointer' : 'default',
-      letterSpacing: '-0.2px',
-      boxShadow: values.length > 0 
-        ? '0 4px 12px rgba(46, 63, 50, 0.2)'
-        : 'none',
-    },
   };
 
   return (
@@ -278,14 +256,6 @@ const PropertyTypeStep = ({ values, onChange, onNext, isEditing }) => {
           </p>
         )}
       </div>
-
-      <button 
-        style={styles.nextButton}
-        onClick={isEditing ? () => onChange(values) : onNext}
-        disabled={values.length === 0}
-      >
-        {isEditing ? 'Save Changes' : 'Continue'}
-      </button>
     </div>
   );
 };

@@ -6,7 +6,7 @@ import {
   RiBuildingFill      // Changed from RiBuildings4Line
 } from 'react-icons/ri';
 
-const CityStep = ({ value, onChange, onNext }) => {
+const CityStep = ({ value, onChange }) => {
   const [pressedId, setPressedId] = useState(null);
 
   const cities = [
@@ -100,28 +100,6 @@ const CityStep = ({ value, onChange, onNext }) => {
       color: '#666',
       marginTop: '4px',
     },
-
-    nextButton: {
-      position: 'absolute',
-      bottom: 'max(env(safe-area-inset-bottom), 24px)',
-      left: '16px',
-      right: '16px',
-      background: value 
-        ? 'linear-gradient(145deg, #2E3F32, #3A4F3E)'
-        : 'rgba(46, 63, 50, 0.1)',
-      border: 'none',
-      borderRadius: '16px',
-      padding: '18px',
-      color: value ? 'white' : '#666',
-      fontSize: '17px',
-      fontWeight: '600',
-      cursor: value ? 'pointer' : 'default',
-      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-      letterSpacing: '-0.2px',
-      boxShadow: value 
-        ? '0 4px 12px rgba(46, 63, 50, 0.2)'
-        : 'none',
-    },
   };
 
   const handleCityClick = (cityId) => {
@@ -173,14 +151,6 @@ const CityStep = ({ value, onChange, onNext }) => {
           );
         })}
       </div>
-
-      <button 
-        style={styles.nextButton}
-        onClick={onNext}
-        disabled={!value}
-      >
-        Continue
-      </button>
     </div>
   );
 };

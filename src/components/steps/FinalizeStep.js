@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { RiBellLine, RiBellFill } from 'react-icons/ri';
 
-const FinalizeStep = ({ values, onChange, onSave, isSaving, isSaved, isEditing }) => {
+const FinalizeStep = ({ values, onChange }) => {
   const styles = {
     container: {
       flex: 1,
@@ -101,40 +101,6 @@ const FinalizeStep = ({ values, onChange, onSave, isSaving, isSaved, isEditing }
       color: isEnabled ? '#2E3F32' : '#666',
       transition: 'all 0.2s ease',
     }),
-
-    saveButton: {
-      position: 'absolute',
-      bottom: 'max(env(safe-area-inset-bottom), 24px)',
-      left: '16px',
-      right: '16px',
-      background: values.name
-        ? 'linear-gradient(145deg, #2E3F32, #3A4F3E)'
-        : 'rgba(46, 63, 50, 0.1)',
-      border: 'none',
-      borderRadius: '16px',
-      padding: '18px',
-      color: values.name ? 'white' : '#666',
-      fontSize: '17px',
-      fontWeight: '600',
-      cursor: values.name ? 'pointer' : 'default',
-      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-      letterSpacing: '-0.2px',
-      boxShadow: values.name 
-        ? '0 4px 12px rgba(46, 63, 50, 0.2)'
-        : 'none',
-      opacity: isSaving ? 0.7 : 1,
-    },
-  };
-
-  const handleSave = async () => {
-    if (!values.name || isSaving || isSaved) return;
-    await onSave();
-  };
-
-  const getButtonText = () => {
-    if (isSaved) return 'Saved';
-    if (isSaving) return 'Saving...';
-    return isEditing ? 'Save Changes' : 'Save Search';
   };
 
   return (
@@ -174,22 +140,6 @@ const FinalizeStep = ({ values, onChange, onSave, isSaving, isSaved, isEditing }
           )}
         </div>
       </div>
-
-      <button 
-        style={{
-          ...styles.saveButton,
-          background: isSaved 
-            ? '#34C759'
-            : values.name
-              ? 'linear-gradient(145deg, #2E3F32, #3A4F3E)'
-              : 'rgba(46, 63, 50, 0.1)',
-          cursor: isSaved ? 'default' : values.name ? 'pointer' : 'default',
-        }}
-        onClick={handleSave}
-        disabled={!values.name || isSaving || isSaved}
-      >
-        {getButtonText()}
-      </button>
     </div>
   );
 };

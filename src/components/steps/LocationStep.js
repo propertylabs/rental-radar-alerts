@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { RiMapLine, RiSearchLine, RiCloseLine } from 'react-icons/ri';
 
-const LocationStep = ({ values, onChange, onNext }) => {
+const LocationStep = ({ values, onChange }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
@@ -277,28 +277,6 @@ const LocationStep = ({ values, onChange, onNext }) => {
         transform: 'scale(1)',
       }
     },
-
-    continueButton: {
-      position: 'fixed',
-      bottom: 'env(safe-area-inset-bottom, 24px)',
-      left: '16px',
-      right: '16px',
-      background: values.length > 0
-        ? 'linear-gradient(145deg, #2E3F32, #3A4F3E)'
-        : 'rgba(46, 63, 50, 0.1)',
-      border: 'none',
-      borderRadius: '16px',
-      padding: '18px',
-      color: values.length > 0 ? 'white' : '#666',
-      fontSize: '17px',
-      fontWeight: '600',
-      cursor: values.length > 0 ? 'pointer' : 'default',
-      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-      letterSpacing: '-0.2px',
-      boxShadow: values.length > 0 
-        ? '0 4px 12px rgba(46, 63, 50, 0.2)'
-        : 'none',
-    },
   };
 
   const getSearchResults = (term) => {
@@ -447,14 +425,6 @@ const LocationStep = ({ values, onChange, onNext }) => {
           </div>
         )}
       </div>
-
-      <button 
-        style={styles.continueButton}
-        onClick={onNext}
-        disabled={values.length === 0}
-      >
-        Continue
-      </button>
     </div>
   );
 };

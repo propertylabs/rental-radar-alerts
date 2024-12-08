@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { RiHotelBedLine, RiMoneyPoundCircleLine } from 'react-icons/ri';
 
-const PriceBedroomsStep = ({ values, onChange, onNext }) => {
+const PriceBedroomsStep = ({ values, onChange }) => {
   const [activeDragHandle, setActiveDragHandle] = useState(null);
   const [sliderWidth, setSliderWidth] = useState(0);
   const sliderRef = useRef(null);
@@ -320,24 +320,6 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
       letterSpacing: '-0.2px',
     },
 
-    nextButton: {
-      position: 'absolute',
-      bottom: 'max(env(safe-area-inset-bottom), 24px)',
-      left: '16px',
-      right: '16px',
-      background: 'linear-gradient(145deg, #2E3F32, #3A4F3E)',
-      border: 'none',
-      borderRadius: '16px',
-      padding: '18px',
-      color: 'white',
-      fontSize: '17px',
-      fontWeight: '600',
-      cursor: 'pointer',
-      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-      letterSpacing: '-0.2px',
-      boxShadow: '0 4px 12px rgba(46, 63, 50, 0.2)',
-    },
-
     sectionDisabled: {
       background: 'rgba(46, 63, 50, 0.02)',
       backdropFilter: 'blur(20px)',
@@ -474,13 +456,6 @@ const PriceBedroomsStep = ({ values, onChange, onNext }) => {
           </div>
         </div>
       </div>
-
-      <button 
-        style={styles.nextButton}
-        onClick={onNext}
-      >
-        Continue
-      </button>
     </div>
   );
 };

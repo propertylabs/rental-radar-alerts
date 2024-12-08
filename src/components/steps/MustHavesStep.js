@@ -8,7 +8,7 @@ import {
   RiWaterFlashLine
 } from 'react-icons/ri';
 
-const MustHavesStep = ({ values, onChange, onNext }) => {
+const MustHavesStep = ({ values, onChange }) => {
   const [pressedId, setPressedId] = useState(null);
 
   const features = [
@@ -119,31 +119,6 @@ const MustHavesStep = ({ values, onChange, onNext }) => {
       transition: 'all 0.2s ease',
       letterSpacing: '-0.1px',
     }),
-
-    continueButton: {
-      position: 'absolute',
-      bottom: 'max(env(safe-area-inset-bottom), 24px)',
-      left: '16px',
-      right: '16px',
-      background: values.length > 0
-        ? 'linear-gradient(145deg, #2E3F32, #3A4F3E)'
-        : 'rgba(46, 63, 50, 0.02)',
-      border: '1px solid',
-      borderColor: values.length > 0 
-        ? 'transparent'
-        : 'rgba(46, 63, 50, 0.08)',
-      borderRadius: '16px',
-      padding: '18px',
-      color: values.length > 0 ? 'white' : '#2E3F32',
-      fontSize: '17px',
-      fontWeight: '600',
-      cursor: 'pointer',
-      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-      letterSpacing: '-0.2px',
-      boxShadow: values.length > 0 
-        ? '0 4px 12px rgba(46, 63, 50, 0.2)'
-        : 'none',
-    },
   };
 
   const handleFeatureClick = (featureId) => {
@@ -189,13 +164,6 @@ const MustHavesStep = ({ values, onChange, onNext }) => {
           );
         })}
       </div>
-
-      <button 
-        style={styles.continueButton}
-        onClick={onNext}
-      >
-        {values.length > 0 ? 'Continue' : 'Skip'}
-      </button>
     </div>
   );
 };

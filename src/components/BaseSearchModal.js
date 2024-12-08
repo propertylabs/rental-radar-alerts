@@ -109,7 +109,8 @@ const BaseSearchModal = {
     showCloseButton = true, 
     showBackButton,
     onBack,
-    customHeaderRight 
+    customHeaderRight,
+    buttonState 
   }) => (
     <div 
       style={{
@@ -152,6 +153,18 @@ const BaseSearchModal = {
             </div>
           </div>
         </div>
+        {buttonState && (
+          <button
+            style={{
+              ...BaseSearchModal.styles.continueButton,
+              opacity: buttonState.opacity
+            }}
+            onClick={buttonState.onClick}
+            disabled={buttonState.disabled}
+          >
+            {buttonState.text}
+          </button>
+        )}
         {children}
       </div>
     </div>
