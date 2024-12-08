@@ -6,60 +6,25 @@ const EditStepComponent = ({ StepComponent, values, onChange, onBack, isSaving, 
       display: 'flex',
       flexDirection: 'column',
       height: '100%',
-    },
-    
-    content: {
-      flex: 1,
-      overflowY: 'auto',
       padding: '20px',
     },
-
-    footer: {
-      padding: '16px 20px',
-      borderTop: '1px solid #eee',
-    },
-
-    button: {
-      width: '100%',
-      padding: '16px',
-      fontSize: '17px',
-      fontWeight: '600',
-      border: 'none',
-      borderRadius: '12px',
-      backgroundColor: '#2E3F32',
-      color: 'white',
-      cursor: 'pointer',
-      transition: 'all 0.2s ease',
-      opacity: hasChanges ? 1 : 0.8,
-    }
   };
 
-  const handleButtonClick = () => {
-    if (hasChanges) {
-      onChange(values);
-    } else {
-      onBack();
-    }
+  // Pass these props up to BaseSearchModal's continue button
+  const continueButtonProps = {
+    onClick: hasChanges ? () => onChange(values) : onBack,
+    disabled: isSaving,
+    text: isSaving ? 'Saving...' : (hasChanges ? 'Save Changes' : 'Back'),
+    opacity: hasChanges ? 1 : 0.8
   };
 
   return (
     <div style={styles.container}>
-      <div style={styles.content}>
-        <StepComponent
-          values={values}
-          onChange={onChange}
-        />
-      </div>
-      
-      <div style={styles.footer}>
-        <button 
-          style={styles.button}
-          onClick={handleButtonClick}
-          disabled={isSaving}
-        >
-          {isSaving ? 'Saving...' : (hasChanges ? 'Save Changes' : 'Back')}
-        </button>
-      </div>
+      <StepComponent
+        values={values}
+        onChange={onChange}
+        continueButtonProps={continueButtonProps}
+      />
     </div>
   );
 };
