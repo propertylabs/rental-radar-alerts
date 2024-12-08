@@ -6,46 +6,60 @@ const EditStepComponent = ({ StepComponent, values, onChange, onBack, isSaving, 
       display: 'flex',
       flexDirection: 'column',
       height: '100%',
-      padding: '16px',
     },
     
-    stepContent: {
+    content: {
       flex: 1,
       overflowY: 'auto',
+      padding: '20px',
     },
 
-    bottomButton: {
+    footer: {
+      padding: '16px 20px',
+      borderTop: '1px solid #eee',
+    },
+
+    button: {
       width: '100%',
       padding: '16px',
-      borderRadius: '12px',
-      border: 'none',
-      backgroundColor: '#2E3F32',
-      color: 'white',
       fontSize: '17px',
       fontWeight: '600',
-      marginTop: '16px',
+      border: 'none',
+      borderRadius: '12px',
+      backgroundColor: '#2E3F32',
+      color: 'white',
       cursor: 'pointer',
-      transition: 'opacity 0.2s ease',
-      opacity: hasChanges ? 1 : 0.5,
+      transition: 'all 0.2s ease',
+      opacity: hasChanges ? 1 : 0.8,
+    }
+  };
+
+  const handleButtonClick = () => {
+    if (hasChanges) {
+      onChange(values);
+    } else {
+      onBack();
     }
   };
 
   return (
     <div style={styles.container}>
-      <div style={styles.stepContent}>
+      <div style={styles.content}>
         <StepComponent
           values={values}
           onChange={onChange}
         />
       </div>
-
-      <button 
-        style={styles.bottomButton}
-        onClick={hasChanges ? () => onChange(values) : onBack}
-        disabled={isSaving}
-      >
-        {isSaving ? 'Saving...' : (hasChanges ? 'Save Changes' : 'Back')}
-      </button>
+      
+      <div style={styles.footer}>
+        <button 
+          style={styles.button}
+          onClick={handleButtonClick}
+          disabled={isSaving}
+        >
+          {isSaving ? 'Saving...' : (hasChanges ? 'Save Changes' : 'Back')}
+        </button>
+      </div>
     </div>
   );
 };
