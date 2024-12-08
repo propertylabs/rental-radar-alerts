@@ -213,7 +213,7 @@ const LocationStep = ({ values, onChange }) => {
       gap: '8px',
       padding: '16px',
       overflowY: 'auto',
-      flex: 1,
+      height: '100%',
       alignContent: 'start',
       WebkitOverflowScrolling: 'touch',
     },
@@ -254,7 +254,7 @@ const LocationStep = ({ values, onChange }) => {
     },
 
     emptyState: {
-      flex: 1,
+      height: '100%',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
