@@ -395,20 +395,18 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     }
   };
 
-  const continueButtonProps = selectedStep !== null ? {
-    onClick: hasChanges ? () => handleSectionSave(selectedStep, searchCriteria) : handleBack,
-    disabled: isSaving,
-    text: isSaving ? 'Saving...' : (hasChanges ? 'Save' : 'Back'),
-    opacity: hasChanges ? 1 : 0.8
-  } : null;
-
   return BaseSearchModal.renderModalFrame({
     isOpen,
     onClose: handleClose,
     title: selectedStep === null ? 'Edit Search' : steps[selectedStep].title,
     showCloseButton: false,
     showBackButton: false,
-    continueButtonProps,
+    buttonState: selectedStep !== null ? {
+      onClick: hasChanges ? () => handleSectionSave(selectedStep, searchCriteria) : handleBack,
+      text: hasChanges ? 'Save' : 'Back',
+      disabled: isSaving,
+      opacity: hasChanges ? 1 : 0.8
+    } : null,
     customHeaderRight: selectedStep === null ? (
       <button 
         style={styles.doneButton} 
