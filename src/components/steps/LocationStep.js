@@ -67,10 +67,8 @@ const LocationStep = ({ values, onChange }) => {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: '32px',
-      padding: '0px',
-      position: 'relative',
       height: '100%',
+      padding: '0px',
     },
 
     header: {
@@ -198,6 +196,7 @@ const LocationStep = ({ values, onChange }) => {
     tagsSection: {
       margin: '0 8px',
       flex: 1,
+      minHeight: 0,
       background: 'rgba(46, 63, 50, 0.02)',
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
