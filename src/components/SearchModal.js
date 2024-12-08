@@ -191,7 +191,12 @@ const SearchModal = ({ isOpen, onClose }) => {
           : step === 2 
             ? searchCriteria.propertyTypes.length === 0 
             : false,
-      opacity: step === 0 && !searchCriteria.city ? 0.5 : 1
+      opacity: (step === 0 && !searchCriteria.city) ||
+              (step === 1 && searchCriteria.locations.length === 0) ||
+              (step === 2 && searchCriteria.propertyTypes.length === 0) ||
+              (step === 4 && searchCriteria.name.trim() === '')
+                ? 0.5 
+                : 1
     },
     children: renderStep()
   });
