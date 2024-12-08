@@ -184,8 +184,14 @@ const SearchModal = ({ isOpen, onClose }) => {
       text: step === steps.length - 1 
         ? (isSaving ? 'Saving...' : 'Save Search') 
         : (step === 4 && searchCriteria.mustHaves.length === 0 ? 'Skip' : 'Continue'),
-      disabled: step === 0 ? !searchCriteria.city : false,
-      opacity: step === 0 && !searchCriteria.city ? 0.5 : 1
+      disabled: step === 0 
+        ? !searchCriteria.city 
+        : step === 1 
+          ? searchCriteria.locations.length === 0 
+          : step === 2 
+            ? searchCriteria.propertyTypes.length === 0 
+            : false,
+      opacity: buttonState.disabled ? 0.5 : 1
     },
     children: renderStep()
   });

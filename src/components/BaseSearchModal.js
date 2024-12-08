@@ -100,6 +100,13 @@ const BaseSearchModal = {
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     },
 
+    content: {
+      flex: 1,
+      overflowY: 'auto',
+      marginBottom: '80px',
+      WebkitOverflowScrolling: 'touch',
+    },
+
     continueButton: {
       width: '100%',
       padding: '16px',
@@ -170,6 +177,9 @@ const BaseSearchModal = {
             </div>
           </div>
         </div>
+        <div style={BaseSearchModal.styles.content}>
+          {children}
+        </div>
         {buttonState && (
           <button
             style={{
@@ -182,7 +192,6 @@ const BaseSearchModal = {
             {buttonState.text}
           </button>
         )}
-        {children}
       </div>
     </div>
   ),
