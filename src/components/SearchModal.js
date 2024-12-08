@@ -196,7 +196,8 @@ const SearchModal = ({ isOpen, onClose }) => {
       opacity: (step === 0 && !searchCriteria.city) ||
               (step === 1 && searchCriteria.locations.length === 0) ||
               (step === 2 && searchCriteria.propertyTypes.length === 0) ||
-              (step === 4 && searchCriteria.name.trim() === '')
+              (step === 4 && searchCriteria.name.trim() === '') ||
+              (step === 4 && searchCriteria.mustHaves.length === 0 && text === 'Skip')
                 ? 0.5 
                 : 1
     },

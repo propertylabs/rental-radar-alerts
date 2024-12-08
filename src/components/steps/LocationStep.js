@@ -206,7 +206,7 @@ const LocationStep = ({ values, onChange }) => {
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
-      marginBottom: 'calc(env(safe-area-inset-bottom) + 120px)',
+      marginBottom: '80px',
     },
 
     tagsContainer: {

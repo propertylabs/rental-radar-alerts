@@ -108,7 +108,7 @@ const BaseSearchModal = {
     },
 
     continueButton: {
-      width: '100%',
+      width: 'calc(100% - 48px)',
       padding: '16px',
       fontSize: '17px',
       fontWeight: '600',
