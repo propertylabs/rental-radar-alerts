@@ -197,8 +197,7 @@ const SearchModal = ({ isOpen, onClose }) => {
               (step === 1 && searchCriteria.locations.length === 0) ||
               (step === 2 && searchCriteria.propertyTypes.length === 0) ||
               (step === 4 && searchCriteria.name.trim() === '') ||
-              (step === 4 && searchCriteria.mustHaves.length === 0 && 
-                (step === 4 && searchCriteria.mustHaves.length === 0 ? 'Skip' : 'Continue') === 'Skip')
+              (step === 4 && searchCriteria.mustHaves.length === 0 && step === 4)
                 ? 0.5 
                 : 1
     },
