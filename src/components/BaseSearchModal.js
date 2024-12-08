@@ -105,7 +105,7 @@ const BaseSearchModal = {
       display: 'flex',
       flexDirection: 'column',
       overflowY: 'auto',
-      marginBottom: '80px',
+      marginBottom: '64px',
       WebkitOverflowScrolling: 'touch',
     },
 
