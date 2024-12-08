@@ -179,6 +179,8 @@ const SearchModal = ({ isOpen, onClose }) => {
       });
     },
     title: 'New Search',
+    showBackButton: step > 0,
+    onBack: () => setStep(prev => prev - 1),
     buttonState: {
       onClick: step === steps.length - 1 ? handleSaveSearch : () => setStep(prev => prev + 1),
       text: step === steps.length - 1 
