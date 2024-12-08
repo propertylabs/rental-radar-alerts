@@ -69,6 +69,7 @@ const LocationStep = ({ values, onChange }) => {
       flexDirection: 'column',
       gap: '32px',
       padding: '0px',
+      height: '100%',
     },
 
     header: {
@@ -204,6 +205,7 @@ const LocationStep = ({ values, onChange }) => {
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
+      height: '100%',
     },
 
     tagsContainer: {
