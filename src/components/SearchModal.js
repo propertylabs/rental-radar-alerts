@@ -191,7 +191,7 @@ const SearchModal = ({ isOpen, onClose }) => {
           : step === 2 
             ? searchCriteria.propertyTypes.length === 0 
             : false,
-      opacity: buttonState.disabled ? 0.5 : 1
+      opacity: step === 0 && !searchCriteria.city ? 0.5 : 1
     },
     children: renderStep()
   });
