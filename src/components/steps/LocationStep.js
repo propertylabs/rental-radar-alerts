@@ -69,7 +69,6 @@ const LocationStep = ({ values, onChange }) => {
       flexDirection: 'column',
       gap: '32px',
       padding: '0px',
-      height: '100%',
     },
 
     header: {
@@ -205,6 +204,7 @@ const LocationStep = ({ values, onChange }) => {
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
+      minHeight: '300px',
     },
 
     tagsContainer: {
@@ -213,7 +213,7 @@ const LocationStep = ({ values, onChange }) => {
       gap: '8px',
       padding: '16px',
       overflowY: 'auto',
-      height: '100%',
+      flex: 1,
       alignContent: 'start',
       WebkitOverflowScrolling: 'touch',
     },
@@ -254,7 +254,7 @@ const LocationStep = ({ values, onChange }) => {
     },
 
     emptyState: {
-      height: '100%',
+      flex: 1,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
