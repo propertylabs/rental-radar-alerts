@@ -99,6 +99,23 @@ const BaseSearchModal = {
       lineHeight: '18px',
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     },
+
+    continueButton: {
+      width: '100%',
+      padding: '16px',
+      fontSize: '17px',
+      fontWeight: '600',
+      border: 'none',
+      borderRadius: '12px',
+      backgroundColor: '#2E3F32',
+      color: 'white',
+      cursor: 'pointer',
+      transition: 'all 0.2s ease',
+      position: 'absolute',
+      bottom: '24px',
+      left: '24px',
+      right: '24px',
+    }
   },
 
   renderModalFrame: ({ 
