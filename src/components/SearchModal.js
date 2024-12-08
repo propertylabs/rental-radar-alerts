@@ -179,8 +179,14 @@ const SearchModal = ({ isOpen, onClose }) => {
       });
     },
     title: 'New Search',
-    step,
-    setStep,
+    buttonState: {
+      onClick: step === steps.length - 1 ? handleSaveSearch : () => setStep(prev => prev + 1),
+      text: step === steps.length - 1 
+        ? (isSaving ? 'Saving...' : 'Save Search') 
+        : (step === 4 && searchCriteria.mustHaves.length === 0 ? 'Skip' : 'Continue'),
+      disabled: step === 0 ? !searchCriteria.city : false,
+      opacity: step === 0 && !searchCriteria.city ? 0.5 : 1
+    },
     children: renderStep()
   });
 };
