@@ -205,7 +205,6 @@ const LocationStep = ({ values, onChange }) => {
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
-      height: 'calc(100vh - 400px)',
     },
 
     tagsContainer: {

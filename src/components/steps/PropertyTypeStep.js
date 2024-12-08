@@ -72,6 +72,7 @@ const PropertyTypeStep = ({ values, onChange }) => {
       flexDirection: 'column',
       gap: '20px',
       padding: '0px',
+      height: '100%',
     },
 
     header: {
@@ -98,6 +99,7 @@ const PropertyTypeStep = ({ values, onChange }) => {
       display: 'flex',
       flexDirection: 'column',
       gap: '16px',
+      flex: 1,
     },
 
     option: (isSelected, disabled, isPressed, showingError) => ({
