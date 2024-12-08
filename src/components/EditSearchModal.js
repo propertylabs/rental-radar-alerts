@@ -130,6 +130,7 @@ const EditMenuStep = ({ steps, onSelectStep }) => {
 const EditSearchModal = ({ isOpen, onClose, searchData }) => {
   const [selectedStep, setSelectedStep] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
   const [searchCriteria, setSearchCriteria] = useState({
     locations: [],
     propertyTypes: [],
@@ -142,10 +143,16 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     notifications: true,
   });
 
-  // Initialize with search data when available
+  // Reset state when modal closes or search changes
   useEffect(() => {
-    console.log('Raw search data:', searchData);
-    if (searchData) {
+    if (!isOpen) {
+      resetModal();
+    }
+  }, [isOpen]);
+
+  // Initialize with search data when available and modal opens
+  useEffect(() => {
+    if (searchData && isOpen) {
       console.log('Setting search criteria with:', searchData);
       setSearchCriteria({
         locations: searchData.location.split(', '),
@@ -158,8 +165,9 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
         name: searchData.name,
         notifications: searchData.active,
       });
+      setHasChanges(false);
     }
-  }, [searchData]);
+  }, [searchData, isOpen]);
 
   const steps = [
     { 
@@ -202,6 +210,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
   const resetModal = () => {
     setSelectedStep(null);
     setIsSaving(false);
+    setHasChanges(false);
     setSearchCriteria({
       locations: [],
       propertyTypes: [],
@@ -213,6 +222,45 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
       name: '',
       notifications: true,
     });
+  };
+
+  // Track changes in step components
+  const handleStepChange = (stepId, values) => {
+    setHasChanges(true);
+    const updatedCriteria = { ...searchCriteria };
+    switch(stepId) {
+      case 0:
+        updatedCriteria.locations = values;
+        break;
+      case 1:
+        updatedCriteria.propertyTypes = values;
+        break;
+      case 2:
+        updatedCriteria.minBedrooms = values.minBedrooms;
+        updatedCriteria.maxBedrooms = values.maxBedrooms;
+        updatedCriteria.minPrice = values.minPrice;
+        updatedCriteria.maxPrice = values.maxPrice;
+        break;
+      case 3:
+        updatedCriteria.mustHaves = values;
+        break;
+      case 4:
+        updatedCriteria.name = values.name;
+        updatedCriteria.notifications = values.notifications;
+        break;
+    }
+    setSearchCriteria(updatedCriteria);
+  };
+
+  const handleBack = () => {
+    if (hasChanges) {
+      if (window.confirm('You have unsaved changes. Are you sure you want to go back?')) {
+        setSelectedStep(null);
+        setHasChanges(false);
+      }
+    } else {
+      setSelectedStep(null);
+    }
   };
 
   const handleSectionSave = async (stepId, values) => {
@@ -327,23 +375,36 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
             notifications: searchCriteria.notifications
           }
         }
-        onChange={(values) => handleSectionSave(selectedStep, values)}
-        onBack={() => setSelectedStep(null)}
+        onChange={(values) => {
+          handleStepChange(selectedStep, values);
+        }}
+        onBack={handleBack}
         isSaving={isSaving}
+        hasChanges={hasChanges}
       />
     );
   };
 
+  const handleClose = () => {
+    if (hasChanges) {
+      if (window.confirm('You have unsaved changes. Are you sure you want to close?')) {
+        onClose();
+      }
+    } else {
+      onClose();
+    }
+  };
+
   return BaseSearchModal.renderModalFrame({
     isOpen,
-    onClose,
+    onClose: handleClose,
     title: selectedStep === null ? 'Edit Search' : steps[selectedStep].title,
     showCloseButton: false,
     showBackButton: false,
     customHeaderRight: selectedStep === null ? (
       <button 
         style={styles.doneButton} 
-        onClick={onClose}
+        onClick={handleClose}
       >
         Done
       </button>

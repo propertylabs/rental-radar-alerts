@@ -1,27 +1,38 @@
 import React, { useState } from 'react';
 
-const EditStepComponent = ({ StepComponent, values, onChange, onBack, isSaving }) => {
-  const [hasChanges, setHasChanges] = useState(false);
-  const [localValues, setLocalValues] = useState(values);
-
-  const handleChange = (newValues) => {
-    setLocalValues(newValues);
-    setHasChanges(true);
+const EditStepComponent = ({ StepComponent, values, onChange, onBack, isSaving, hasChanges }) => {
+  const styles = {
+    saveButton: {
+      opacity: hasChanges ? 1 : 0.5,
+      pointerEvents: hasChanges ? 'auto' : 'none',
+    },
+    backButton: {
+    }
   };
 
   return (
-    <StepComponent
-      values={localValues}
-      onChange={handleChange}
-      onSave={() => {
-        onChange(localValues);
-        setHasChanges(false);
-      }}
-      onBack={onBack}
-      hasChanges={hasChanges}
-      isSaving={isSaving}
-      isEditing={true}
-    />
+    <div style={styles.container}>
+      <div style={styles.header}>
+        <button 
+          style={styles.backButton}
+          onClick={onBack}
+        >
+          Back
+        </button>
+        <button 
+          style={styles.saveButton}
+          onClick={() => onChange(values)}
+          disabled={!hasChanges || isSaving}
+        >
+          {isSaving ? 'Saving...' : 'Save'}
+        </button>
+      </div>
+      
+      <StepComponent
+        values={values}
+        onChange={onChange}
+      />
+    </div>
   );
 };
 
