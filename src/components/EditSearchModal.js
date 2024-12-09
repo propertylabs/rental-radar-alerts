@@ -397,33 +397,30 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     }
 
     const step = steps[selectedStep];
-    const stepValues = selectedStep === 3 ? searchCriteria.mustHaves :
+    const stepValues = 
+      selectedStep === 0 ? searchCriteria.locations :
+      selectedStep === 1 ? searchCriteria.propertyTypes :
+      selectedStep === 2 ? {
+        minBedrooms: searchCriteria.minBedrooms,
+        maxBedrooms: searchCriteria.maxBedrooms,
+        minPrice: searchCriteria.minPrice,
+        maxPrice: searchCriteria.maxPrice
+      } :
+      selectedStep === 3 ? searchCriteria.mustHaves :
+      {
+        name: searchCriteria.name,
+        notifications: searchCriteria.notifications
+      };
+
     console.log('Rendering step:', selectedStep, 'with values:', stepValues);
     
     return (
       <EditStepComponent
         StepComponent={step.component}
-        values={
-          selectedStep === 0 ? searchCriteria.locations :
-          selectedStep === 1 ? searchCriteria.propertyTypes :
-          selectedStep === 2 ? {
-            minBedrooms: searchCriteria.minBedrooms,
-            maxBedrooms: searchCriteria.maxBedrooms,
-            minPrice: searchCriteria.minPrice,
-            maxPrice: searchCriteria.maxPrice
-          } :
-          selectedStep === 3 ? searchCriteria.mustHaves :
-          {
-            name: searchCriteria.name,
-            notifications: searchCriteria.notifications
-          }
-        }
+        values={stepValues}
         onChange={(values) => {
           handleStepChange(selectedStep, values);
         }}
-        onBack={handleBack}
-        isSaving={isSaving}
-        hasChanges={hasChanges}
       />
     );
   };
