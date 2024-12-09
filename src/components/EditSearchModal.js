@@ -462,7 +462,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
       <EditStepComponent
         StepComponent={step.component}
         values={stepValues}
-        value={selectedStep === 1 ? inferCityFromPostcodes(searchCriteria.locations) : null}
+        value={selectedStep === 0 ? inferCityFromPostcodes(searchCriteria.locations) : null}
         onChange={(values) => {
           handleStepChange(selectedStep, values);
         }}
