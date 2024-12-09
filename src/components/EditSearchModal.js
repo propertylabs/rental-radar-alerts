@@ -155,6 +155,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
   useEffect(() => {
     if (searchData && isOpen) {
       console.log('Raw searchData:', searchData);
+      console.log('Must haves from raw data:', searchData.criteria.mustHaves);
       setSearchCriteria({
         locations: searchData.postcodes,
         propertyTypes: searchData.criteria.propertyTypes,
@@ -166,7 +167,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
         name: searchData.searchName,
         notifications: searchData.notifications,
       });
-      setHasChanges(false);
+      console.log('Search criteria after set:', searchCriteria);
     }
   }, [searchData, isOpen]);
 
@@ -290,6 +291,9 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
   const handleStepSelect = (stepId) => {
     setOriginalValues({ ...searchCriteria });
     setSelectedStep(stepId);
+    console.log('Selected step:', stepId);
+    console.log('Current search criteria:', searchCriteria);
+    console.log('Original values being set:', { ...searchCriteria });
   };
 
   const handleBack = () => {
