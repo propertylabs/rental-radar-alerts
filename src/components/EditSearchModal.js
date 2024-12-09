@@ -413,8 +413,6 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
         notifications: searchCriteria.notifications
       };
 
-    console.log('Rendering step:', selectedStep, 'with values:', stepValues);
-    
     return (
       <EditStepComponent
         StepComponent={step.component}
@@ -443,7 +441,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     showCloseButton: false,
     showBackButton: false,
     buttonState: selectedStep !== null ? {
-      onClick: hasChanges ? () => handleSectionSave(selectedStep, searchCriteria) : handleBack,
+      onClick: hasChanges ? () => handleSectionSave(selectedStep, stepValues) : handleBack,
       text: hasChanges ? 'Save' : 'Back',
       disabled: isSaving,
       opacity: hasChanges ? 1 : 0.8
