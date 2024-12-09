@@ -107,6 +107,7 @@ const BaseSearchModal = {
       overflowY: 'auto',
       marginBottom: '64px',
       WebkitOverflowScrolling: 'touch',
+      height: 'calc(100% - 140px)',
     },
 
     continueButton: {
