@@ -205,7 +205,7 @@ const LocationStep = ({ values, onChange }) => {
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
-      height: 'calc(100vh - 300px)',
+      height: '100%',
     },
 
     tagsContainer: {
@@ -217,6 +217,7 @@ const LocationStep = ({ values, onChange }) => {
       flex: 1,
       alignContent: 'start',
       WebkitOverflowScrolling: 'touch',
+      minHeight: '100%',
     },
 
     tag: {
