@@ -415,6 +415,28 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
       };
   };
 
+  // Move inferCityFromPostcodes to top level and add logging
+  const inferCityFromPostcodes = (postcodes) => {
+    if (!postcodes) {
+      console.log('No postcodes provided to inferCityFromPostcodes');
+      return null;
+    }
+    console.log('Inferring city from postcodes:', postcodes);
+
+    // If any postcode starts with M, it's Manchester
+    if (postcodes.some(p => p.startsWith('M'))) {
+      console.log('Detected Manchester from postcodes');
+      return 'manchester';
+    }
+    // If any postcode starts with SW or NW, it's London
+    if (postcodes.some(p => p.startsWith('SW') || p.startsWith('NW'))) {
+      console.log('Detected London from postcodes');
+      return 'london';
+    }
+    console.log('No city detected from postcodes');
+    return null;
+  };
+
   const renderStep = () => {
     if (selectedStep === null) {
       return (
@@ -427,6 +449,14 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
 
     const step = steps[selectedStep];
     const stepValues = getStepValues(selectedStep);
+    
+    // Add logging for LocationStep
+    if (selectedStep === 1) {
+      console.log('Rendering LocationStep with:', {
+        locations: searchCriteria.locations,
+        inferredCity: inferCityFromPostcodes(searchCriteria.locations)
+      });
+    }
 
     return (
       <EditStepComponent
@@ -453,19 +483,6 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
 
   // Get current step values for the save button
   const currentStepValues = getStepValues(selectedStep);
-
-  // Move inferCityFromPostcodes to top level so it can be used in multiple places
-  const inferCityFromPostcodes = (postcodes) => {
-    // If any postcode starts with M, it's Manchester
-    if (postcodes.some(p => p.startsWith('M'))) {
-      return 'manchester';
-    }
-    // If any postcode starts with SW or NW, it's London
-    if (postcodes.some(p => p.startsWith('SW') || p.startsWith('NW'))) {
-      return 'london';
-    }
-    return null;
-  };
 
   return BaseSearchModal.renderModalFrame({
     isOpen,

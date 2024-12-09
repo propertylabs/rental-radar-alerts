@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { RiMapLine, RiSearchLine, RiCloseLine } from 'react-icons/ri';
 
 const LocationStep = ({ value, values, onChange }) => {
+  console.log('LocationStep received:', { city: value, postcodes: values });
+
   const [searchTerm, setSearchTerm] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
@@ -57,6 +59,7 @@ const LocationStep = ({ value, values, onChange }) => {
   };
 
   const getAvailablePostcodes = () => {
+    console.log('Getting postcodes for city:', value);
     if (value === 'london') return LONDON_POSTCODES;
     if (value === 'manchester') return MANCHESTER_POSTCODES;
     return [];
@@ -69,6 +72,7 @@ const LocationStep = ({ value, values, onChange }) => {
   };
 
   const availablePostcodes = getAvailablePostcodes();
+  console.log('Available postcodes:', availablePostcodes);
   const areaMapping = getAreaMapping();
 
   useEffect(() => {
