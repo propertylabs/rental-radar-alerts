@@ -41,14 +41,7 @@ export default async function handler(req, res) {
         postcodes: row.postcodes,
         notifications: row.notifications,
         created_at: row.created_at,
-        criteria: {
-          minPrice: row.min_price,
-          maxPrice: row.max_price,
-          minBedrooms: row.min_bedrooms,
-          maxBedrooms: row.max_bedrooms,
-          propertyTypes: row.property_types,
-          mustHaves: row.must_haves,
-        }
+        mustHaves: row.must_haves,
       }));
 
       return res.status(200).json(searches);

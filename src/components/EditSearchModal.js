@@ -155,7 +155,6 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
   useEffect(() => {
     if (searchData && isOpen) {
       console.log('Raw searchData:', searchData);
-      console.log('Must haves from API:', searchData.criteria?.mustHaves);
       setSearchCriteria({
         locations: searchData.location.split(', '),
         propertyTypes: [searchData.type],
@@ -163,7 +162,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
         maxBedrooms: 5,
         minPrice: searchData.price === 'Any price' ? 0 : parseInt(searchData.price.split('-')[0].replace('£', '')),
         maxPrice: searchData.price === 'Any price' ? 3000 : parseInt(searchData.price.split('-')[1]),
-        mustHaves: searchData.criteria?.mustHaves || [],
+        mustHaves: searchData.mustHaves || [],
         name: searchData.name,
         notifications: searchData.active,
       });
