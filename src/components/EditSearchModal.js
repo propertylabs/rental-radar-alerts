@@ -144,18 +144,38 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     notifications: true,
   });
 
-  // Reset state when modal closes
+  // Complete reset when modal closes
+  const handleModalClose = () => {
+    setSelectedStep(null);
+    setIsSaving(false);
+    setHasChanges(false);
+    setOriginalValues(null);
+    setSearchCriteria({
+      locations: [],
+      propertyTypes: [],
+      minBedrooms: 1,
+      maxBedrooms: 5,
+      minPrice: 0,
+      maxPrice: 3000,
+      mustHaves: [],
+      name: '',
+      notifications: true,
+    });
+    onClose();
+  };
+
+  // Reset when modal closes
   useEffect(() => {
     if (!isOpen) {
-      resetModal();
+      handleModalClose();
     }
   }, [isOpen]);
 
-  // Initialize with search data when available and modal opens
+  // Initialize when new search data is provided
   useEffect(() => {
     if (searchData && isOpen) {
-      console.log('Loading search data for edit:', searchData);
-      setSearchCriteria({
+      console.log('Loading new search data:', searchData);
+      const newCriteria = {
         locations: searchData.postcodes,
         propertyTypes: searchData.criteria.propertyTypes,
         minBedrooms: searchData.criteria.minBedrooms,
@@ -165,10 +185,13 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
         mustHaves: searchData.criteria.mustHaves || [],
         name: searchData.searchName,
         notifications: searchData.notifications,
-      });
+      };
+      setSearchCriteria(newCriteria);
+      setOriginalValues(newCriteria);  // Also set original values
       setHasChanges(false);
+      setSelectedStep(null);
     }
-  }, [searchData, isOpen]);
+  }, [searchData?.id, isOpen]);  // Add searchData.id as dependency to detect new search
 
   const steps = [
     { 
@@ -207,25 +230,6 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
       component: FinalizeStep
     },
   ];
-
-  const resetModal = () => {
-    setSelectedStep(null);
-    setIsSaving(false);
-    setHasChanges(false);
-    if (!searchData) {
-      setSearchCriteria({
-        locations: [],
-        propertyTypes: [],
-        minBedrooms: 1,
-        maxBedrooms: 5,
-        minPrice: 0,
-        maxPrice: 3000,
-        mustHaves: [],
-        name: '',
-        notifications: true,
-      });
-    }
-  };
 
   // Track changes in step components
   const handleStepChange = (stepId, values) => {
@@ -432,13 +436,14 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     );
   };
 
+  // Replace existing handleClose with new one
   const handleClose = () => {
     if (hasChanges) {
       if (window.confirm('You have unsaved changes. Are you sure you want to close?')) {
-        onClose();
+        handleModalClose();
       }
     } else {
-      onClose();
+      handleModalClose();
     }
   };
 
