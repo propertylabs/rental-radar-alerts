@@ -8,6 +8,7 @@ const pool = new Pool({
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     const { userId } = req.query;
+    console.log('GET /api/get-user-searches - userId:', userId);
 
     try {
       const result = await pool.query(
@@ -30,6 +31,8 @@ export default async function handler(req, res) {
         [userId]
       );
 
+      console.log('Database query result:', result.rows);
+
       if (result.rows.length === 0) {
         return res.status(404).json({ error: 'No searches found for the user' });
       }
@@ -41,10 +44,20 @@ export default async function handler(req, res) {
         postcodes: row.postcodes,
         notifications: row.notifications,
         created_at: row.created_at,
-        mustHaves: row.must_haves,
+        criteria: {
+          minPrice: row.min_price,
+          maxPrice: row.max_price,
+          minBedrooms: row.min_bedrooms,
+          maxBedrooms: row.max_bedrooms,
+          propertyTypes: row.property_types,
+          mustHaves: row.must_haves
+        },
+        last_alert: row.last_alert || 'No alerts yet'
       }));
 
+      console.log('Formatted response:', searches);
       return res.status(200).json(searches);
+
     } catch (error) {
       console.error('Error fetching user searches:', error);
       return res.status(500).json({ error: 'Error fetching user searches' });
