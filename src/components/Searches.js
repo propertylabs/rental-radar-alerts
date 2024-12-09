@@ -513,7 +513,9 @@ const SearchesNew = ({ onOpenSearchModal, onOpenEditModal }) => {
             : 'Any price',
           type: search.criteria.propertyTypes[0] || 'Any type',
           lastAlert: search.last_alert || 'No alerts yet',
-          active: search.notifications
+          active: search.notifications,
+          createdAt: search.created_at,
+          fullData: search
         }));
         console.log('Setting new searches:', formattedSearches);
         setSearches(formattedSearches);
