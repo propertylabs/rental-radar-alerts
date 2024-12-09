@@ -221,6 +221,17 @@ const LocationStep = ({ values, onChange }) => {
       minHeight: '100%',
     },
 
+    emptyState: {
+      color: '#666',
+      fontSize: '15px',
+      fontStyle: 'italic',
+      gridColumn: '1 / -1',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100%',
+    },
+
     tag: {
       display: 'flex',
       alignItems: 'center',
@@ -408,7 +419,7 @@ const LocationStep = ({ values, onChange }) => {
               </div>
             ))
           ) : (
-            <span style={{color: '#666', fontSize: '15px', fontStyle: 'italic'}}>
+            <span style={styles.emptyState}>
               The postcodes you select will appear here
             </span>
           )}
