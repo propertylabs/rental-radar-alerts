@@ -226,10 +226,11 @@ const LocationStep = ({ values, onChange }) => {
       fontSize: '15px',
       fontStyle: 'italic',
       gridColumn: '1 / -1',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '100%',
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      textAlign: 'center',
     },
 
     tag: {
@@ -393,7 +394,10 @@ const LocationStep = ({ values, onChange }) => {
       </div>
 
       <div style={styles.tagsSection}>
-        <div style={styles.tagsContainer}>
+        <div style={{
+          ...styles.tagsContainer,
+          position: values.length > 0 ? 'static' : 'relative'
+        }}>
           {values.length > 0 ? (
             values.map(postcode => (
               <div 
