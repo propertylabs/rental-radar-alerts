@@ -117,6 +117,16 @@ const LocationStep = ({ value, values, onChange }) => {
     'fitzrovia': ['W1T', 'W1W'],
     'marylebone': ['W1U', 'W1G'],
     'bloomsbury': ['WC1A', 'WC1B', 'WC1E', 'WC1H', 'WC1N'],
+    
+    // Prefix Groups
+    'all sw1 postcodes': ['SW1H', 'SW1P', 'SW1V', 'SW1W', 'SW1X', 'SW1Y'],
+    'all ec1 postcodes': ['EC1A', 'EC1M', 'EC1N', 'EC1R', 'EC1V', 'EC1Y'],
+    'all ec2 postcodes': ['EC2A', 'EC2M', 'EC2N', 'EC2R', 'EC2V', 'EC2Y'],
+    'all ec3 postcodes': ['EC3A', 'EC3M', 'EC3N', 'EC3R', 'EC3V'],
+    'all ec4 postcodes': ['EC4A', 'EC4M'],
+    'all w1 postcodes': ['W1B', 'W1C', 'W1D', 'W1F', 'W1G', 'W1H', 'W1J', 'W1K', 'W1S', 'W1T', 'W1U', 'W1W'],
+    'all wc1 postcodes': ['WC1A', 'WC1B', 'WC1E', 'WC1H', 'WC1N', 'WC1R', 'WC1V', 'WC1X'],
+    'all wc2 postcodes': ['WC2A', 'WC2B', 'WC2E', 'WC2H', 'WC2N', 'WC2R'],
   };
 
   const getAvailablePostcodes = () => {
@@ -600,8 +610,16 @@ const LocationStep = ({ value, values, onChange }) => {
       }));
     }
     
-    // Manchester data is already in the format we want
-    return source.features;
+    // Manchester data structure:
+    // properties.name contains the postcode (e.g., "M1", "M2", etc.)
+    return source.features.map(feature => ({
+      type: 'Feature',
+      geometry: feature.geometry,
+      properties: {
+        postcode: feature.properties.name, // Manchester uses lowercase 'name'
+        selected: false
+      }
+    }));
   };
 
   return (
