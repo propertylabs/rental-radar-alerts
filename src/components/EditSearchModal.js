@@ -144,7 +144,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     notifications: true,
   });
 
-  // Reset state when modal closes or search changes
+  // Reset state when modal closes
   useEffect(() => {
     if (!isOpen) {
       resetModal();
@@ -154,7 +154,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
   // Initialize with search data when available and modal opens
   useEffect(() => {
     if (searchData && isOpen) {
-      console.log('Raw searchData:', searchData);
+      console.log('Loading search data for edit:', searchData);
       setSearchCriteria({
         locations: searchData.postcodes,
         propertyTypes: searchData.criteria.propertyTypes,
@@ -212,17 +212,19 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     setSelectedStep(null);
     setIsSaving(false);
     setHasChanges(false);
-    setSearchCriteria({
-      locations: [],
-      propertyTypes: [],
-      minBedrooms: 1,
-      maxBedrooms: 5,
-      minPrice: 0,
-      maxPrice: 3000,
-      mustHaves: [],
-      name: '',
-      notifications: true,
-    });
+    if (!searchData) {
+      setSearchCriteria({
+        locations: [],
+        propertyTypes: [],
+        minBedrooms: 1,
+        maxBedrooms: 5,
+        minPrice: 0,
+        maxPrice: 3000,
+        mustHaves: [],
+        name: '',
+        notifications: true,
+      });
+    }
   };
 
   // Track changes in step components
