@@ -45,7 +45,6 @@ const EditMenuStep = ({ steps, onSelectStep }) => {
       display: 'flex',
       flexDirection: 'column',
       gap: '12px',
-      padding: '8px',
     },
 
     menuItem: {
@@ -53,6 +52,7 @@ const EditMenuStep = ({ steps, onSelectStep }) => {
       alignItems: 'center',
       gap: '16px',
       padding: '16px',
+      margin: '0 8px',
       background: 'rgba(46, 63, 50, 0.02)',
       borderRadius: '16px',
       border: '1px solid rgba(46, 63, 50, 0.08)',
