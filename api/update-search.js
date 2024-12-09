@@ -9,6 +9,7 @@ export default async function handler(req, res) {
   if (req.method === 'PUT') {
     const { 
       user_id,
+      searchId,
       search_name,
       postcodes,
       min_price,
@@ -18,7 +19,6 @@ export default async function handler(req, res) {
       property_types,
       must_haves,
       notifications,
-      searchId  // Additional parameter for update
     } = req.body;
 
     if (!user_id || !searchId) {
@@ -41,34 +41,61 @@ export default async function handler(req, res) {
         return res.status(403).json({ error: 'Unauthorized to update this search' });
       }
 
-      // Update using the same structure as save-search
-      await pool.query(
-        `UPDATE searches SET
-          user_id = $1,
-          search_name = $2,
-          postcodes = $3,
-          min_price = $4,
-          max_price = $5,
-          min_bedrooms = $6,
-          max_bedrooms = $7,
-          property_types = $8,
-          must_haves = $9,
-          notifications = $10
-        WHERE id = $11`,
-        [
-          user_id,
-          search_name,
-          postcodes,
-          min_price,
-          max_price,
-          min_bedrooms,
-          max_bedrooms,
-          property_types,
-          must_haves,
-          notifications,
-          searchId
-        ]
-      );
+      // Build dynamic update query based on provided fields
+      let updateFields = [];
+      let values = [searchId];  // First value is always searchId
+      let valueIndex = 2;  // Start at 2 since $1 is searchId
+
+      if (search_name !== undefined) {
+        updateFields.push(`search_name = $${valueIndex++}`);
+        values.push(search_name);
+      }
+      if (postcodes !== undefined) {
+        updateFields.push(`postcodes = $${valueIndex++}`);
+        values.push(postcodes);
+      }
+      if (min_price !== undefined) {
+        updateFields.push(`min_price = $${valueIndex++}`);
+        values.push(min_price);
+      }
+      if (max_price !== undefined) {
+        updateFields.push(`max_price = $${valueIndex++}`);
+        values.push(max_price);
+      }
+      if (min_bedrooms !== undefined) {
+        updateFields.push(`min_bedrooms = $${valueIndex++}`);
+        values.push(min_bedrooms);
+      }
+      if (max_bedrooms !== undefined) {
+        updateFields.push(`max_bedrooms = $${valueIndex++}`);
+        values.push(max_bedrooms);
+      }
+      if (property_types !== undefined) {
+        updateFields.push(`property_types = $${valueIndex++}`);
+        values.push(property_types);
+      }
+      if (must_haves !== undefined) {
+        updateFields.push(`must_haves = $${valueIndex++}`);
+        values.push(must_haves);
+      }
+      if (notifications !== undefined) {
+        updateFields.push(`notifications = $${valueIndex++}`);
+        values.push(notifications);
+      }
+
+      // Only proceed if there are fields to update
+      if (updateFields.length > 0) {
+        const query = `
+          UPDATE searches 
+          SET ${updateFields.join(', ')}
+          WHERE id = $1
+        `;
+
+        console.log('Update query:', query);
+        console.log('Update values:', values);
+
+        await pool.query(query, values);
+      }
 
       return res.status(200).json({ 
         message: 'Search updated successfully',
