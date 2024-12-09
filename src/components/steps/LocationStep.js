@@ -191,6 +191,8 @@ const LocationStep = ({ value, values, onChange }) => {
     }
 
     function initializeMapData() {
+      console.log('Initializing map data for:', value);
+      
       // Remove existing layers and source if they exist
       if (map.current.getLayer('postcode-fills')) map.current.removeLayer('postcode-fills');
       if (map.current.getLayer('postcode-outlines')) map.current.removeLayer('postcode-outlines');
@@ -214,7 +216,7 @@ const LocationStep = ({ value, values, onChange }) => {
         }
       });
 
-      // Add fill layer
+      // Add fill layer with increased opacity
       map.current.addLayer({
         id: 'postcode-fills',
         type: 'fill',
@@ -223,25 +225,25 @@ const LocationStep = ({ value, values, onChange }) => {
           'fill-color': [
             'case',
             ['get', 'selected'], '#2E3F32',
-            'rgba(46, 63, 50, 0.1)'
+            'rgba(46, 63, 50, 0.2)' // Increased opacity for better visibility
           ],
           'fill-opacity': [
             'case',
             ['boolean', ['feature-state', 'hover'], false], 0.8,
-            0.6
+            0.7 // Increased base opacity
           ]
         }
       });
 
-      // Add outline layer
+      // Add outline layer with increased width
       map.current.addLayer({
         id: 'postcode-outlines',
         type: 'line',
         source: 'postcodes',
         paint: {
           'line-color': '#2E3F32',
-          'line-width': 1,
-          'line-opacity': 0.3
+          'line-width': 1.5, // Increased width
+          'line-opacity': 0.4 // Increased opacity
         }
       });
 
@@ -599,9 +601,12 @@ const LocationStep = ({ value, values, onChange }) => {
   };
 
   const normalizeGeoJSON = (source, city) => {
+    console.log(`Normalizing GeoJSON for ${city}:`, source);
+    
     if (city === 'london') {
       return source.features.map(feature => ({
         type: 'Feature',
+        id: feature.properties.Name,
         geometry: feature.geometry,
         properties: {
           postcode: feature.properties.Name,
@@ -610,13 +615,13 @@ const LocationStep = ({ value, values, onChange }) => {
       }));
     }
     
-    // Manchester data structure:
-    // properties.name contains the postcode (e.g., "M1", "M2", etc.)
+    // Manchester data
     return source.features.map(feature => ({
       type: 'Feature',
+      id: feature.properties.name,
       geometry: feature.geometry,
       properties: {
-        postcode: feature.properties.name, // Manchester uses lowercase 'name'
+        postcode: feature.properties.name,
         selected: false
       }
     }));
