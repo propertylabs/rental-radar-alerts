@@ -154,7 +154,8 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
   // Initialize with search data when available and modal opens
   useEffect(() => {
     if (searchData && isOpen) {
-      console.log('Setting search criteria with:', searchData);
+      console.log('Raw searchData:', searchData);
+      console.log('Must haves from API:', searchData.criteria?.mustHaves);
       setSearchCriteria({
         locations: searchData.location.split(', '),
         propertyTypes: [searchData.type],
@@ -397,6 +398,9 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     }
 
     const step = steps[selectedStep];
+    const stepValues = selectedStep === 3 ? searchCriteria.mustHaves :
+    console.log('Rendering step:', selectedStep, 'with values:', stepValues);
+    
     return (
       <EditStepComponent
         StepComponent={step.component}
