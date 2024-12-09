@@ -70,6 +70,7 @@ const LocationStep = ({ values, onChange }) => {
       gap: '32px',
       padding: '0px',
       height: '100%',
+      minHeight: '100%',
     },
 
     header: {
