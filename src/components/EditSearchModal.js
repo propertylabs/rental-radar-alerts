@@ -334,15 +334,15 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
       const relevantData = {
         user_id: whopUserId,
         searchId: searchData.id,
-        ...(stepId === 0 && { postcodes: values.locations }),
-        ...(stepId === 1 && { property_types: values.propertyTypes }),
+        ...(stepId === 0 && { postcodes: values }),
+        ...(stepId === 1 && { property_types: values }),
         ...(stepId === 2 && {
           min_price: values.minPrice,
           max_price: values.maxPrice,
           min_bedrooms: values.minBedrooms,
           max_bedrooms: values.maxBedrooms,
         }),
-        ...(stepId === 3 && { must_haves: values.mustHaves }),
+        ...(stepId === 3 && { must_haves: values }),
         ...(stepId === 4 && {
           search_name: values.name,
           notifications: values.notifications,
