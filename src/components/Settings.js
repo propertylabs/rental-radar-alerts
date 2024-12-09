@@ -55,6 +55,31 @@ const Settings = () => {
     navigate('/login');
   };
 
+  const ProfileSection = ({ userData }) => (
+    <div style={styles.profileCard}>
+      <div style={styles.profileImageContainer}>
+        {userData?.image_url ? (
+          <img 
+            src={userData.image_url} 
+            alt={userData.name} 
+            style={styles.profileImage}
+          />
+        ) : (
+          <div style={styles.profileImagePlaceholder}>
+            {userData?.name?.charAt(0) || '?'}
+          </div>
+        )}
+      </div>
+      <div style={styles.profileInfo}>
+        <h2 style={styles.profileName}>{userData?.name || 'Loading...'}</h2>
+        <p style={styles.profileEmail}>{userData?.email || 'Loading...'}</p>
+      </div>
+      <div style={styles.membershipBadge}>
+        Pro Member
+      </div>
+    </div>
+  );
+
   const SettingsGroup = ({ title, children }) => (
     <div style={styles.group}>
       <div style={styles.groupTitle}>{title}</div>
@@ -73,7 +98,9 @@ const Settings = () => {
       onClick={onClick}
     >
       <div style={styles.rowLeft}>
-        {icon}
+        <div style={styles.iconContainer}>
+          {icon}
+        </div>
         <span style={styles.rowLabel}>{label}</span>
       </div>
       <div style={styles.rowRight}>
@@ -87,36 +114,10 @@ const Settings = () => {
     <div style={styles.pageContainer}>
       <div style={{
         ...styles.contentWrapper,
-        paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 16px)' : '16px',
+        paddingTop: isStandalone ? 'calc(env(safe-area-inset-top))' : '0',
       }}>
-        <h1 style={styles.title}>Settings</h1>
-
         <div style={styles.scrollContainer}>
-          <SettingsGroup title="Account & Profile">
-            <SettingsRow 
-              icon={<RiUserLine style={styles.icon} />}
-              label="Name"
-              value={userData?.name || 'Loading...'}
-            />
-            <SettingsRow 
-              icon={<RiUserLine style={styles.icon} />}
-              label="Email"
-              value={userData?.email || 'Loading...'}
-            />
-          </SettingsGroup>
-
-          <SettingsGroup title="Notifications">
-            <SettingsRow 
-              icon={<RiNotificationLine style={styles.icon} />}
-              label="Push Notifications"
-              value="On"
-            />
-            <SettingsRow 
-              icon={<RiNotificationLine style={styles.icon} />}
-              label="Email Alerts"
-              value="Daily"
-            />
-          </SettingsGroup>
+          <ProfileSection userData={userData} />
 
           <SettingsGroup title="App Preferences">
             <SettingsRow 
@@ -124,9 +125,14 @@ const Settings = () => {
               label="Appearance"
               value="Light"
             />
+            <SettingsRow 
+              icon={<RiNotificationLine style={styles.icon} />}
+              label="Notifications"
+              value="On"
+            />
           </SettingsGroup>
 
-          <SettingsGroup title="Privacy & Data">
+          <SettingsGroup title="Privacy & Security">
             <SettingsRow 
               icon={<RiShieldLine style={styles.icon} />}
               label="Privacy Settings"
@@ -144,7 +150,7 @@ const Settings = () => {
             />
           </SettingsGroup>
 
-          <SettingsGroup title="Account Actions">
+          <SettingsGroup title="Account">
             <SettingsRow 
               icon={<RiLogoutBoxLine style={styles.icon} />}
               label="Log Out"
@@ -171,11 +177,9 @@ const styles = {
     right: 0,
     bottom: 0,
     overflow: 'hidden',
-    background: 'linear-gradient(to bottom, #f8f9fa, #f0f2f1)',
+    background: '#F5F5F7', // Apple-style background
     WebkitOverflowScrolling: 'touch',
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-    '-webkit-font-smoothing': 'antialiased',
-    '-moz-osx-font-smoothing': 'grayscale',
   },
 
   contentWrapper: {
@@ -184,23 +188,87 @@ const styles = {
     flexDirection: 'column',
   },
 
-  title: {
-    fontSize: '32px',
-    fontWeight: '700',
-    color: ACCENT,
-    margin: '0 20px 16px',
-    letterSpacing: '-0.5px',
-    fontFamily: 'inherit',
-  },
-
   scrollContainer: {
     flex: 1,
     overflow: 'auto',
+    padding: '16px',
     paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)',
   },
 
+  profileCard: {
+    background: 'white',
+    borderRadius: '24px',
+    padding: '24px',
+    marginBottom: '24px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+  },
+
+  profileImageContainer: {
+    width: '100px',
+    height: '100px',
+    marginBottom: '16px',
+    position: 'relative',
+  },
+
+  profileImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: '50%',
+    objectFit: 'cover',
+    border: '3px solid white',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+  },
+
+  profileImagePlaceholder: {
+    width: '100%',
+    height: '100%',
+    borderRadius: '50%',
+    background: 'linear-gradient(135deg, #2E3F32 0%, #4A6350 100%)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '36px',
+    color: 'white',
+    fontWeight: '600',
+    border: '3px solid white',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+  },
+
+  profileInfo: {
+    marginBottom: '16px',
+  },
+
+  profileName: {
+    fontSize: '24px',
+    fontWeight: '700',
+    color: '#2E3F32',
+    margin: '0 0 4px 0',
+    letterSpacing: '-0.5px',
+  },
+
+  profileEmail: {
+    fontSize: '15px',
+    color: '#666',
+    margin: 0,
+    letterSpacing: '-0.2px',
+  },
+
+  membershipBadge: {
+    background: 'linear-gradient(135deg, #2E3F32 0%, #4A6350 100%)',
+    color: 'white',
+    padding: '6px 12px',
+    borderRadius: '12px',
+    fontSize: '13px',
+    fontWeight: '600',
+    letterSpacing: '-0.2px',
+  },
+
   group: {
-    marginBottom: '32px',
+    marginBottom: '24px',
   },
 
   groupTitle: {
@@ -208,29 +276,39 @@ const styles = {
     fontWeight: '600',
     color: '#6d6d72',
     textTransform: 'uppercase',
-    marginLeft: '20px',
+    marginLeft: '16px',
     marginBottom: '8px',
     letterSpacing: '0.1em',
   },
 
   groupContent: {
     background: 'white',
-    borderTop: '1px solid rgba(0,0,0,0.1)',
-    borderBottom: '1px solid rgba(0,0,0,0.1)',
+    borderRadius: '16px',
+    overflow: 'hidden',
+    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.05)',
   },
 
   row: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '12px 20px',
-    minHeight: '44px',
+    padding: '16px',
     cursor: 'pointer',
     transition: 'background-color 0.2s',
+    borderBottom: '1px solid rgba(0,0,0,0.05)',
     ':active': {
-      backgroundColor: '#f2f2f7',
+      backgroundColor: '#f8f8f8',
     },
-    borderBottom: '1px solid rgba(0,0,0,0.1)',
+  },
+
+  iconContainer: {
+    width: '32px',
+    height: '32px',
+    borderRadius: '8px',
+    background: 'rgba(46, 63, 50, 0.1)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   rowLeft: {
@@ -246,14 +324,15 @@ const styles = {
   },
 
   icon: {
-    fontSize: '20px',
-    color: ACCENT,
+    fontSize: '18px',
+    color: '#2E3F32',
   },
 
   rowLabel: {
     fontSize: '17px',
     fontWeight: '400',
     letterSpacing: '-0.2px',
+    color: '#2E3F32',
   },
 
   rowValue: {
@@ -264,7 +343,7 @@ const styles = {
 
   chevron: {
     fontSize: '20px',
-    color: '#c7c7cc', // iOS light gray
+    color: '#c7c7cc',
   },
 };
 
