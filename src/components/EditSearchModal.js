@@ -131,6 +131,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
   const [selectedStep, setSelectedStep] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [originalValues, setOriginalValues] = useState(null);
   const [searchCriteria, setSearchCriteria] = useState({
     locations: [],
     propertyTypes: [],
@@ -226,7 +227,40 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
 
   // Track changes in step components
   const handleStepChange = (stepId, values) => {
-    setHasChanges(true);
+    let originalStepValues;
+    
+    // Get original values for comparison
+    switch(stepId) {
+      case 0:
+        originalStepValues = originalValues.locations;
+        break;
+      case 1:
+        originalStepValues = originalValues.propertyTypes;
+        break;
+      case 2:
+        originalStepValues = {
+          minBedrooms: originalValues.minBedrooms,
+          maxBedrooms: originalValues.maxBedrooms,
+          minPrice: originalValues.minPrice,
+          maxPrice: originalValues.maxPrice
+        };
+        break;
+      case 3:
+        originalStepValues = originalValues.mustHaves;
+        break;
+      case 4:
+        originalStepValues = {
+          name: originalValues.name,
+          notifications: originalValues.notifications
+        };
+        break;
+    }
+
+    // Compare current values with original values
+    const hasActualChanges = JSON.stringify(values) !== JSON.stringify(originalStepValues);
+    setHasChanges(hasActualChanges);
+
+    // Update current criteria
     const updatedCriteria = { ...searchCriteria };
     switch(stepId) {
       case 0:
@@ -250,6 +284,12 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
         break;
     }
     setSearchCriteria(updatedCriteria);
+  };
+
+  // When a step is selected, store the original values
+  const handleStepSelect = (stepId) => {
+    setOriginalValues({ ...searchCriteria });
+    setSelectedStep(stepId);
   };
 
   const handleBack = () => {
@@ -351,7 +391,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
       return (
         <EditMenuStep 
           steps={steps}
-          onSelectStep={setSelectedStep}
+          onSelectStep={handleStepSelect}
         />
       );
     }
@@ -398,7 +438,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
   return BaseSearchModal.renderModalFrame({
     isOpen,
     onClose: handleClose,
-    title: selectedStep === null ? 'Edit Search' : steps[selectedStep].title,
+    title: 'Edit Search',
     showCloseButton: false,
     showBackButton: false,
     buttonState: selectedStep !== null ? {
