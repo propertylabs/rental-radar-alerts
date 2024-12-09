@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { RiMapLine, RiSearchLine, RiCloseLine, RiArrowLeftLine } from 'react-icons/ri';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import londonGeoJSON from '../../../geojson/london_postcodes.json';
+import manchesterGeoJSON from '../../../public/data/manchester-postcodes.geojson';
 
 // This is fine since it's a public token
 mapboxgl.accessToken = 'pk.eyJ1IjoicHJvcGVydHlsYWJzIiwiYSI6ImNtNGg3d3hpbTAzdW0ycXIwNzM0aDVwd3EifQ.i5CHRd7TtWIgFcRNUokNCw';
@@ -151,15 +153,125 @@ const LocationStep = ({ value, values, onChange }) => {
   useEffect(() => {
     if (!showMap) return;
 
+    const cityCenter = value === 'london' 
+      ? [-0.118092, 51.509865] 
+      : [-2.244644, 53.483959];
+
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v11',
-      center: value === 'london' ? [-0.118092, 51.509865] : [-2.244644, 53.483959], // London or Manchester
+      center: cityCenter,
       zoom: 11
     });
 
+    map.current.on('load', () => {
+      // Add source
+      const geoJSON = value === 'london' ? londonGeoJSON : manchesterGeoJSON;
+      const features = normalizeGeoJSON(geoJSON, value);
+      
+      map.current.addSource('postcodes', {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: features.map(f => ({
+            ...f,
+            properties: {
+              ...f.properties,
+              selected: values.includes(f.properties.postcode)
+            }
+          }))
+        }
+      });
+
+      // Add fill layer
+      map.current.addLayer({
+        id: 'postcode-fills',
+        type: 'fill',
+        source: 'postcodes',
+        paint: {
+          'fill-color': [
+            'case',
+            ['get', 'selected'], '#2E3F32',
+            'rgba(46, 63, 50, 0.1)'
+          ],
+          'fill-opacity': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false], 0.8,
+            0.6
+          ]
+        }
+      });
+
+      // Add outline layer
+      map.current.addLayer({
+        id: 'postcode-outlines',
+        type: 'line',
+        source: 'postcodes',
+        paint: {
+          'line-color': '#2E3F32',
+          'line-width': 1,
+          'line-opacity': 0.3
+        }
+      });
+
+      // Add hover effects
+      let hoveredStateId = null;
+
+      map.current.on('mousemove', 'postcode-fills', (e) => {
+        if (e.features.length > 0) {
+          if (hoveredStateId !== null) {
+            map.current.setFeatureState(
+              { source: 'postcodes', id: hoveredStateId },
+              { hover: false }
+            );
+          }
+          hoveredStateId = e.features[0].id;
+          map.current.setFeatureState(
+            { source: 'postcodes', id: hoveredStateId },
+            { hover: true }
+          );
+        }
+      });
+
+      // Add click handler
+      map.current.on('click', 'postcode-fills', (e) => {
+        if (e.features.length > 0) {
+          const postcode = e.features[0].properties.postcode;
+          const isSelected = values.includes(postcode);
+          
+          if (isSelected) {
+            onChange(values.filter(p => p !== postcode));
+          } else {
+            onChange([...values, postcode]);
+          }
+
+          // Update the visual state
+          map.current.setFeatureState(
+            { source: 'postcodes', id: e.features[0].id },
+            { selected: !isSelected }
+          );
+        }
+      });
+
+      // Change cursor on hover
+      map.current.on('mouseenter', 'postcode-fills', () => {
+        map.current.getCanvas().style.cursor = 'pointer';
+      });
+
+      map.current.on('mouseleave', 'postcode-fills', () => {
+        map.current.getCanvas().style.cursor = '';
+        if (hoveredStateId !== null) {
+          map.current.setFeatureState(
+            { source: 'postcodes', id: hoveredStateId },
+            { hover: false }
+          );
+        }
+        hoveredStateId = null;
+      });
+    });
+
     return () => map.current?.remove();
-  }, [showMap, value]);
+  }, [showMap, value, values]);
 
   // Add map button click handler
   const handleMapButtonClick = () => {
@@ -455,6 +567,22 @@ const LocationStep = ({ value, values, onChange }) => {
       boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
       color: '#2E3F32',
     }
+  };
+
+  const normalizeGeoJSON = (source, city) => {
+    if (city === 'london') {
+      return source.features.map(feature => ({
+        type: 'Feature',
+        geometry: feature.geometry,
+        properties: {
+          postcode: feature.properties.Name,
+          selected: false
+        }
+      }));
+    }
+    
+    // Manchester data is already in the format we want
+    return source.features;
   };
 
   return (
