@@ -387,6 +387,25 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     }
   };
 
+  // Move stepValues calculation outside of renderStep
+  const getStepValues = (step) => {
+    if (step === null) return null;
+    
+    return step === 0 ? searchCriteria.locations :
+      step === 1 ? searchCriteria.propertyTypes :
+      step === 2 ? {
+        minBedrooms: searchCriteria.minBedrooms,
+        maxBedrooms: searchCriteria.maxBedrooms,
+        minPrice: searchCriteria.minPrice,
+        maxPrice: searchCriteria.maxPrice
+      } :
+      step === 3 ? searchCriteria.mustHaves :
+      {
+        name: searchCriteria.name,
+        notifications: searchCriteria.notifications
+      };
+  };
+
   const renderStep = () => {
     if (selectedStep === null) {
       return (
@@ -398,20 +417,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     }
 
     const step = steps[selectedStep];
-    const stepValues = 
-      selectedStep === 0 ? searchCriteria.locations :
-      selectedStep === 1 ? searchCriteria.propertyTypes :
-      selectedStep === 2 ? {
-        minBedrooms: searchCriteria.minBedrooms,
-        maxBedrooms: searchCriteria.maxBedrooms,
-        minPrice: searchCriteria.minPrice,
-        maxPrice: searchCriteria.maxPrice
-      } :
-      selectedStep === 3 ? searchCriteria.mustHaves :
-      {
-        name: searchCriteria.name,
-        notifications: searchCriteria.notifications
-      };
+    const stepValues = getStepValues(selectedStep);
 
     return (
       <EditStepComponent
