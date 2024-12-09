@@ -190,7 +190,7 @@ const LocationStep = ({ value, values, onChange }) => {
       initializeMapData();
     }
 
-    function initializeMapData() {
+    async function initializeMapData() {
       console.log('Initializing map data for:', value);
       
       // Remove existing layers and source if they exist
@@ -198,7 +198,15 @@ const LocationStep = ({ value, values, onChange }) => {
       if (map.current.getLayer('postcode-outlines')) map.current.removeLayer('postcode-outlines');
       if (map.current.getSource('postcodes')) map.current.removeSource('postcodes');
 
-      const geoJSON = value === 'london' ? londonGeoJSON : manchesterGeoJSON;
+      let geoJSON;
+      if (value === 'london') {
+        geoJSON = londonGeoJSON;
+      } else {
+        // Fetch Manchester data
+        const response = await fetch(manchesterGeoJSON);
+        geoJSON = await response.json();
+      }
+
       const features = normalizeGeoJSON(geoJSON, value);
       
       // Add source
