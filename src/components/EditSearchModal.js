@@ -312,50 +312,51 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
         throw new Error('No user ID available');
       }
 
-      // Update local state first
-      const updatedCriteria = { ...searchCriteria };
-      switch(stepId) {
-        case 0:
-          updatedCriteria.locations = values;
-          break;
-        case 1:
-          updatedCriteria.propertyTypes = values;
-          break;
-        case 2:
-          updatedCriteria.minBedrooms = values.minBedrooms;
-          updatedCriteria.maxBedrooms = values.maxBedrooms;
-          updatedCriteria.minPrice = values.minPrice;
-          updatedCriteria.maxPrice = values.maxPrice;
-          break;
-        case 3:
-          updatedCriteria.mustHaves = values;
-          break;
-        case 4:
-          updatedCriteria.name = values.name;
-          updatedCriteria.notifications = values.notifications;
-          break;
-      }
-      setSearchCriteria(updatedCriteria);
+      // Log what we're sending to the API
+      console.log('Saving step:', stepId, 'with values:', values);
 
-      // Save to API
+      // Format the data correctly for the API
+      const updateData = {
+        user_id: whopUserId,
+        searchId: searchData.id,
+        search_name: values.name,
+        postcodes: values.locations,
+        min_price: values.minPrice,
+        max_price: values.maxPrice,
+        min_bedrooms: values.minBedrooms,
+        max_bedrooms: values.maxBedrooms,
+        property_types: values.propertyTypes,
+        must_haves: values.mustHaves,
+        notifications: values.notifications,
+      };
+
+      // Only include relevant fields based on which step we're saving
+      const relevantData = {
+        user_id: whopUserId,
+        searchId: searchData.id,
+        ...(stepId === 0 && { postcodes: values.locations }),
+        ...(stepId === 1 && { property_types: values.propertyTypes }),
+        ...(stepId === 2 && {
+          min_price: values.minPrice,
+          max_price: values.maxPrice,
+          min_bedrooms: values.minBedrooms,
+          max_bedrooms: values.maxBedrooms,
+        }),
+        ...(stepId === 3 && { must_haves: values.mustHaves }),
+        ...(stepId === 4 && {
+          search_name: values.name,
+          notifications: values.notifications,
+        }),
+      };
+
+      console.log('Sending to API:', relevantData);
+
       const response = await fetch('/api/update-search', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          user_id: whopUserId,
-          searchId: searchData.id,
-          search_name: updatedCriteria.name,
-          postcodes: updatedCriteria.locations,
-          min_price: updatedCriteria.minPrice,
-          max_price: updatedCriteria.maxPrice,
-          min_bedrooms: updatedCriteria.minBedrooms,
-          max_bedrooms: updatedCriteria.maxBedrooms,
-          property_types: updatedCriteria.propertyTypes,
-          must_haves: updatedCriteria.mustHaves,
-          notifications: updatedCriteria.notifications,
-        }),
+        body: JSON.stringify(relevantData),
       });
 
       if (!response.ok) {
@@ -367,8 +368,8 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
       window.dispatchEvent(new CustomEvent('refreshSearches'));
 
     } catch (error) {
-      alert('Failed to update search');
       console.error('Error updating search:', error);
+      alert('Failed to update search');
     } finally {
       setIsSaving(false);
     }
