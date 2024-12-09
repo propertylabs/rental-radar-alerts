@@ -440,6 +440,9 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     }
   };
 
+  // Get current step values for the save button
+  const currentStepValues = getStepValues(selectedStep);
+
   return BaseSearchModal.renderModalFrame({
     isOpen,
     onClose: handleClose,
@@ -447,7 +450,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     showCloseButton: false,
     showBackButton: false,
     buttonState: selectedStep !== null ? {
-      onClick: hasChanges ? () => handleSectionSave(selectedStep, stepValues) : handleBack,
+      onClick: hasChanges ? () => handleSectionSave(selectedStep, currentStepValues) : handleBack,
       text: hasChanges ? 'Save' : 'Back',
       disabled: isSaving,
       opacity: hasChanges ? 1 : 0.8
