@@ -447,6 +447,8 @@ const SearchesNew = ({ onOpenSearchModal, onOpenEditModal }) => {
         const result = await response.json();
         console.log('Search data from API:', result);
         if (Array.isArray(result)) {
+          const fullSearchData = result;
+          
           const formattedSearches = result
             .map(search => ({
               id: search.id,
@@ -459,6 +461,7 @@ const SearchesNew = ({ onOpenSearchModal, onOpenEditModal }) => {
               lastAlert: search.last_alert || 'No alerts yet',
               active: search.notifications,
               createdAt: search.created_at,
+              fullData: search
             }))
             .sort((a, b) => b.createdAt - a.createdAt);
 
@@ -654,7 +657,7 @@ const SearchesNew = ({ onOpenSearchModal, onOpenEditModal }) => {
                         onClick={(e) => {
                           e.stopPropagation();
                           setActiveMenu(null);
-                          onOpenEditModal(search);
+                          onOpenEditModal(search.fullData);
                         }}
                       >
                         <RiEditBoxLine style={{ fontSize: '20px', color: ACCENT }} />

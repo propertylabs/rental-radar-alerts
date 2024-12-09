@@ -156,15 +156,15 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     if (searchData && isOpen) {
       console.log('Raw searchData:', searchData);
       setSearchCriteria({
-        locations: searchData.location.split(', '),
+        locations: searchData.postcodes,
         propertyTypes: searchData.criteria.propertyTypes,
         minBedrooms: searchData.criteria.minBedrooms,
         maxBedrooms: searchData.criteria.maxBedrooms,
         minPrice: searchData.criteria.minPrice,
         maxPrice: searchData.criteria.maxPrice,
         mustHaves: searchData.criteria.mustHaves || [],
-        name: searchData.name,
-        notifications: searchData.active,
+        name: searchData.searchName,
+        notifications: searchData.notifications,
       });
       setHasChanges(false);
     }
