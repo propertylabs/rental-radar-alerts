@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { RiMapLine, RiSearchLine, RiCloseLine, RiArrowLeftLine } from 'react-icons/ri';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import londonGeoJSON from '../../../geojson/london_postcodes.json';
-import manchesterGeoJSON from '../../../public/data/manchester-postcodes.geojson';
+import londonGeoJSON from '../../data/london-postcodes.json';
+import manchesterGeoJSON from '../../data/manchester-postcodes.geojson';
 
 // This is fine since it's a public token
 mapboxgl.accessToken = 'pk.eyJ1IjoicHJvcGVydHlsYWJzIiwiYSI6ImNtNGg3d3hpbTAzdW0ycXIwNzM0aDVwd3EifQ.i5CHRd7TtWIgFcRNUokNCw';
