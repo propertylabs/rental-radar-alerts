@@ -1,5 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { RiMapLine, RiSearchLine, RiCloseLine } from 'react-icons/ri';
+import { RiMapLine, RiSearchLine, RiCloseLine, RiArrowLeftLine } from 'react-icons/ri';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+
+// This is fine since it's a public token
+mapboxgl.accessToken = 'pk.eyJ1IjoicHJvcGVydHlsYWJzIiwiYSI6ImNtNGg3d3hpbTAzdW0ycXIwNzM0aDVwd3EifQ.i5CHRd7TtWIgFcRNUokNCw';
 
 const LocationStep = ({ value, values, onChange }) => {
   console.log('LocationStep received:', { city: value, postcodes: values });
@@ -8,8 +13,18 @@ const LocationStep = ({ value, values, onChange }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const searchWrapperRef = useRef(null);
+  const [showMap, setShowMap] = useState(false);
+  const mapContainer = useRef(null);
+  const map = useRef(null);
 
-  const LONDON_POSTCODES = ['SW1', 'NW3'];
+  const LONDON_POSTCODES = [
+    'E1', 'E1W', 'E2', 'E3', 'E4', 'E5', 'E6', 'E7', 'E8', 'E9', 'E10', 'E11', 'E12', 'E13', 'E14', 'E15', 'E16', 'E17', 'E18', 'E20',
+    'EC1A', 'EC1M', 'EC1N', 'EC1R', 'EC1V', 'EC1Y', 'EC2A', 'EC2M', 'EC2N', 'EC2R', 'EC2V', 'EC2Y', 'EC3A', 'EC3M', 'EC3N', 'EC3R', 'EC3V', 'EC4A', 'EC4M',
+    'SW1H', 'SW1P', 'SW1V', 'SW1W', 'SW1X', 'SW1Y',
+    'W1B', 'W1C', 'W1D', 'W1F', 'W1G', 'W1H', 'W1J', 'W1K', 'W1S', 'W1T', 'W1U', 'W1W',
+    'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'W9', 'W10', 'W11', 'W12', 'W13', 'W14',
+    'WC1A', 'WC1B', 'WC1E', 'WC1H', 'WC1N', 'WC1R', 'WC1V', 'WC1X', 'WC2A', 'WC2B', 'WC2E', 'WC2H', 'WC2N', 'WC2R'
+  ];
 
   const MANCHESTER_POSTCODES = [
     'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9',
@@ -54,8 +69,52 @@ const LocationStep = ({ value, values, onChange }) => {
   };
 
   const LONDON_AREAS = {
-    'chelsea': ['SW1'],
-    'hampstead': ['NW3'],
+    // Central London
+    'mayfair': ['W1J', 'W1K'],
+    'soho': ['W1D', 'W1F'],
+    'covent garden': ['WC2E', 'WC2H', 'WC2B'],
+    'city of london': ['EC1', 'EC2', 'EC3', 'EC4'],
+    'shoreditch': ['E1', 'EC2A'],
+    'clerkenwell': ['EC1R', 'EC1V'],
+    
+    // West London
+    'notting hill': ['W11'],
+    'kensington': ['W8'],
+    'chelsea': ['SW1W'],
+    'knightsbridge': ['SW1X'],
+    'paddington': ['W2'],
+    'hammersmith': ['W6'],
+    'chiswick': ['W4'],
+    
+    // East London
+    'canary wharf': ['E14'],
+    'stratford': ['E15', 'E20'],
+    'hackney': ['E8', 'E9'],
+    'bethnal green': ['E2'],
+    'bow': ['E3'],
+    'mile end': ['E1', 'E3'],
+    
+    // Landmarks & Stations
+    'london bridge': ['SE1'],
+    'kings cross': ['N1C', 'WC1H'],
+    'liverpool street': ['EC2M', 'EC3A'],
+    'oxford street': ['W1C', 'W1B'],
+    'piccadilly circus': ['W1J'],
+    'bond street': ['W1S'],
+    'bank': ['EC2R', 'EC3V'],
+    
+    // Business Districts
+    'square mile': ['EC2N', 'EC2R', 'EC2V', 'EC3'],
+    'west end': ['W1', 'WC2'],
+    'tech city': ['EC1V', 'EC2A'],
+    
+    // Popular Areas
+    'angel': ['EC1V'],
+    'old street': ['EC1V', 'EC1Y'],
+    'holborn': ['WC1V', 'WC2'],
+    'fitzrovia': ['W1T', 'W1W'],
+    'marylebone': ['W1U', 'W1G'],
+    'bloomsbury': ['WC1A', 'WC1B', 'WC1E', 'WC1H', 'WC1N'],
   };
 
   const getAvailablePostcodes = () => {
@@ -87,6 +146,25 @@ const LocationStep = ({ value, values, onChange }) => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Initialize map when showing
+  useEffect(() => {
+    if (!showMap) return;
+
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/light-v11',
+      center: value === 'london' ? [-0.118092, 51.509865] : [-2.244644, 53.483959], // London or Manchester
+      zoom: 11
+    });
+
+    return () => map.current?.remove();
+  }, [showMap, value]);
+
+  // Add map button click handler
+  const handleMapButtonClick = () => {
+    setShowMap(true);
+  };
 
   const styles = {
     wrapper: {
@@ -350,111 +428,155 @@ const LocationStep = ({ value, values, onChange }) => {
 
   const filteredResults = getSearchResults(searchTerm);
 
+  // Add map styles
+  const mapStyles = {
+    mapContainer: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 1000,
+    },
+    backButton: {
+      position: 'absolute',
+      top: '16px',
+      left: '16px',
+      zIndex: 1001,
+      width: '58px',
+      height: '58px',
+      background: 'white',
+      border: '1px solid rgba(46, 63, 50, 0.08)',
+      borderRadius: '16px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      cursor: 'pointer',
+      boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+      color: '#2E3F32',
+    }
+  };
+
   return (
-    <div style={styles.wrapper}>
-      <div style={styles.header}>
-        <h2 style={styles.title}>Location</h2>
-        <p style={styles.subtitle}>Search for areas, landmarks, or postcodes</p>
-      </div>
-
-      <div style={styles.inputRow}>
-        <div style={styles.searchWrapper} ref={searchWrapperRef}>
-          <RiSearchLine size={20} style={styles.searchIcon} />
-          <input
-            style={styles.input}
-            placeholder="Try 'M1' or 'M20'"
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setShowDropdown(true);
-            }}
-          />
-          {showDropdown && searchTerm && (
-            <div style={styles.dropdown} ref={dropdownRef}>
-              {filteredResults.length > 0 ? (
-                filteredResults.map((result, index) => (
-                  <div
-                    key={`${result.type}-${index}`}
-                    style={{
-                      ...styles.dropdownItem,
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}
-                    onClick={() => {
-                      const newPostcodes = result.postcodes.filter(
-                        postcode => !values.includes(postcode)
-                      );
-                      if (newPostcodes.length > 0) {
-                        onChange([...values, ...newPostcodes]);
-                      }
-                      setSearchTerm('');
-                      setShowDropdown(false);
-                    }}
-                  >
-                    <span>{result.display}</span>
-                    {result.type === 'area' && (
-                      <span style={{
-                        fontSize: '13px',
-                        color: '#666',
-                        marginLeft: '8px',
-                      }}>
-                        {result.selectedCount > 0 ? (
-                          `${result.postcodes.length} of ${result.totalPostcodes} postcodes`
-                        ) : (
-                          result.postcodes.join(', ')
-                        )}
-                      </span>
-                    )}
-                  </div>
-                ))
-              ) : (
-                <div style={styles.noResults}>
-                  No matching areas or postcodes found
-                </div>
-              )}
-            </div>
-          )}
+    <>
+      <div style={styles.wrapper}>
+        <div style={styles.header}>
+          <h2 style={styles.title}>Location</h2>
+          <p style={styles.subtitle}>Search for areas, landmarks, or postcodes</p>
         </div>
-        <button style={styles.mapButton}>
-          <RiMapLine size={24} />
-        </button>
-      </div>
 
-      <div style={styles.tagsSection}>
-        <div style={styles.tagsContainer}>
-          {values.length > 0 ? (
-            values.map(postcode => (
-              <div 
-                key={postcode} 
-                style={{
-                  ...styles.tag,
-                  animation: 'tagAppear 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                }}
-              >
-                <span style={{ userSelect: 'none' }}>{postcode}</span>
+        <div style={styles.inputRow}>
+          <div style={styles.searchWrapper} ref={searchWrapperRef}>
+            <RiSearchLine size={20} style={styles.searchIcon} />
+            <input
+              style={styles.input}
+              placeholder="Try 'M1' or 'M20'"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setShowDropdown(true);
+              }}
+            />
+            {showDropdown && searchTerm && (
+              <div style={styles.dropdown} ref={dropdownRef}>
+                {filteredResults.length > 0 ? (
+                  filteredResults.map((result, index) => (
+                    <div
+                      key={`${result.type}-${index}`}
+                      style={{
+                        ...styles.dropdownItem,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                      onClick={() => {
+                        const newPostcodes = result.postcodes.filter(
+                          postcode => !values.includes(postcode)
+                        );
+                        if (newPostcodes.length > 0) {
+                          onChange([...values, ...newPostcodes]);
+                        }
+                        setSearchTerm('');
+                        setShowDropdown(false);
+                      }}
+                    >
+                      <span>{result.display}</span>
+                      {result.type === 'area' && (
+                        <span style={{
+                          fontSize: '13px',
+                          color: '#666',
+                          marginLeft: '8px',
+                        }}>
+                          {result.selectedCount > 0 ? (
+                            `${result.postcodes.length} of ${result.totalPostcodes} postcodes`
+                          ) : (
+                            result.postcodes.join(', ')
+                          )}
+                        </span>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div style={styles.noResults}>
+                    No matching areas or postcodes found
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+          <button style={styles.mapButton} onClick={handleMapButtonClick}>
+            <RiMapLine size={24} />
+          </button>
+        </div>
+
+        <div style={styles.tagsSection}>
+          <div style={styles.tagsContainer}>
+            {values.length > 0 ? (
+              values.map(postcode => (
                 <div 
-                  style={styles.removeTag}
-                  onClick={(e) => {
-                    e.currentTarget.parentElement.style.transform = 'scale(0.8)';
-                    e.currentTarget.parentElement.style.opacity = '0';
-                    setTimeout(() => {
-                      onChange(values.filter(p => p !== postcode));
-                    }, 150);
+                  key={postcode} 
+                  style={{
+                    ...styles.tag,
+                    animation: 'tagAppear 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                   }}
                 >
-                  <RiCloseLine size={26} />
+                  <span style={{ userSelect: 'none' }}>{postcode}</span>
+                  <div 
+                    style={styles.removeTag}
+                    onClick={(e) => {
+                      e.currentTarget.parentElement.style.transform = 'scale(0.8)';
+                      e.currentTarget.parentElement.style.opacity = '0';
+                      setTimeout(() => {
+                        onChange(values.filter(p => p !== postcode));
+                      }, 150);
+                    }}
+                  >
+                    <RiCloseLine size={26} />
+                  </div>
                 </div>
-              </div>
-            ))
-          ) : (
-            <span style={styles.emptyState}>
-              The postcodes you select will appear here
-            </span>
-          )}
+              ))
+            ) : (
+              <span style={styles.emptyState}>
+                The postcodes you select will appear here
+              </span>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Add Map View */}
+      {showMap && (
+        <div style={mapStyles.mapContainer}>
+          <div 
+            style={mapStyles.backButton}
+            onClick={() => setShowMap(false)}
+          >
+            <RiArrowLeftLine size={24} />
+          </div>
+          <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
+        </div>
+      )}
+    </>
   );
 };
 
