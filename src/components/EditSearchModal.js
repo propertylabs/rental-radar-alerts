@@ -162,7 +162,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
         maxBedrooms: 5,
         minPrice: searchData.price === 'Any price' ? 0 : parseInt(searchData.price.split('-')[0].replace('£', '')),
         maxPrice: searchData.price === 'Any price' ? 3000 : parseInt(searchData.price.split('-')[1]),
-        mustHaves: [],
+        mustHaves: searchData.must_haves || [],
         name: searchData.name,
         notifications: searchData.active,
       });
