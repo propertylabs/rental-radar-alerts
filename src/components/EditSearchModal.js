@@ -451,10 +451,13 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     const stepValues = getStepValues(selectedStep);
     
     // Add logging for LocationStep
-    if (selectedStep === 1) {
+    if (selectedStep === 0) {
+      const inferredCity = inferCityFromPostcodes(searchCriteria.locations);
       console.log('Rendering LocationStep with:', {
+        stepId: selectedStep,
         locations: searchCriteria.locations,
-        inferredCity: inferCityFromPostcodes(searchCriteria.locations)
+        inferredCity,
+        searchCriteria
       });
     }
 
