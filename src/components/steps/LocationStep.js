@@ -254,18 +254,6 @@ const LocationStep = ({ values, onChange }) => {
       },
     },
 
-    emptyState: {
-      height: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      textAlign: 'center',
-      color: '#666',
-      fontSize: '15px',
-      padding: '0 16px',
-      fontStyle: 'italic',
-    },
-
     '@keyframes tagAppear': {
       from: {
         opacity: 0,
@@ -392,9 +380,9 @@ const LocationStep = ({ values, onChange }) => {
       </div>
 
       <div style={styles.tagsSection}>
-        {values.length > 0 ? (
-          <div style={styles.tagsContainer}>
-            {values.map(postcode => (
+        <div style={styles.tagsContainer}>
+          {values.length > 0 ? (
+            values.map(postcode => (
               <div 
                 key={postcode} 
                 style={{
@@ -416,13 +404,13 @@ const LocationStep = ({ values, onChange }) => {
                   <RiCloseLine size={26} />
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div style={styles.emptyState}>
-            The postcodes you select will appear here
-          </div>
-        )}
+            ))
+          ) : (
+            <span style={{color: '#666', fontSize: '15px', fontStyle: 'italic'}}>
+              The postcodes you select will appear here
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
