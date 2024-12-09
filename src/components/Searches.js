@@ -445,6 +445,7 @@ const SearchesNew = ({ onOpenSearchModal, onOpenEditModal }) => {
       
       if (response.ok) {
         const result = await response.json();
+        console.log('Search data from API:', result);
         if (Array.isArray(result)) {
           const formattedSearches = result
             .map(search => ({
@@ -461,6 +462,7 @@ const SearchesNew = ({ onOpenSearchModal, onOpenEditModal }) => {
             }))
             .sort((a, b) => b.createdAt - a.createdAt);
 
+          console.log('Formatted searches for cards:', formattedSearches);
           setSearches(formattedSearches);
         }
       }
