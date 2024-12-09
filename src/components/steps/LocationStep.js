@@ -204,8 +204,91 @@ const LocationStep = ({ value, values, onChange }) => {
         }
       });
 
-      // Add layers and event handlers
-      // ... (rest of the layer and event handler code stays the same)
+      // Add fill layer
+      map.current.addLayer({
+        id: 'postcode-fills',
+        type: 'fill',
+        source: 'postcodes',
+        paint: {
+          'fill-color': [
+            'case',
+            ['get', 'selected'], '#2E3F32',
+            'rgba(46, 63, 50, 0.1)'
+          ],
+          'fill-opacity': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false], 0.8,
+            0.6
+          ]
+        }
+      });
+
+      // Add outline layer
+      map.current.addLayer({
+        id: 'postcode-outlines',
+        type: 'line',
+        source: 'postcodes',
+        paint: {
+          'line-color': '#2E3F32',
+          'line-width': 1,
+          'line-opacity': 0.3
+        }
+      });
+
+      // Add hover effects
+      let hoveredStateId = null;
+
+      map.current.on('mousemove', 'postcode-fills', (e) => {
+        if (e.features.length > 0) {
+          if (hoveredStateId !== null) {
+            map.current.setFeatureState(
+              { source: 'postcodes', id: hoveredStateId },
+              { hover: false }
+            );
+          }
+          hoveredStateId = e.features[0].id;
+          map.current.setFeatureState(
+            { source: 'postcodes', id: hoveredStateId },
+            { hover: true }
+          );
+        }
+      });
+
+      // Add click handler
+      map.current.on('click', 'postcode-fills', (e) => {
+        if (e.features.length > 0) {
+          const postcode = e.features[0].properties.postcode;
+          const isSelected = values.includes(postcode);
+          
+          if (isSelected) {
+            onChange(values.filter(p => p !== postcode));
+          } else {
+            onChange([...values, postcode]);
+          }
+
+          // Update the visual state
+          map.current.setFeatureState(
+            { source: 'postcodes', id: e.features[0].id },
+            { selected: !isSelected }
+          );
+        }
+      });
+
+      // Change cursor on hover
+      map.current.on('mouseenter', 'postcode-fills', () => {
+        map.current.getCanvas().style.cursor = 'pointer';
+      });
+
+      map.current.on('mouseleave', 'postcode-fills', () => {
+        map.current.getCanvas().style.cursor = '';
+        if (hoveredStateId !== null) {
+          map.current.setFeatureState(
+            { source: 'postcodes', id: hoveredStateId },
+            { hover: false }
+          );
+        }
+        hoveredStateId = null;
+      });
     }
   }, [showMap, value, values]); // Include all dependencies but handle updates more gracefully
 
