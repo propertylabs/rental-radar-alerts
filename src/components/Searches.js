@@ -657,6 +657,7 @@ const SearchesNew = ({ onOpenSearchModal, onOpenEditModal }) => {
                         onClick={(e) => {
                           e.stopPropagation();
                           setActiveMenu(null);
+                          console.log('Opening edit modal with data:', search.fullData);
                           onOpenEditModal(search.fullData);
                         }}
                       >

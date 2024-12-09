@@ -173,6 +173,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
 
   // Initialize when new search data is provided
   useEffect(() => {
+    console.log('Search data changed:', searchData);
     if (searchData && isOpen) {
       console.log('Loading new search data:', searchData);
       const newCriteria = {
@@ -187,11 +188,11 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
         notifications: searchData.notifications,
       };
       setSearchCriteria(newCriteria);
-      setOriginalValues(newCriteria);  // Also set original values
+      setOriginalValues(newCriteria);
       setHasChanges(false);
       setSelectedStep(null);
     }
-  }, [searchData?.id, isOpen]);  // Add searchData.id as dependency to detect new search
+  }, [searchData?.id, isOpen]);
 
   const steps = [
     { 
