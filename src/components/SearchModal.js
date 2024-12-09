@@ -104,7 +104,7 @@ const SearchModal = ({ isOpen, onClose }) => {
     
     return (
       <CurrentStep 
-        value={step === 0 ? searchCriteria.city : null}
+        value={step === 0 || step === 1 ? searchCriteria.city : null}
         values={step !== 0 ? (
           step === 1 ? searchCriteria.locations :
           step === 2 ? searchCriteria.propertyTypes :
