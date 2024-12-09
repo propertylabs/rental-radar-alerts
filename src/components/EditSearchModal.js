@@ -176,7 +176,9 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
     console.log('Search data changed:', searchData);
     if (searchData && isOpen) {
       console.log('Loading new search data:', searchData);
+      const city = inferCityFromPostcodes(searchData.postcodes);
       const newCriteria = {
+        city,
         locations: searchData.postcodes,
         propertyTypes: searchData.criteria.propertyTypes,
         minBedrooms: searchData.criteria.minBedrooms,
@@ -430,6 +432,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
       <EditStepComponent
         StepComponent={step.component}
         values={stepValues}
+        value={selectedStep === 0 ? searchCriteria.city : null}
         onChange={(values) => {
           handleStepChange(selectedStep, values);
         }}
@@ -450,6 +453,18 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
 
   // Get current step values for the save button
   const currentStepValues = getStepValues(selectedStep);
+
+  const inferCityFromPostcodes = (postcodes) => {
+    // If any postcode starts with M, it's Manchester
+    if (postcodes.some(p => p.startsWith('M'))) {
+      return 'manchester';
+    }
+    // If any postcode starts with SW or NW, it's London
+    if (postcodes.some(p => p.startsWith('SW') || p.startsWith('NW'))) {
+      return 'london';
+    }
+    return null;
+  };
 
   return BaseSearchModal.renderModalFrame({
     isOpen,

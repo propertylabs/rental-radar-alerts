@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { RiMapLine, RiSearchLine, RiCloseLine } from 'react-icons/ri';
 
-const LocationStep = ({ values, onChange }) => {
+const LocationStep = ({ value, values, onChange }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const searchWrapperRef = useRef(null);
+
+  const LONDON_POSTCODES = ['SW1', 'NW3'];
 
   const MANCHESTER_POSTCODES = [
     'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9',
@@ -48,6 +50,26 @@ const LocationStep = ({ values, onChange }) => {
     'manchester metropolitan': ['M15'],
     'trafford centre': ['M17'],
   };
+
+  const LONDON_AREAS = {
+    'chelsea': ['SW1'],
+    'hampstead': ['NW3'],
+  };
+
+  const getAvailablePostcodes = () => {
+    if (value === 'london') return LONDON_POSTCODES;
+    if (value === 'manchester') return MANCHESTER_POSTCODES;
+    return [];
+  };
+
+  const getAreaMapping = () => {
+    if (value === 'london') return LONDON_AREAS;
+    if (value === 'manchester') return MANCHESTER_AREAS;
+    return {};
+  };
+
+  const availablePostcodes = getAvailablePostcodes();
+  const areaMapping = getAreaMapping();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -285,7 +307,7 @@ const LocationStep = ({ values, onChange }) => {
     const results = [];
 
     // Direct postcode matches (exclude already selected postcodes)
-    const postcodeMatches = MANCHESTER_POSTCODES.filter(postcode => 
+    const postcodeMatches = availablePostcodes.filter(postcode => 
       postcode.toLowerCase().startsWith(trimmedTerm) && !values.includes(postcode)
     );
     postcodeMatches.forEach(postcode => {
@@ -297,7 +319,7 @@ const LocationStep = ({ values, onChange }) => {
     });
 
     // Area/landmark matches
-    Object.entries(MANCHESTER_AREAS).forEach(([area, postcodes]) => {
+    Object.entries(areaMapping).forEach(([area, postcodes]) => {
       if (area.includes(trimmedTerm)) {
         // Only include areas that have at least one unselected postcode
         const availablePostcodes = postcodes.filter(p => !values.includes(p));

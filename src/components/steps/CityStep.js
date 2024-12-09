@@ -10,8 +10,8 @@ const CityStep = ({ value, onChange }) => {
   const [pressedId, setPressedId] = useState(null);
 
   const cities = [
-    { id: 'london', name: 'London', icon: RiBuilding4Fill },
-    { id: 'manchester', name: 'Manchester', icon: RiBuilding2Fill },
+    { id: 'manchester', name: 'Manchester', icon: RiBuilding4Fill },
+    { id: 'london', name: 'London', icon: RiBuilding2Fill },
     { id: 'nyc', name: 'New York', icon: RiBuilding3Fill, disabled: true },
     { id: 'la', name: 'Los Angeles', icon: RiBuildingFill, disabled: true }
   ];
