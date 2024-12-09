@@ -432,7 +432,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
       <EditStepComponent
         StepComponent={step.component}
         values={stepValues}
-        value={selectedStep === 0 ? searchCriteria.city : null}
+        value={selectedStep === 1 ? inferCityFromPostcodes(searchCriteria.locations) : null}
         onChange={(values) => {
           handleStepChange(selectedStep, values);
         }}
@@ -454,6 +454,7 @@ const EditSearchModal = ({ isOpen, onClose, searchData }) => {
   // Get current step values for the save button
   const currentStepValues = getStepValues(selectedStep);
 
+  // Move inferCityFromPostcodes to top level so it can be used in multiple places
   const inferCityFromPostcodes = (postcodes) => {
     // If any postcode starts with M, it's Manchester
     if (postcodes.some(p => p.startsWith('M'))) {
