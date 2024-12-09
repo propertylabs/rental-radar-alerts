@@ -123,7 +123,7 @@ const SearchModal = ({ isOpen, onClose }) => {
         onChange={(values) => {
           switch(step) {
             case 0:
-              console.log('City step change:', values);
+              console.log('City selected:', values);
               setSearchCriteria({...searchCriteria, city: values});
               break;
             case 1:

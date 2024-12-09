@@ -304,12 +304,19 @@ const LocationStep = ({ value, values, onChange }) => {
     
     if (!trimmedTerm) return [];
 
+    console.log('Searching with term:', trimmedTerm);
+    console.log('Available postcodes:', availablePostcodes);
+    console.log('Area mapping:', areaMapping);
+
     const results = [];
 
-    // Direct postcode matches (exclude already selected postcodes)
+    // Direct postcode matches
     const postcodeMatches = availablePostcodes.filter(postcode => 
       postcode.toLowerCase().startsWith(trimmedTerm) && !values.includes(postcode)
     );
+
+    console.log('Postcode matches:', postcodeMatches);
+
     postcodeMatches.forEach(postcode => {
       results.push({
         type: 'postcode',
@@ -318,10 +325,9 @@ const LocationStep = ({ value, values, onChange }) => {
       });
     });
 
-    // Area/landmark matches
+    // Area matches
     Object.entries(areaMapping).forEach(([area, postcodes]) => {
       if (area.includes(trimmedTerm)) {
-        // Only include areas that have at least one unselected postcode
         const availablePostcodes = postcodes.filter(p => !values.includes(p));
         if (availablePostcodes.length > 0) {
           results.push({
@@ -329,7 +335,6 @@ const LocationStep = ({ value, values, onChange }) => {
             display: area.charAt(0).toUpperCase() + area.slice(1),
             postcodes: availablePostcodes,
             totalPostcodes: postcodes.length,
-            // Add this to show "X of Y postcodes" if some are already selected
             selectedCount: postcodes.length - availablePostcodes.length
           });
         }
