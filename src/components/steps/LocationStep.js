@@ -216,7 +216,8 @@ const LocationStep = ({ values, onChange }) => {
       padding: '16px',
       overflowY: 'auto',
       flex: 1,
-      alignContent: 'start',
+      alignContent: values.length > 0 ? 'start' : 'center',
+      justifyContent: 'center',
       WebkitOverflowScrolling: 'touch',
       minHeight: '100%',
     },
@@ -226,10 +227,6 @@ const LocationStep = ({ values, onChange }) => {
       fontSize: '15px',
       fontStyle: 'italic',
       gridColumn: '1 / -1',
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
       textAlign: 'center',
     },
 
@@ -394,10 +391,7 @@ const LocationStep = ({ values, onChange }) => {
       </div>
 
       <div style={styles.tagsSection}>
-        <div style={{
-          ...styles.tagsContainer,
-          position: values.length > 0 ? 'static' : 'relative'
-        }}>
+        <div style={styles.tagsContainer}>
           {values.length > 0 ? (
             values.map(postcode => (
               <div 
