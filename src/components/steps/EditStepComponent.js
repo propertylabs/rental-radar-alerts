@@ -6,7 +6,6 @@ const EditStepComponent = ({ StepComponent, values, onChange }) => {
       display: 'flex',
       flexDirection: 'column',
       height: '100%',
-      padding: '20px',
     },
   };
 
